@@ -105,23 +105,5 @@ class TestLaplacian(TestCase):
         # this will likely not be a useful test.
         pass
 
-    def test_get_kernel_basis(self):
-        pass
-
-    def test_get_kernel_dim(self):
-        pass
-
-    def test_get_sparse_matrix(self):
-        pass
-
-    def test_get_sparse_Lambda(self):
-        pass
-
-    def test_get_dense_Lambda(self):
-        pass
-
-    def test_get_dense_matrix(self):
-        pass
-
 suite = unittest.TestLoader().loadTestsFromTestCase(TestLaplacian)
 unittest.TextTestRunner(verbosity=2).run(suite)
