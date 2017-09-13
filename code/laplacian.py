@@ -202,13 +202,13 @@ class Laplacian:
 
     def save(self, filename):
         """ Saves the current Laplacian in a way that can be recovered """
-        pickle.dump(self, open(filename, 'w'))
+        pickle.dump(self, open(filename, 'wb'))
 
 
 # Function for loading Laplacian from file
 def load(filename):
     """ Loads a pickled Laplacian from a file, and returns instance. """
-    operator = pickle.load(open(filename))
+    operator = pickle.load(open(filename,'rb'))
     return operator
 
 
