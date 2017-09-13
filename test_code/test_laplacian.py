@@ -96,7 +96,6 @@ class TestLaplacian(TestCase):
         # delete dummy file
         os.remove('foo.pkl')
 
-        #pass
 
     # In general, unit tests should not be written for getter and setter methods (according to good programming standards), however they are left as is for 100% code coverage for
     # illustrative purposes. A test may be written for any of these methods if it proves to be helpful.
