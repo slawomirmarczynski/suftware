@@ -14,7 +14,8 @@ class TestMaxent(TestCase):
     def test_coeffs_to_field(self):
         pass
 
-
+	
+    # tests the maximum entropy probaiblity distribution in 1d	
     def test_compute_maxent_prob_1d(self):
         # N number of data points
         N,G = 100, 10
