@@ -12,7 +12,7 @@ import scipy as sp
 class TestMaxent(TestCase):
 
 
-    # set up some variables for re-use in the test methods
+    # set up some variables for re-use in the test methods below
     def setUp(self):
         # N number of data points
         self.N = 100
@@ -25,6 +25,7 @@ class TestMaxent(TestCase):
         self.R, self.bin_centers = utils.histogram_counts_1d(self.data, self.G, bbox=bbox,normalized=True)
         # basis/kernel
         self.basis = utils.legendre_basis_1d(self.G,self.alpha)
+        self.coeffs = maxent.compute_maxent_field(self.R, self.basis)[0]
 
     def tearDown(self):
         pass
@@ -32,7 +33,10 @@ class TestMaxent(TestCase):
     # Begin tests
 
     def test_coeffs_to_field(self):
-        pass
+        #returns a raveled G by 1 column
+        actual_col = maxent.coeffs_to_field(self.coeffs,self.basis)
+        expected_col = sp.array([ 0.47197615,  0.41100069,  0.35002523,  0.28904977,  0.22807432,  0.16709886, 0.1061234, 0.04514794, -0.01582752, -0.07680298])
+        self.assertEquals(actual_col.all(),expected_col.all())
 
     # tests the maximum entropy probaiblity distribution in 1d
     def test_compute_maxent_prob_1d(self):
