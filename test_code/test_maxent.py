@@ -8,6 +8,7 @@ import maxent
 import utils
 import simulate_data_1d
 import scipy as sp
+import unittest
 
 class TestMaxent(TestCase):
 
@@ -76,3 +77,6 @@ class TestMaxent(TestCase):
         self.assertEqual(actual_phi.all(), expected_phi.all())
         self.assertEqual(actual_success,expected_success)
 
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestMaxent)
+unittest.TextTestRunner(verbosity=2).run(suite)
