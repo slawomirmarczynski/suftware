@@ -22,7 +22,7 @@ def safe_exp(v):
     ''' Returns a value for np.exp(v) without underflow and overflow errors '''
     assert isinstance(v,ARRAY+NUMBER),\
         'Error: trying to exponentiate something of type %s.'%str(type(v))
-    if isinstance(v,ARRAY):        
+    if isinstance(v,ARRAY):
         v = np.array(v).copy()
         assert not any(v > PHI_MAX),\
             'Error: trying to exponentiate numbers that are too large'
@@ -34,7 +34,7 @@ def safe_exp(v):
             v = PHI_MIN
     return np.exp(v)
 
-# Evaluate geodesic distance 
+# Evaluate geodesic distance
 def geo_dist(P,Q):
 
     # Make sure these are valid distributions
@@ -46,8 +46,8 @@ def geo_dist(P,Q):
     assert any(Q > 0)
 
     # Enforce proper normalization
-    P_prob = P/sp.sum(P) 
-    Q_prob = Q/sp.sum(Q) 
+    P_prob = P/sp.sum(P)
+    Q_prob = Q/sp.sum(Q)
 
     # Return geodistance. arccos can behave badly if argument
     # is too close to one, so prepare for this
@@ -63,7 +63,7 @@ def geo_dist(P,Q):
 
 # Convert field to non-normalized probabiltiy distribution
 def field_to_quasiprob(raw_phi):
-    phi = np.copy(raw_phi) 
+    phi = np.copy(raw_phi)
     G = len(phi)
 
     # Make sure phi is real
@@ -88,8 +88,8 @@ def field_to_quasiprob(raw_phi):
     return quasiQ
 
 # Convert field to normalized probability distribution
-def field_to_prob(raw_phi): 
-    phi = np.copy(raw_phi) 
+def field_to_prob(raw_phi):
+    phi = np.copy(raw_phi)
     G = len(phi)
 
     # Make sure phi is real
@@ -104,7 +104,6 @@ def field_to_prob(raw_phi):
     # set equal to upper bound
     #if any(phi > PHI_MAX):
     #    phi[phi > PHI_MAX] = PHI_MAX
-
     # Compute quasiQ
     denom = sp.sum(sp.exp(-phi))
     Q = sp.exp(-phi)/denom
@@ -153,44 +152,77 @@ def grid_info_from_bbox_and_G(bbox, G):
 # Make a 1d histogram. Bounding box is optional
 def histogram_counts_1d(data, G, bbox='auto', normalized=False):
 
+    # initializing empty cropped data to avoid referencing before initialization errors
+    cropped_data = np.array([])
+
     # If setting interval automatically
     if bbox=='auto':
-
         # Make sure there is actually data present
         assert len(data) > 0,\
             ''' Error: cannot set bbox automatically when fewer than 2 
             distinct data points are proivded. Here, only %d distinct 
             data points were provided'''%len(set(data))
 
-        # Get interval spanned by data
-        data_interval = max(data[0])-min(data[0])
+        # if data contains metadata
+        if type(data) is tuple:
+            # Get interval spanned by data
+            data_interval = max(data[0])-min(data[0])
 
-        # Make sure that this interval is finite
-        assert np.isfinite(data_interval)
+            # Make sure that this interval is finite
+            assert np.isfinite(data_interval)
 
-        # Make sure the data actually have some spread
-        assert data_interval > 0
+            # Make sure the data actually have some spread
+            assert data_interval > 0
 
-        # Set bbox
-        bbox = []
-        bbox.append(min(data[0]) - data_interval*0.2)
-        bbox.append(max(data[0]) + data_interval*0.2)
+            # Set bbox
+            bbox = []
+            bbox.append(min(data[0]) - data_interval*0.2)
+            bbox.append(max(data[0]) + data_interval*0.2)
 
-    # Make sure bbox is valid 
-    assert isinstance(bbox[0],NUMBER)
-    assert isinstance(bbox[1],NUMBER)
-    assert bbox[0] < bbox[1]
+            # Make sure bbox is valid
+            assert isinstance(bbox[0], NUMBER)
+            assert isinstance(bbox[1], NUMBER)
+            assert bbox[0] < bbox[1]
 
-    # Crop data to bounding box: if any data are lower or greater than bounding box, ignore them
-    indices = np.where((data[0] > bbox[0]) & (data[0] < bbox[1]))
-    cropped_data = data[0][indices]
+            # Crop data to bounding box: if any data are lower or greater than bounding box, ignore them
+            # indices = (data > bbox[0]) & (data < bbox[1])
+            indices = np.where((data[0] > bbox[0]) & (data[0] < bbox[1]))
+            cropped_data = data[0][indices]
+
+        # if data contains just raw data without metadata
+        elif type(data) is np.ndarray:
+            # Get interval spanned by data
+            data_interval = max(data) - min(data)
+
+            # Set bbox
+            bbox = []
+
+            bbox.append(min(data) - data_interval * 0.2)
+            bbox.append(max(data) + data_interval * 0.2)
+
+            indices = (data > bbox[0]) & (data < bbox[1])
+            cropped_data = data[indices]
+
+            # Make sure bbox is valid
+            assert isinstance(bbox[0], NUMBER)
+            assert isinstance(bbox[1], NUMBER)
+            assert bbox[0] < bbox[1]
+
+            # Crop data to bounding box: if any data are lower or greater than bounding box, ignore them
+            indices = (data > bbox[0]) & (data < bbox[1])
+            cropped_data = data[indices]
 
     # Get grid info from bbox and G
     h, bin_centers, bin_edges = grid_info_from_bbox_and_G(bbox, G)
 
     # Get counts in each bin
-    #counts, _ = np.histogram(data[0], bins=bin_edges, density=False)	# check if Justin actually wanted this line
-    counts, _ = np.histogram(cropped_data, bins=bin_edges, density=False)
+    #counts, _ = np.histogram(data[0], bins=bin_edges, density=False)
+    if len(cropped_data) is not 0:
+        counts, _ = np.histogram(cropped_data, bins=bin_edges, density=False)
+    elif type(data) is tuple:
+        counts, _ = np.histogram(data[0], bins=bin_edges, density=False)
+    else:
+        counts, _ = np.histogram(data, bins=bin_edges, density=False)
 
     if normalized:
         hist = 1.*counts/np.sum(h*counts)
@@ -210,7 +242,7 @@ def histogram_2d(data, box, num_bins=[10,10], normalized=False):
     hy, ys, y_edges = \
         grid_info_from_bbox_and_G(box[1], num_bins[1])
 
-    hist, xedges, yedges = np.histogram2d(data_x, data_y, 
+    hist, xedges, yedges = np.histogram2d(data_x, data_y,
         bins=[x_edges, y_edges], normed=normalized)
 
     return hist, xs, ys
@@ -319,6 +351,6 @@ def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0,1.0]):
 
     # Normalize this basis using my convension
     basis = normalize(raw_basis, grid_spacing)
-    
+
     # Return normalized basis
     return basis
