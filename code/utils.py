@@ -153,7 +153,7 @@ def grid_info_from_bbox_and_G(bbox, G):
 # Make a 1d histogram. Bounding box is optional
 def histogram_counts_1d(data, G, bbox='auto', normalized=False):
 
-    # If setting intervalu automatically
+    # If setting interval automatically
     if bbox=='auto':
 
         # Make sure there is actually data present
@@ -163,7 +163,7 @@ def histogram_counts_1d(data, G, bbox='auto', normalized=False):
             data points were provided'''%len(set(data))
 
         # Get interval spanned by data
-        data_interval = max(data)-min(data)
+        data_interval = max(data[0])-min(data[0])
 
         # Make sure that this interval is finite
         assert np.isfinite(data_interval)
@@ -173,23 +173,24 @@ def histogram_counts_1d(data, G, bbox='auto', normalized=False):
 
         # Set bbox
         bbox = []
-        bbox[0] = min(data) - data_interval*0.2
-        bbox[1] = max(data) + data_interval*0.2
+        bbox.append(min(data[0]) - data_interval*0.2)
+        bbox.append(max(data[0]) + data_interval*0.2)
 
     # Make sure bbox is valid 
     assert isinstance(bbox[0],NUMBER)
     assert isinstance(bbox[1],NUMBER)
     assert bbox[0] < bbox[1]
 
-    # Crop data to bounding box 
-    indices = (data > bbox[0]) & (data < bbox[1])
-    cropped_data = data[indices]
+    # Crop data to bounding box: if any data are lower or greater than bounding box, ignore them
+    indices = np.where((data[0] > bbox[0]) & (data[0] < bbox[1]))
+    cropped_data = data[0][indices]
 
     # Get grid info from bbox and G
     h, bin_centers, bin_edges = grid_info_from_bbox_and_G(bbox, G)
 
     # Get counts in each bin
-    counts, _ = np.histogram(data, bins=bin_edges, density=False)
+    #counts, _ = np.histogram(data[0], bins=bin_edges, density=False)	# check if Justin actually wanted this line
+    counts, _ = np.histogram(cropped_data, bins=bin_edges, density=False)
 
     if normalized:
         hist = 1.*counts/np.sum(h*counts)

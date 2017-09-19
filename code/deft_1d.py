@@ -169,7 +169,7 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 # The main DEFT algorithm in 1D. 
 #
 
-def run(data, G=100, alpha=3, bbox=[-np.Inf, np.Inf], periodic=False, \
+def run(data, G=100, alpha=3, bbox="auto", periodic=False, \
         resolution=3.14E-2, tollerance=1E-3, num_samples=100, \
         errorbars=False, print_t=False, ell_guess=False, \
         num_steps_per_sample=100, num_thermalization_steps=1000, fix_t_at_t_star=False):
