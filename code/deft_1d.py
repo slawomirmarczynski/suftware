@@ -65,20 +65,22 @@ def get_commandline_arguments():
 
 # Gets a handle to the data file, be it a system file or stdin
 def get_data_file_handle(data_file_name):
-    # Get data input file
+
+    data_file_handle = ''
+    # Get data input file from standard input
     if data_file_name == 'stdin':
-        data_file_handle = sys.stdin
-        assert data_file_handle, 'Failed to open standard input.'
+        data_file_handle = input('please enter file name: \n')
+        data_file_name = data_file_handle
 
-    else:
-        # Verify that input file exists and that we have permission to read it
-        assert os.path.isfile(data_file_name)
-
-        # Open data file
+    # try opening the file, if it doesn't exist, an IO Exception will occur.
+    try:
         data_file_handle = open(data_file_name,'r')
-        assert data_file_handle, 'Failed to open "%s"'%data_file_name
 
-    # Return a handle to the data file
+    except (IOError, OSError, FileNotFoundError) as e:
+        print("An exception has occured while opening file: ",e)
+        return e
+        # try return e here
+
     return data_file_handle
 
 
@@ -103,6 +105,7 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 # The main DEFT algorithm in 1D. 
 #
 
+#def run(data, G=100, alpha=3, bbox=[-np.Inf, np.Inf], periodic=False, \
 def run(data, G=100, alpha=3, bbox="auto", periodic=False, \
         resolution=3.14E-2, tollerance=1E-3, num_samples=100, \
         errorbars=False, print_t=False, ell_guess=False, \
