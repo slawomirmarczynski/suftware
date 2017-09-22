@@ -32,7 +32,7 @@ class TestDeft1d(TestCase):
 
 
     # this test ensures that loading data has appropriate exception handling
-    def test_get_data_file_hand(self):
+    def test_get_data_file_handle(self):
         # call function with a dummy arguement and check if the appropriate exception gets called
         dummyFile = 'dummyFileName'
         x = deft_1d.get_data_file_handle(dummyFile)
