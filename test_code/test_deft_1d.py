@@ -8,6 +8,7 @@ import numpy as np
 import unittest
 import deft_1d
 import simulate_data_1d
+import os
 
 class TestDeft1d(TestCase):
 
@@ -30,13 +31,28 @@ class TestDeft1d(TestCase):
     def raiseFileNotFoundError(self):
         return FileNotFoundError
 
-
     # this test ensures that loading data has appropriate exception handling
     def test_get_data_file_handle(self):
         # call function with a dummy arguement and check if the appropriate exception gets called
         dummyFile = 'dummyFileName'
         x = deft_1d.get_data_file_handle(dummyFile)
         self.assertEqual(type(x), self.raiseFileNotFoundError())
+
+    def test_load_data(self):
+        # make test file, populate with numbers and an illegal charater
+        testFile = open("dummyData.txt", "w+")
+        for i in range(3):
+            testFile.write(str(np.random.rand()) + "\n")
+        # write an illegal character
+        testFile.write("& \n")
+        # another illegal character
+        testFile.write("^ \n")
+        testFile.close()
+        # ensure that there only numbers in the dummy file
+        for data in deft_1d.load_data(open("dummyData.txt",'r')):
+            self.assertEqual(type(data),np.float64)
+        os.remove("dummyData.txt")
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestDeft1d)
 unittest.TextTestRunner(verbosity=2).run(suite)
