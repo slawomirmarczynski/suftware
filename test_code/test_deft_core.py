@@ -12,7 +12,6 @@ from scipy.sparse import csr_matrix
 
 class TestDeftCore(TestCase):
 
-
     # the following two methods run before everything and after anything, in the unit test suite. Objects with suite wide scope may be defined here for better performance.
     @classmethod
     def setUpClass(cls):
@@ -90,7 +89,13 @@ class TestDeftCore(TestCase):
         phiNew_corrector_step_t0_predicted = np.array([7.735609670513095,3.0574147401594662,0.1548807439299333,-0.972424856445949, - 0.372762525711791])
         self.assertEqual(phiNew_corrector_step_t0_actual.tolist(),phiNew_corrector_step_t0_predicted.tolist())
 
-
+    def test_compute_predictor_step(self):
+        # choosing values used in deft core, should also use other arbitrary values
+        resolution = 1E-2
+        direction = -1
+        predictor_step_actual, t_new = deft_core.compute_predictor_step(self.phi_infty,self.R,self.delta,0,self.N,direction,resolution)
+        predictor_step_predicted = np.array([7.4631945039611409,  2.9702001688713144,  0.15826997173369853,-0.9721635291813676, -0.37283987940842334])
+        self.assertEqual(predictor_step_actual.tolist(),predictor_step_predicted.tolist())
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestDeftCore)
