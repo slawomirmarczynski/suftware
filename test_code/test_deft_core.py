@@ -6,10 +6,20 @@ sys.path.append('../sim/')
 
 import numpy as np
 import deft_core
-import os
+import unittest
 from scipy.sparse import csr_matrix
 
 class TestDeftCore(TestCase):
+
+
+    # the following two methods run before everything and after anything, in the unit test suite. Objects with suite wide scope may be defined here for better performance.
+    @classmethod
+    def setUpClass(cls):
+        cls.phi_infty = np.array([ 7.59930786,  3.01371323,  0.15648113, -0.97238842, -0.37289543])
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
 
     # setup replica class of laplacian as delta which will passed into deft_core.run to test functionality
     class Delta:
@@ -51,5 +61,11 @@ class TestDeftCore(TestCase):
         results = deft_core.run(counts,delta)
         predicted_Q_star = np.array([8.73962713e-05,9.40171643e-03,1.71301689e-01,5.28864295e-01, 2.90344903e-01])
         actual_Q_star = results.Q_star
+        predicted_R = np.array([0.,0.,0.2,0.5,0.3])
+        actual_R = results.R
         self.assertEqual(predicted_Q_star.all(),actual_Q_star.all())
+        self.assertEqual(predicted_R.all(), actual_R.all())
 
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestDeftCore)
+unittest.TextTestRunner(verbosity=2).run(suite)
