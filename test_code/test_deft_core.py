@@ -4,6 +4,7 @@ import sys
 sys.path.append('../code')
 sys.path.append('../sim/')
 
+import scipy as sp
 import numpy as np
 import deft_core
 import unittest
@@ -15,7 +16,11 @@ class TestDeftCore(TestCase):
     # the following two methods run before everything and after anything, in the unit test suite. Objects with suite wide scope may be defined here for better performance.
     @classmethod
     def setUpClass(cls):
+
         cls.phi_infty = np.array([ 7.59930786,  3.01371323,  0.15648113, -0.97238842, -0.37289543])
+        cls.R = np.array([ 0., 0., 0.2,  0.5,  0.3])
+        cls.N = 10
+        cls.delta = TestDeftCore.Delta()
 
     @classmethod
     def tearDownClass(cls):
@@ -57,15 +62,28 @@ class TestDeftCore(TestCase):
     def test_run(self):
 
         counts = np.array([0, 0, 2, 5, 3])
-        delta = TestDeftCore.Delta()
+        delta = self.delta
         results = deft_core.run(counts,delta)
-        predicted_Q_star = np.array([8.73962713e-05,9.40171643e-03,1.71301689e-01,5.28864295e-01, 2.90344903e-01])
+        predicted_Q_star = np.array([8.7396271344805499e-05, 9.4017164259393576e-03, 1.7130168936492607e-01, 5.2886429495267018e-01, 2.9034490298511967e-01])
         actual_Q_star = results.Q_star
         predicted_R = np.array([0.,0.,0.2,0.5,0.3])
         actual_R = results.R
-        self.assertEqual(predicted_Q_star.all(),actual_Q_star.all())
-        self.assertEqual(predicted_R.all(), actual_R.all())
+        self.assertEqual(predicted_Q_star.tolist(),actual_Q_star.tolist())
+        self.assertEqual(predicted_R.tolist(), actual_R.tolist())
 
+    def test_compute_map_curve(self):
+        map_curve_actual = deft_core.compute_map_curve(self.N,self.R,self.delta)
+        actual_t = sp.array([p.t for p in map_curve_actual.points])
+        predicted_t = np.array([-np.inf,   0.,                  1.,                  2.,
+                                2.5392220639675585,   2.9299162740567244,   3.2584596317615167,
+                                3.5542893085059477,   3.8319910581692125,   4.1003895258805398,
+                                4.3656622894509312,   4.6327052332959937,   4.9058578556237924,
+                                5.1893734949820542,   5.4878039456936829,   5.8064002819804124,
+                                6.1516242499409159,   6.5319014009163876,   6.9588494544043584,
+                                7.449460625415953,    8.0303352276425244,   8.7468058319425737,
+                                9.6855280829599746,  10.6855280829599746,   11.6855280829599746,
+                                np.inf])
+        self.assertEqual(actual_t.tolist(),predicted_t.tolist())
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestDeftCore)
 unittest.TextTestRunner(verbosity=2).run(suite)
