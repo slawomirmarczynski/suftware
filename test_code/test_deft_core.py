@@ -85,5 +85,13 @@ class TestDeftCore(TestCase):
                                 np.inf])
         self.assertEqual(actual_t.tolist(),predicted_t.tolist())
 
+    def test_compute_corrector_step(self):
+        phiNew_corrector_step_t0_actual = deft_core.compute_corrector_step(self.phi_infty,self.R,self.delta,0,self.N)
+        phiNew_corrector_step_t0_predicted = np.array([7.735609670513095,3.0574147401594662,0.1548807439299333,-0.972424856445949, - 0.372762525711791])
+        self.assertEqual(phiNew_corrector_step_t0_actual.tolist(),phiNew_corrector_step_t0_predicted.tolist())
+
+
+
+
 suite = unittest.TestLoader().loadTestsFromTestCase(TestDeftCore)
 unittest.TextTestRunner(verbosity=2).run(suite)
