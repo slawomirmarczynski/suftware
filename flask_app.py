@@ -26,19 +26,25 @@ app.secret_key = os.urandom(32)
 @app.route('/', methods=['GET','POST'])
 def index():
 
+    # dictionary to store all metadata in key value pairs
+    metaData = {}
+
+    # create temp files like metadata
     if 'uid' in session:
         print("Temp file already created")
-        tempFile = str(session['uid']) + ".input"
         metaDataFile = str(session['uid']) + ".meta"
     else:
         session['uid'] = uuid.uuid4()
-        tempFile = str(session['uid'])+".input"
-        shutil.copy('crp_sites.fasta',tempFile)
         metaDataFile = str(session['uid']) + ".meta"
         print("New temp file created")
 
     sample_distribution_type = ["gaussian", "narrow", "wide", "foothills", "accordian", "goalposts", "towers","uniform",
                                 "beta_convex", "beta_concave", "exponential", "gamma", "triangular", "laplace","vonmises"]
+
+    # example data list
+    example_data = ['buffalo_snowfall.dat','old_faithful_eruption_times.dat','old_faithful_waiting_times.dat','treatment_length.dat']
+    example_data_dict = {}
+    example_data_selected = 'buffalo_snowfall.dat'
 
     # write following parameters to metadata files
 
@@ -56,18 +62,28 @@ def index():
     # metadata file and update in the html from there.
     input_type = 'simulated'
 
-    # index that selects default value of distribution list
-    index = 0
+    # simulate_index that selects default value of distribution list
+    simulate_index = 0
+    # similar index but for example data
+    example_data_index = 0
 
     # list of example data
-    buffalo_snowfall = np.loadtxt('./data/buffalo_snowfall.dat')
-    old_faithful_eruption_times = np.loadtxt('./data/old_faithful_eruption_times.dat')
-    old_faithful_waiting_times = np.loadtxt('./data/old_faithful_waiting_times.dat')
-    treatment_length = np.loadtxt('./data/treatment_length.dat')
+
+    example_data_dict['buffalo_snowfall.dat'] = np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
+    example_data_dict['old_faithful_eruption_times.dat'] = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+    example_data_dict['old_faithful_waiting_times.dat'] = np.loadtxt('./data/old_faithful_waiting_times.dat').astype(np.float)
+    example_data_dict['treatment_length.dat'] = np.loadtxt('./data/treatment_length.dat').astype(np.float)
+    '''
+    buffalo_snowfall = np.load('./data/'+str(example_data[0]))
+    old_faithful_eruption_times = np.load('./data/' + str(example_data[1]))
+    old_faithful_waiting_times = np.load('./data/' + str(example_data[2]))
+    treatment_length = np.load('./data/' + str(example_data[3]))
+    '''
 
     if request.method == 'POST':
 
         if str(request.form.get("run_deft_button")) == 'run_deft':
+
             # update deft parameters via post
             N = int(request.form['N'])
             G = int(request.form['G'])
@@ -75,31 +91,70 @@ def index():
             bbox_left = int(request.form['bbox_left'])
             bbox_right = int(request.form['bbox_right'])
             bbox = [int(request.form['bbox_left']),int(request.form['bbox_right'])]
-            data_type = request.form['distribution']
-
-            # loop for selecting the default value of distribution select
-            for dist in sample_distribution_type:
-                if str(data_type)==dist:
-                    break
-                index+=1
 
             # read radio button value
             if request.form.getlist('input_type'):
                 input_type = str(request.form['input_type'])
                 print(" Radio button value: ",input_type)
+                metaData['input_type'] = input_type
 
-    if(input_type=='simulated'):
+            # write metadata to file
+            with open(metaDataFile, "w") as myfile:
+                for key in sorted(metaData):
+                    myfile.write(key + ":" + str("".join(metaData[key])) + "\n")
+
+            data_type = request.form['distribution']
+            example_data_selected = str(request.form['example_data'])
+
+            # the following two loops and their indices need to be replaced
+            # by dicts:
+
+            # loop for selecting the default value of distribution select
+            for dist in sample_distribution_type:
+                if str(data_type) == dist:
+                    break
+                simulate_index += 1
+
+            # loop for selecting the default value of example_data select
+            for example in example_data:
+                if str(example_data_selected) == example:
+                    break
+                example_data_index += 1
+
+    data, defaults = simulate_data_1d.run(data_type, N)
+    #print(example_data_dict['buffalo_snowfall.dat'])
+    loaded_data = example_data_dict[example_data_selected]
+    #print(loaded_data)
+
+    '''
+    if input_type == 'simulated':
         # Simulate data and get default deft settings
         data, defaults = simulate_data_1d.run(data_type, N)
-    elif(input_type=='example'):
+    elif input_type == 'example':
         # load example data here:
         pass
+    '''
 
+    # read any meta data written to file
+    # check if file exists first
+    read_metadata_dict = {}
+    try:
+        with open(metaDataFile) as myfile:
+            for line in myfile:
+                name, var = line.partition(":")[::2]
+                read_metadata_dict[name.strip()] = var
+    except FileNotFoundError:
+        print("No metadata file")
 
+    # read radio button value
+    if 'input_type' in read_metadata_dict:
+        input_type = str(read_metadata_dict['input_type']).strip()
 
-    # Do density estimation
-    results = deft_1d.run(data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
-    #results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=[0,150], periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
+    if input_type == 'simulated':
+        # Do density estimation
+        results = deft_1d.run(data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
+    elif input_type == 'example':
+        results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
 
     # Compute true density
     xs = results.bin_centers
@@ -121,8 +176,9 @@ def index():
     # Plot deft density estimate
     plt.plot(xs, results.Q_star,     color='blue', linewidth=2, alpha=1, zorder=2, label='deft')
 
+    if input_type == 'simulated':
     # Plot the true density
-    plt.plot(xs, Q_true, color='black', linewidth=2, label='true')
+        plt.plot(xs, Q_true, color='black', linewidth=2, label='true')
 
     # Tidy up the plot
     #plt.yticks([])
@@ -155,12 +211,10 @@ def index():
     # Save plot
     #plt.savefig('static/report_test_deft_1d.png')
 
-
-
-
     return render_template('index.html',result=deftFigData, N=N,G=G,alpha=alpha,data_type=data_type,
-                           distribution=sample_distribution_type, dist_index=index, bbox_left=bbox_left,
-                           bbox_right=bbox_right)
+                           distribution=sample_distribution_type, dist_index=simulate_index, bbox_left=bbox_left,
+                           bbox_right=bbox_right,input_type=input_type,example_data=example_data,
+                           example_data_index=example_data_index)
 
 
 if __name__ == "__main__":
