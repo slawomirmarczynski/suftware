@@ -10,6 +10,9 @@
 <h2>Deft-1D</h2>
 <h3>Density Estimation Using Field Theory</h3>
 
+<input form="run_deft_form" type = "file" name = "file" onchange="document.getElementById('uploaderButton').click();"/>
+<input hidden id="uploaderButton" form="run_deft_form" type="submit" value="Upload Data" name="dataUploadButton">
+
 <form id="run_deft_form" action = "/" method = "POST" enctype = "multipart/form-data">
 
 {% if input_type == 'simulated' %}
@@ -36,7 +39,13 @@ Example data:
     <option value="{{ example }}" {% if loop.index0==example_data_index %} selected="selected"{% endif %}> {{ example }} </option>
 {% endfor %}
 </select>
-
+<br>
+{% if input_type == 'user' %}
+<input id="user_1" type="radio" name="input_type" value="User Data" checked="checked"/>
+{% else %}
+<input id="user_2" type="radio" name="input_type" value="User Data"/>
+{% endif %}
+User Data:
 <br>
 G: <input type="number" name="G" value="{{ G }}">
 alpha: <input type="number" name="alpha" value="{{ alpha }}">
@@ -53,54 +62,3 @@ bbox: [ <input type="number" name="bbox_left" value="{{ bbox_left }}">, <input t
 </body>
 </html>
 
-
-<!-- hardcoded html
-
-<select name="distribution" width="30">
-                <option value="gaussian">
-                    Gaussain
-                </option>
-                <option value="narrow">
-                    Gaussian mixture, narrow separaiton
-                </option>
-                <option value="wide" selected="selected">
-                    Gaussian mixture, wide separation
-                </option>
-                <option value="accordian">
-                    Accordian
-                </option>
-                <option value="foothills">
-                    Foothills
-                </option>
-                <option value="goalposts">
-                    Goalposts
-                </option>
-                <option value="towers">
-                    Towers
-                </option>
-                <option value="uniform">
-                    Uniform
-                </option>
-                <option value="beta_convex">
-                    Convex beta
-                </option>
-                <option value="beta_concave">
-                    Concave beta
-                </option>
-                <option value="exponential">
-                    Exponential
-                </option>
-                <option value="gamma">
-                    Gamma
-                </option>
-                <option value="triangular">
-                    Triangular
-                </option>
-                <option value="laplace">
-                    Laplace
-                </option>
-                <option value="vonmises">
-                    von Mises
-                </option>
-</select>
--->

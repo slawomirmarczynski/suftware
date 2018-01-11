@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, session
+from werkzeug.utils import secure_filename
 
 #from io import BytesIO
 import io
@@ -21,6 +22,14 @@ app = Flask(__name__)
 # this key decrypts the cookie on the client's browser
 app.secret_key = os.urandom(32)
 
+# allowed input file extensions
+ALLOWED_EXTENSIONS = set(['txt','dat','input'])
+
+# handler methods for checking file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 # deft home page
 @app.route('/', methods=['GET','POST'])
@@ -32,18 +41,23 @@ def index():
     # create temp files like metadata
     if 'uid' in session:
         print("Temp file already created")
+        tempFile = str(session['uid']) + ".input"
         metaDataFile = str(session['uid']) + ".meta"
     else:
         session['uid'] = uuid.uuid4()
+        tempFile = str(session['uid']) + ".input"
         metaDataFile = str(session['uid']) + ".meta"
         print("New temp file created")
 
     sample_distribution_type = ["gaussian", "narrow", "wide", "foothills", "accordian", "goalposts", "towers","uniform",
                                 "beta_convex", "beta_concave", "exponential", "gamma", "triangular", "laplace","vonmises"]
 
-    # example data list
+    # give the data file the temp name
+    dataFileName = tempFile
+
+    # example data list, for keeping drop down updated on re-runs
     example_data = ['buffalo_snowfall.dat','old_faithful_eruption_times.dat','old_faithful_waiting_times.dat','treatment_length.dat']
-    example_data_dict = {}
+    # default value
     example_data_selected = 'buffalo_snowfall.dat'
 
     # write following parameters to metadata files
@@ -67,21 +81,17 @@ def index():
     # similar index but for example data
     example_data_index = 0
 
-    # list of example data
-
+    # dict of example data
+    example_data_dict = {}
     example_data_dict['buffalo_snowfall.dat'] = np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
     example_data_dict['old_faithful_eruption_times.dat'] = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
     example_data_dict['old_faithful_waiting_times.dat'] = np.loadtxt('./data/old_faithful_waiting_times.dat').astype(np.float)
     example_data_dict['treatment_length.dat'] = np.loadtxt('./data/treatment_length.dat').astype(np.float)
-    '''
-    buffalo_snowfall = np.load('./data/'+str(example_data[0]))
-    old_faithful_eruption_times = np.load('./data/' + str(example_data[1]))
-    old_faithful_waiting_times = np.load('./data/' + str(example_data[2]))
-    treatment_length = np.load('./data/' + str(example_data[3]))
-    '''
 
+    # handle posts from web page
     if request.method == 'POST':
 
+        # if run deft button is pressed
         if str(request.form.get("run_deft_button")) == 'run_deft':
 
             # update deft parameters via post
@@ -121,19 +131,37 @@ def index():
                     break
                 example_data_index += 1
 
-    data, defaults = simulate_data_1d.run(data_type, N)
-    #print(example_data_dict['buffalo_snowfall.dat'])
-    loaded_data = example_data_dict[example_data_selected]
-    #print(loaded_data)
+        # if user data is uploaded
+        elif str(request.form.get("dataUploadButton")) == 'Upload Data':
+            print("Hitting Upload button ")
 
-    '''
-    if input_type == 'simulated':
-        # Simulate data and get default deft settings
-        data, defaults = simulate_data_1d.run(data_type, N)
-    elif input_type == 'example':
-        # load example data here:
-        pass
-    '''
+            # get file name
+            f = request.files['file']
+            # secure filename cleans the name of the uploaded file
+            f.save(secure_filename(f.filename))
+
+            # write file name in metadata
+            metaData['fileName'] = f.filename
+
+            # change radio state to 'User Data'
+            input_type = 'user'
+            metaData['input_type'] = input_type
+
+            # write all metadata to file
+            with open(metaDataFile, "w") as myfile:
+                for key in sorted(metaData):
+                    myfile.write(key + ":" + str("".join(metaData[key])) + "\n")
+
+            # the following puts uploaded data in the temp file
+            # write from
+            with open(f.filename) as f1:
+                # write to
+                with open(dataFileName, "w") as f2:
+                    for line in f1:
+                        f2.write(line)
+
+    # default data on homepage
+    data, defaults = simulate_data_1d.run(data_type, N)
 
     # read any meta data written to file
     # check if file exists first
@@ -146,15 +174,32 @@ def index():
     except FileNotFoundError:
         print("No metadata file")
 
-    # read radio button value
+    # update radio button value from metadata file
     if 'input_type' in read_metadata_dict:
         input_type = str(read_metadata_dict['input_type']).strip()
 
     if input_type == 'simulated':
         # Do density estimation
+        bbox_left = -6
+        bbox_right = 6
+        bbox = [bbox_left, bbox_right]
         results = deft_1d.run(data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
+
     elif input_type == 'example':
-        results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
+        loaded_data = example_data_dict[example_data_selected]
+        bbox_left = int(np.min(loaded_data)-2)
+        bbox_right = int(np.max(loaded_data)+2)
+        bbox = [bbox_left,bbox_right]
+        results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
+
+    elif input_type == 'user':
+
+        user_uploaded_data = np.loadtxt(dataFileName).astype(np.float)
+        bbox_left = int(np.min(user_uploaded_data)-2)
+        bbox_right = int(np.max(user_uploaded_data)+2)
+        bbox = [bbox_left, bbox_right]
+        results = deft_1d.run(user_uploaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
+        print('Input type set to User Data',dataFileName, user_uploaded_data)
 
     # Compute true density
     xs = results.bin_centers
@@ -190,7 +235,6 @@ def index():
     plt.xlabel('x')
     plt.ylabel('density')
 
-
     '''
     # deal with evidence ratio later
     # Plot log evidence ratio against t values
@@ -198,7 +242,6 @@ def index():
     plt.plot(ts, log_Es)
     plt.xlabel('t')
     plt.ylabel('log evidence')
-    
     '''
 
     deftFigFile = io.BytesIO()
