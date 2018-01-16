@@ -7,7 +7,6 @@ import scipy as sp
 import scipy.stats as stats
 import sys
 
-
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
 gaussian
@@ -43,7 +42,7 @@ def get_commandline_arguments():
         default='gaussian', choices=VALID_DISTRIBUTIONS)
 
     # Number of data points to simulate
-    parser.add_argument('-N', '--num_samples', dest='num_samples', type=int, 
+    parser.add_argument('-N', '--num_datapoints', dest='num_datapoints', type=int, 
         default=100, help='Number of data points to simulate.')
 
     # Output file, if any
@@ -91,13 +90,13 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
     return data, pdf_py, pdf_js
 
 
-def run(distribution_type='gaussian', N=100):
+def run(distribution_type='gaussian', N=100, seed=None):
     """
     Performs the primary task of this module: simulating 1D data
 
     Args:
         - distribution_type (str): The distribution from which to draw data.
-            must be one of the options listed in VALID_DISTRIBUTIONS.
+            Must be one of the options listed in VALID_DISTRIBUTIONS.
         - N (int): The number of data points to simulate. Must be less than
             MAX_NUM_SAMPLES.
 
@@ -109,6 +108,12 @@ def run(distribution_type='gaussian', N=100):
 
     periodic = False
     alpha = 3
+
+    # If seed is specified, set it
+    if not (seed is None):
+        np.random.seed(seed)
+    else:
+        np.random.seed(None)
 
     # If gaussian distribution
     if distribution_type == 'gaussian':
@@ -131,10 +136,10 @@ def run(distribution_type='gaussian', N=100):
     # If mixture of two gaussian distributions
     elif distribution_type == 'wide':
         description = 'Gaussian mixture, wide separation'
-        mus = [-2.5, 2.5]
-        sigmas = [1., 1.]
-        weights = [1., 0.4]
-        bbox = [-6, 6]
+        mus = [-2.0, 2.0]
+        sigmas = [1.0, 1.0]
+        weights = [1.0, 0.5]
+        bbox = [-6.0, 6.0]
         data, pdf_py, pdf_js = gaussian_mixture(N,weights,mus,sigmas,bbox)
 
     elif distribution_type == 'foothills':
@@ -235,10 +240,9 @@ def run(distribution_type='gaussian', N=100):
         pdf_py = "np.exp(np.cos(x))/7.95493"
 
     else:
-        assert False, 'Distribution type "%s" not recognized.'% \
-            distribution_type
+        raise DeftError('Distribution type "%s" not recognized.'%distribution_type)
 
-    settings = {
+    details = {
         'box_min':bbox[0],
         'box_max':bbox[1],
         'alpha':alpha, 
@@ -249,7 +253,7 @@ def run(distribution_type='gaussian', N=100):
         'pdf_py':pdf_py
     }
 
-    return data, settings
+    return data, details
 
 
 def main():
