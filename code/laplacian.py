@@ -93,7 +93,7 @@ class Laplacian:
             elif operator_type == '2d_periodic':
                 periodic = True
             else:
-                print 'ERROR: cannot identify operator_type.'
+                print('ERROR: cannot identify operator_type.')
                 raise
             
             self._type = operator_type

@@ -455,10 +455,10 @@ def diagrams_2nd_order(G, P, V):
     s = sp.sum(s_array) * G**4 / num_samples
     ms = sp.mean(s_array)
     ds = sp.std(s_array) / sp.sqrt(num_samples)
-    print ''
-    print 's =', s
-    print ds/ms
-    print 'time 1 =', time.time()-time1
+    print('')
+    print('s =', s)
+    print(ds/ms)
+    print('time 1 =', time.time()-time1)
 
     """
     time2 = time.time()

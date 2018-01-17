@@ -122,7 +122,7 @@ def sample_from_deft_1d_prior(template_data, ell, G=100, alpha=3,
         if success:
             break
         else:
-            print 'Maxent failure! Trying to sample again.'
+            print('Maxent failure! Trying to sample again.')
 
     phi_rowspace = np.array(phi_rowspace).ravel()
     phi_kernel = np.array(phi_kernel).ravel()
@@ -261,7 +261,8 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
 
     phi_star_func = interp1d(extended_xgrid, extended_phi_star, kind='cubic')
     Z = sp.sum(h*sp.exp(-results.phi_star))
-    Q_star_func = lambda(x): sp.exp(-phi_star_func(x))/Z
+    #Q_star_func = lambda(x): sp.exp(-phi_star_func(x))/Z
+    Q_star_func = lambda x: sp.exp(-phi_star_func(x)) / Z
     results.Q_star_func = Q_star_func
 
     # Compute differential entropy in bits

@@ -10,7 +10,8 @@ PHI_MAX = 500
 PHI_STD_REG = 100.0
 
 # This is useful for testing whether something is a number
-NUMBER = (int, float, long)
+#NUMBER = (int, float, long)
+NUMBER = (int, float, int)
 
 # This is useful for testing whether something is an array
 ARRAY = (np.ndarray, list)

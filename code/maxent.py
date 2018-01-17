@@ -295,7 +295,7 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
         # This should always be satisifed
         if (ds > 0):
-            print 'Warning: ds > 0. Quitting compute_maxent_field.'
+            print('Warning: ds > 0. Quitting compute_maxent_field.')
             break
 
         # Reduce step size until in linear regime
@@ -333,7 +333,7 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
         # Break out of loop with warning if S_new > S. Should not happen,
         # but not fatal if it does. Just means less precision
         elif s_new-s > 0:
-            print 'Warning: action has increased. Terminating steps.'
+            print('Warning: action has increased. Terminating steps.')
             success = False
             break
 
@@ -350,9 +350,9 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
     # Actually, should judge success by whether moments match
     if not success:
-        print 'gradident norm == %f'%np.linalg.norm(v)
-        print 'gradient tollerance == %f'%grad_tollerance
-        print 'Failure! Trying Maxent again!'
+        print('gradident norm == %f'%np.linalg.norm(v))
+        print('gradient tollerance == %f'%grad_tollerance)
+        print('Failure! Trying Maxent again!')
         
     # After corrector loop has finished, return field
     # Also return stepping stats if requested
