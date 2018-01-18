@@ -5,16 +5,21 @@ from werkzeug.utils import secure_filename
 import io
 import base64
 
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import os
-
 import uuid
 import shutil
 
-from deft_1d.deft_code import deft_1d
-from deft_1d.sim import simulate_data_1d
+from deft_code import deft_1d
+from sim import simulate_data_1d
+
+import sys
+import numpy as np
+import scipy as sp
+import matplotlib.pyplot as plt
+sys.path.append('deft_code/')
+TINY_FLOAT64 = sp.finfo(sp.float64).tiny
+import os
+
+exec(open(os.getcwd()+"/test_suite/test_header.py").read())
 
 # name of the flask app
 app = Flask(__name__)
@@ -29,6 +34,8 @@ ALLOWED_EXTENSIONS = set(['txt','dat','input'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 
 # deft home page
@@ -71,6 +78,16 @@ def index():
     bbox_left = -6
     bbox_right = 6
     bbox = [bbox_left,bbox_right]
+
+    N = 100
+    bbox = [-15, 15]
+    Z_eval = 'Lap'
+    num_Z_samples = 0
+    pt_method = 'Lap'
+    num_pt_samples = 100
+    fix_t_at_t_star = True
+    # make this pickalable
+
 
     # input_type default value is simulated, user post value will be written to
     # metadata file and update in the html from there.
@@ -180,27 +197,79 @@ def index():
 
     if input_type == 'simulated':
         # Do density estimation
-        bbox_left = -6
-        bbox_right = 6
+        bbox_left = -15
+        bbox_right = 15
         bbox = [bbox_left, bbox_right]
-        results = deft_1d.run(data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,
+                           num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
+                           fix_t_at_t_star=fix_t_at_t_star).run()
 
     elif input_type == 'example':
         loaded_data = example_data_dict[example_data_selected]
-        bbox_left = int(np.min(loaded_data)-2)
-        bbox_right = int(np.max(loaded_data)+2)
+        bbox_left = int(np.min(loaded_data)-10)
+        bbox_right = int(np.max(loaded_data)+10)
         bbox = [bbox_left,bbox_right]
         results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
 
-    elif input_type == 'user':
+    elif input_type == 'user' or input_type == 'User Data':
 
-        user_uploaded_data = np.loadtxt(dataFileName).astype(np.float)
-        bbox_left = int(np.min(user_uploaded_data)-2)
-        bbox_right = int(np.max(user_uploaded_data)+2)
+        #user_uploaded_data = np.loadtxt(dataFileName).astype(np.float)
+        #bbox_left = int(np.min(user_uploaded_data) - 2)
+        #bbox_right = int(np.max(user_uploaded_data) + 2)
+        #bbox = [bbox_left, bbox_right]
+        #fed_data = np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
+        fed_data = example_data_dict['old_faithful_eruption_times.dat'] = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+        bbox_left = int(np.min(fed_data)-10)
+        bbox_right = int(np.max(fed_data)+10)
         bbox = [bbox_left, bbox_right]
-        results = deft_1d.run(user_uploaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
-        print('Input type set to User Data',dataFileName, user_uploaded_data)
+        #results = deft_1d.run(user_uploaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
+        #np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
 
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=fed_data,
+                           num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
+                           fix_t_at_t_star=fix_t_at_t_star).run()
+        #print('Input type set to User Data',dataFileName, user_uploaded_data)
+
+    xs = results.results.bin_centers
+    phi_samples = results.results.phi_samples
+    phi_star = results.results.phi_star
+
+    sample_weights = results.results.phi_weights
+    indices = range(num_pt_samples)
+    index_probs = sample_weights / sum(sample_weights)
+    weighted_sample_indices = np.random.choice(indices, size=num_pt_samples, p=index_probs)
+    phi_samples_weighted = phi_samples[:, weighted_sample_indices]
+
+    # Naive Laplace sampling
+    xs = results.results.bin_centers
+    R = results.results.R
+    h = results.results.h
+    #Q_true = results.Q_true
+    Q_star = results.results.Q_star
+    Q_samples = results.results.Q_samples
+    sample_weights = results.results.phi_weights
+
+    plt.figure(figsize=[6, 6])
+    #plt.figure(1)
+    plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
+    #plt.plot(xs, Q_true, color='black', zorder=3)
+    plt.plot(xs, Q_star, color='red', zorder=4)
+    plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
+    #plt.ylim(0, 0.4)
+    #plt.show()
+
+    deftFigFile = io.BytesIO()
+    plt.savefig(deftFigFile, format='png')
+    deftFigFile.seek(0)
+
+    # the following contains the actual data passed to the html template
+    deftFigData = base64.b64encode(deftFigFile.getvalue()).decode()
+
+    # Save plot
+    #plt.savefig('static/report_test_deft_1d.png')
+
+    '''
+    # put in mpl calls here
     # Compute true density
     xs = results.bin_centers
     Q_true = np.zeros(G)
@@ -234,16 +303,8 @@ def index():
     plt.legend()
     plt.xlabel('x')
     plt.ylabel('density')
-
-    '''
-    # deal with evidence ratio later
-    # Plot log evidence ratio against t values
-    log_Es, ts = results.map_curve.get_log_evidence_ratios()
-    plt.plot(ts, log_Es)
-    plt.xlabel('t')
-    plt.ylabel('log evidence')
-    '''
-
+    
+    
     deftFigFile = io.BytesIO()
     plt.savefig(deftFigFile, format='png')
     deftFigFile.seek(0)
@@ -253,11 +314,16 @@ def index():
 
     # Save plot
     #plt.savefig('static/report_test_deft_1d.png')
+    '''
+
+    #return "<h1>New code working </h1>"
 
     return render_template('index.html',result=deftFigData, N=N,G=G,alpha=alpha,data_type=data_type,
                            distribution=sample_distribution_type, dist_index=simulate_index, bbox_left=bbox_left,
                            bbox_right=bbox_right,input_type=input_type,example_data=example_data,
                            example_data_index=example_data_index)
+
+
 
 
 if __name__ == "__main__":
