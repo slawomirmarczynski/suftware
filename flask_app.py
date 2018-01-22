@@ -223,19 +223,12 @@ def index():
 
     elif input_type == 'user' or input_type == 'User Data':
 
-        #user_uploaded_data = np.loadtxt(dataFileName).astype(np.float)
-        #bbox_left = int(np.min(user_uploaded_data) - 2)
-        #bbox_right = int(np.max(user_uploaded_data) + 2)
-        #bbox = [bbox_left, bbox_right]
-        #fed_data = np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
-        fed_data = example_data_dict['old_faithful_eruption_times.dat'] = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
-        bbox_left = int(np.min(fed_data)-10)
-        bbox_right = int(np.max(fed_data)+10)
+        user_uploaded_data = np.loadtxt(dataFileName).astype(np.float)
+        bbox_left = int(np.min(user_uploaded_data) - 2)
+        bbox_right = int(np.max(user_uploaded_data) + 2)
         bbox = [bbox_left, bbox_right]
-        #results = deft_1d.run(user_uploaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False,tollerance=1E-3)
-        #np.loadtxt('./data/buffalo_snowfall.dat').astype(np.float64)
 
-        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=fed_data,
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=user_uploaded_data,
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
         #print('Input type set to User Data',dataFileName, user_uploaded_data)
@@ -265,7 +258,7 @@ def index():
     #plt.plot(xs, Q_true, color='black', zorder=3)
     plt.plot(xs, Q_star, color='red', zorder=4)
     plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
-    plt.ylim(0, 0.5)
+    #plt.ylim(0, 0.5)
     #plt.show()
 
     deftFigFile = io.BytesIO()
