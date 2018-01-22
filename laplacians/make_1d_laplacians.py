@@ -22,6 +22,6 @@ for alpha in alphas:
     for op_type in op_types:
         for G in Gs:
             file_name = '%s_alpha_%d_G_%d.pickle'%(op_type,alpha,G)
-            print('creating operator %s...'%file_name)
+            print 'creating operator %s...'%file_name
             op = laplacian.Laplacian(op_type, alpha, G, h)
             op.save(directory + file_name)
