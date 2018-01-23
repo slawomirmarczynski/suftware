@@ -564,7 +564,7 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel, pt_s
 # Sample probable densities using posterior probability
 def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star):
 
-    if pt_method == 'Lap':
+    if pt_method == 'Lap' or 'Lap+W':
         method, go_parallel = Laplace_approach, False
     if pt_method == 'Lap+P':
         method, go_parallel = Laplace_approach, True

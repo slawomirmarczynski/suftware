@@ -57,8 +57,11 @@ def index():
         print("New temp file created")
 
     # this list makes the drop down for simulated data
-    simulated_distribution_type = ["gaussian", "narrow", "wide", "foothills", "accordian", "goalposts", "towers","uniform",
+    simulated_distribution_type = ["wide", "narrow", "gaussian", "foothills", "accordian", "goalposts", "towers","uniform",
                                 "beta_convex", "beta_concave", "exponential", "gamma", "triangular", "laplace","vonmises"]
+
+    # posterior sampling method choices
+    pt_method_list = ['None','Lap','Lap+W',"MMC"]
 
     # give the data file the temp name
     dataFileName = tempFile
@@ -68,27 +71,22 @@ def index():
     # default value
     example_data_selected = 'buffalo_snowfall.dat'
 
-    # write following parameters to metadata files
-
-    # default N value
+    # write following parameters to metadata files...why?
+    # default params used if no post is made
     N = 100
     data_type = 'wide'
     # Deft parameter settings
     G = 100
     alpha = 3
-    bbox_left = -6
-    bbox_right = 6
-    bbox = [bbox_left,bbox_right]
+    bbox_left = -15
+    bbox_right = 15
 
-    N = 100
-    bbox = [-15, 15]
+    # parameters after sampling code
+    #Z_eval = 'Lap'
     Z_eval = 'Lap'
     num_Z_samples = 0
-    pt_method = 'Lap'
-    num_pt_samples = 100
+    num_pt_samples = 10
     fix_t_at_t_star = True
-    # make this pickalable
-
 
     # input_type default value is simulated, user post value will be written to
     # metadata file and update in the html from there.
@@ -98,6 +96,9 @@ def index():
     simulate_index = 0
     # similar index but for example data
     example_data_index = 0
+    # similar index but for pt_methods
+    pt_method_index = 0
+    pt_method_selected = 'None' # default value, unless post is made
 
     # dict of example data
     example_data_dict = {}
@@ -133,6 +134,7 @@ def index():
 
             data_type = request.form['distribution']
             example_data_selected = str(request.form['example_data'])
+            pt_method_selected = request.form['pt_method']
 
             # the following two loops and their indices need to be replaced
             # by dicts:
@@ -148,6 +150,12 @@ def index():
                 if str(example_data_selected) == example:
                     break
                 example_data_index += 1
+
+            # loop for selecting the default value of example_data select
+            for method in pt_method_list:
+                if pt_method_selected == method:
+                    break
+                pt_method_index += 1
 
         # if user data is uploaded
         elif str(request.form.get("dataUploadButton")) == 'Upload Data':
@@ -178,10 +186,6 @@ def index():
                     for line in f1:
                         f2.write(line)
 
-    # not used in the new code, safe-delete
-    # default data on homepage
-    data, defaults = simulate_data_1d.run(data_type, N)
-
     # read any meta data written to file
     # check if file exists first
     read_metadata_dict = {}
@@ -193,11 +197,18 @@ def index():
     except FileNotFoundError:
         print("No metadata file")
 
+    # select pt_method
+    print('index: ',pt_method_index)
+
+    # this because the pt_method cannot take the argument 'None', it has to be None
+    if pt_method_index == 0:
+        pt_method = None
+    else:
+        pt_method = pt_method_list[pt_method_index]
+
     # update radio button value from metadata file
     if 'input_type' in read_metadata_dict:
         input_type = str(read_metadata_dict['input_type']).strip()
-
-    print("Example Index: ",example_data_dict[example_data_selected])
 
     if input_type == 'simulated':
 
@@ -205,7 +216,7 @@ def index():
         bbox_left = -10
         bbox_right = 10
         bbox = [bbox_left, bbox_right]
-        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,data_type=simulated_distribution_type[simulate_index],
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval,data_type=simulated_distribution_type[simulate_index],
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
 
@@ -216,7 +227,7 @@ def index():
         bbox_right = int(np.max(fed_data)+10)
         bbox = [bbox_left, bbox_right]
         #results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
-        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval, feed_data=True,
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval, feed_data=True,
                            data_fed=fed_data,
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
@@ -228,38 +239,104 @@ def index():
         bbox_right = int(np.max(user_uploaded_data) + 2)
         bbox = [bbox_left, bbox_right]
 
-        results = TestCase(N=N, data_seed=0, deft_seed=0, G=100, alpha=3, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=user_uploaded_data,
+        results = TestCase(N=N, data_seed=0, deft_seed=0, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=user_uploaded_data,
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
         #print('Input type set to User Data',dataFileName, user_uploaded_data)
 
-    xs = results.results.bin_centers
-    phi_samples = results.results.phi_samples
-    phi_star = results.results.phi_star
+    if pt_method == None:
 
-    sample_weights = results.results.phi_weights
-    indices = range(num_pt_samples)
-    index_probs = sample_weights / sum(sample_weights)
-    weighted_sample_indices = np.random.choice(indices, size=num_pt_samples, p=index_probs)
-    phi_samples_weighted = phi_samples[:, weighted_sample_indices]
+        xs = results.results.bin_centers
+        phi_star = results.results.phi_star
 
-    # Naive Laplace sampling
-    xs = results.results.bin_centers
-    R = results.results.R
-    h = results.results.h
-    #Q_true = results.Q_true
-    Q_star = results.results.Q_star
-    Q_samples = results.results.Q_samples
-    sample_weights = results.results.phi_weights
+        plt.figure(figsize=[6, 6])
+        # plt.figure(1)
+        R = results.results.R
+        h = results.results.h
+        Q_true = results.Q_true
+        Q_star = results.results.Q_star
+        plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
+        plt.plot(xs, Q_true, color='black', zorder=3)
+        plt.plot(xs, Q_star, color='red', zorder=4)
+        # plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
 
-    plt.figure(figsize=[6, 6])
-    #plt.figure(1)
-    plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
-    #plt.plot(xs, Q_true, color='black', zorder=3)
-    plt.plot(xs, Q_star, color='red', zorder=4)
-    plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
-    #plt.ylim(0, 0.5)
-    #plt.show()
+    elif pt_method=='Lap':
+
+        xs = results.results.bin_centers
+        phi_samples = results.results.phi_samples
+        phi_star = results.results.phi_star
+
+        sample_weights = results.results.phi_weights
+        indices = range(num_pt_samples)
+        index_probs = sample_weights / sum(sample_weights)
+        weighted_sample_indices = np.random.choice(indices, size=num_pt_samples, p=index_probs)
+        phi_samples_weighted = phi_samples[:, weighted_sample_indices]
+
+        # Naive Laplace sampling
+        xs = results.results.bin_centers
+        R = results.results.R
+        h = results.results.h
+        Q_true = results.Q_true
+        Q_star = results.results.Q_star
+        Q_samples = results.results.Q_samples
+        sample_weights = results.results.phi_weights
+
+        plt.figure(figsize=[6, 6])
+        #plt.figure(1)
+        plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
+        #plt.plot(xs, Q_true, color='black', zorder=3)
+        plt.plot(xs, Q_star, color='red', zorder=4)
+        plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
+        #plt.ylim(0, 0.5)
+
+    # importance sampling
+    elif pt_method=='Lap+W':
+
+        xs = results.results.bin_centers
+        phi_samples = results.results.phi_samples
+        phi_star = results.results.phi_star
+
+        sample_weights = results.results.phi_weights
+        indices = range(num_pt_samples)
+        index_probs = sample_weights / sum(sample_weights)
+        weighted_sample_indices = np.random.choice(indices, size=num_pt_samples, p=index_probs)
+        phi_samples_weighted = phi_samples[:, weighted_sample_indices]
+
+        R = results.results.R
+        h = results.results.h
+        Q_true = results.Q_true
+        Q_star = results.results.Q_star
+        Q_samples = results.results.Q_samples
+        Q_samples_weighted = Q_samples[:, weighted_sample_indices]
+
+        plt.figure(figsize=[6, 6])
+        plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
+        plt.plot(xs, Q_true, color='black', zorder=3)
+        plt.plot(xs, Q_star, color='red', zorder=4)
+        plt.plot(xs, Q_samples_weighted, color='blue', alpha=0.3, zorder=1)
+        #plt.ylim(0, 0.5)
+
+    elif pt_method=='MMC':
+
+        xs = results.results.bin_centers
+        phi_samples = results.results.phi_samples
+        phi_star = results.results.phi_star
+
+        # MMC sampling
+        xs = results.results.bin_centers
+        R = results.results.R
+        h = results.results.h
+        Q_true = results.Q_true
+        Q_star = results.results.Q_star
+        Q_samples = results.results.Q_samples
+
+        plt.figure(figsize=[6, 6])
+        #plt.figure(1)
+        plt.bar(xs, R, width=h, color='grey', alpha=0.3, zorder=2)
+        #plt.plot(xs, Q_true, color='black', zorder=3)
+        plt.plot(xs, Q_star, color='red', zorder=4)
+        plt.plot(xs, Q_samples, color='blue', alpha=0.3, zorder=1)
+        #plt.ylim(0, 0.5)
 
     deftFigFile = io.BytesIO()
     plt.savefig(deftFigFile, format='png')
@@ -319,12 +396,10 @@ def index():
     #plt.savefig('static/report_test_deft_1d.png')
     '''
 
-    #return "<h1>New code working </h1>"
-
     return render_template('index.html',result=deftFigData, N=N,G=G,alpha=alpha,data_type=data_type,
                            distribution=simulated_distribution_type, dist_index=simulate_index, bbox_left=bbox_left,
                            bbox_right=bbox_right,input_type=input_type,example_data=example_data,
-                           example_data_index=example_data_index)
+                           example_data_index=example_data_index,pt_method_list=pt_method_list,pt_method_index=pt_method_index)
 
 
 
