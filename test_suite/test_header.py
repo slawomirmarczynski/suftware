@@ -2,9 +2,11 @@ from __future__ import division
 import scipy as sp
 import numpy as np
 import sys
+import os
 
 # Add parent directory to path
-sys.path.append('../code/')
+#sys.path.append('../code/')
+sys.path.insert(0,os.getcwd()+'/sim')
 sys.path.append('../sim/')
 
 # Import deft modules
@@ -64,9 +66,12 @@ class TestCase:
         # Use the data fed or generate data anew
         if self.feed_data:
             self.data = self.data_fed
+            #print(self.data)
         else:
             self.data, self.details = simulate_data_1d.run(self.data_type, self.N, self.data_seed)
-
+            #print("data:")
+            #for i in self.data:
+            #    print (i)
         # Check inputs
         inputs_check(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
@@ -82,6 +87,7 @@ class TestCase:
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
                                        num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
             print('Succeeded!  t_star = %.2f' % self.results.t_star)
+            print(self.pt_method)
             self.outcome_good = self.should_succeed
         except DeftError as e:
             print(e)
@@ -234,12 +240,14 @@ def numerics_check(self):
     actions = np.zeros([num_t,3])
         
     # Compute Q_true and phi_true
-    xs = self.results.bin_centers    
+    xs = self.results.bin_centers
     if self.feed_data:
-        Q_true_func = self.Q_true_func
-        Q_true = Q_true_func(xs)
-        Q_true = Q_true/sp.sum(Q_true)
-        phi_true = utils.prob_to_field(Q_true)        
+        # these tests shouldn't be performed if data is fed
+        pass
+        #Q_true_func = self.Q_true_func
+        #Q_true = Q_true_func(xs)
+        #Q_true = Q_true/sp.sum(Q_true)
+        #phi_true = utils.prob_to_field(Q_true)
     else:
         Q_true = np.zeros(G)
         for i, x in enumerate(xs):
@@ -255,10 +263,10 @@ def numerics_check(self):
         Q_i = Qs[i]/sp.sum(Qs[i])
         phi_i = utils.prob_to_field(Q_i)
         S_of_phi_i = deft_core.action(phi_i, R, Delta, t_i, N) * (N/G)
-        S_of_phi_true = deft_core.action(phi_true, R, Delta, t_i, N) * (N/G)
+        #S_of_phi_true = deft_core.action(phi_true, R, Delta, t_i, N) * (N/G)
         actions[i,0] = S_of_phi_i
-        actions[i,1] = S_of_phi_true
-        actions[i,2] = S_of_phi_i - S_of_phi_true
+        #actions[i,1] = S_of_phi_true
+        #actions[i,2] = S_of_phi_i - S_of_phi_true
 
     # Error checking
     if not all(actions[:,2] <= 0.0):

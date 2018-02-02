@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title>Deft_1d</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<style>
+
+body{
+background: #ECE9E6;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #FFFFFF, #ECE9E6);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #FFFFFF, #ECE9E6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+</style>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="container">
@@ -48,10 +58,26 @@ Example data:
 User Data:
 <br>
 G: <input type="number" name="G" value="{{ G }}">
-alpha: <input type="number" name="alpha" value="{{ alpha }}">
-bbox: [ <input type="number" name="bbox_left" value="{{ bbox_left }}">, <input type="number" name="bbox_right" value="{{ bbox_right }}">] <br>
-
-
+&alpha;: <input type="number" name="alpha" value="{{ alpha }}"> <br>
+bbox: [ <input type="number" step="0.1" name="bbox_left" value="{{ bbox_left }}">, <input type="number" step="0.1" name="bbox_right" value="{{ bbox_right }}">] <br>
+Posterior Sampling Method:
+<select name="pt_method" width="30">
+{% for method in pt_method_list %}
+    <option value="{{ method }}" {% if loop.index0==pt_method_index %} selected="selected"{% endif %}> {{ method }} </option>
+{% endfor %}
+</select>
+<br>
+Manual Bbox
+{% if bbox_state == 1 %}
+<label class="switch">
+  <input type="checkbox" value="bbox" name="sliderbbox" checked><span class="slider round"></span>
+</label>
+{% else %}
+<label class="switch">
+  <input type="checkbox" value="bbox" name="sliderbbox"><span class="slider round"></span>
+</label>
+{% endif %}
+Auto Bbox
 <br>
 <input class="btn btn-md btn-success" id="run_deft" type="submit" value="run_deft" name="run_deft_button" />
 
