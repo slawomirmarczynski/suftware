@@ -221,7 +221,9 @@ def index():
 
         # Do density estimation
         bbox = [bbox_left, bbox_right]
-        results = TestCase(N=N, data_seed=None, deft_seed=None, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval,data_type=simulated_distribution_type[simulate_index],
+
+        results = TestCase(N=N, data_seed=None, deft_seed=None, G=G, alpha=alpha, bbox=bbox, bbox_state=bbox_state,
+                           Z_eval=Z_eval, data_type=simulated_distribution_type[simulate_index],
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
 
@@ -237,7 +239,7 @@ def index():
 
         #results = deft_1d.run(loaded_data, G=G, alpha=alpha, bbox=bbox, periodic=False, num_samples=0, print_t=False, tollerance=1E-3)
         results = TestCase(data_seed=0, deft_seed=0, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval, feed_data=True,
-                           data_fed=fed_data,
+                           data_fed=fed_data,input_type=input_type,
                            num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
                            fix_t_at_t_star=fix_t_at_t_star).run()
 
@@ -252,7 +254,7 @@ def index():
             bbox = [bbox_left, bbox_right]
 
         results = TestCase(N=N, data_seed=0, deft_seed=0, G=G, alpha=alpha, bbox=bbox, Z_eval=Z_eval,feed_data=True,data_fed=user_uploaded_data,
-                           num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,
+                           num_Z_samples=num_Z_samples, DT_MAX=1.0, pt_method=pt_method, num_pt_samples=num_pt_samples,input_type=input_type,
                            fix_t_at_t_star=fix_t_at_t_star).run()
         #print('Input type set to User Data',dataFileName, user_uploaded_data)
 

@@ -26,7 +26,7 @@ class TestCase:
     """ Contains information needed for a test run of deft_1d. """
 
     def __init__(self, message='', should_succeed=True, feed_data=False, data_fed=None, Q_true_func=None,
-                 data_type='wide', N=100, data_seed=None, G=100, alpha=3, bbox=[-6,6], periodic=False,
+                 data_type='wide', N=100, data_seed=None, G=100, alpha=3, bbox=[-6,6],bbox_state=1,input_type='simulated', periodic=False,
                  Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0, print_t=False, tollerance=1E-6, resolution=1E-1,
                  deft_seed=None, pt_method=None, num_pt_samples=0, fix_t_at_t_star=True):
         
@@ -42,6 +42,7 @@ class TestCase:
         self.G = G
         self.alpha = alpha
         self.bbox = bbox
+        self.bbox_state = bbox_state
         self.periodic = periodic
         self.Z_eval = Z_eval
         self.num_Z_samples = num_Z_samples
@@ -53,6 +54,7 @@ class TestCase:
         self.pt_method = pt_method
         self.num_pt_samples = num_pt_samples
         self.fix_t_at_t_star = fix_t_at_t_star
+        self.input_type = input_type
 
         self.outcome_good = False
 
@@ -69,9 +71,10 @@ class TestCase:
             #print(self.data)
         else:
             self.data, self.details = simulate_data_1d.run(self.data_type, self.N, self.data_seed)
-            #print("data:")
-            #for i in self.data:
-            #    print (i)
+
+            # if auto bbox, then choose from simulate 1d
+            if self.bbox_state==1 and self.input_type=='simulated':
+                self.bbox = [self.details['box_min'],self.details['box_max']]
         # Check inputs
         inputs_check(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
