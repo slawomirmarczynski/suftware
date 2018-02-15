@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, session
 from werkzeug.utils import secure_filename
 
+# this is the fix needed for beta_concave and convex
+import math
+
 #from io import BytesIO
 import io
 import base64
