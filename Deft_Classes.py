@@ -107,11 +107,16 @@ class Deft1D:
     set_params()
     """
 
-
     def __init__(self):
         pass
 
     def fit(self):
+        pass
+
+    def get_QStar(self):
+        pass
+
+    def get_QSampled(self):
         pass
 
     def get_params(self):
