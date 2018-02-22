@@ -137,8 +137,9 @@ class Deft1D:
         will also make calculation slower. 0 means the laplace approximation
         for the evaluation of the partition function is used.
     resolution (float):
-            Specifies max distance between neighboring points on the
-            MAP curve
+        Specifies max distance between neighboring points on the MAP curve
+    deft_seed: (int)
+        specify random seed for posterior sampling methods
     DT_MAX: (float)
         maximum dt step size on the map curve
     tolerance: (float)
@@ -154,6 +155,9 @@ class Deft1D:
     fix_t_at_t_star: (boolean)
         if True, than posterior samples drawn at t_star
         if False, posterior sampling done among t near t_star
+
+    :parameter
+    test_param: (float) some test parameter
 
     methods
     -------
@@ -171,7 +175,7 @@ class Deft1D:
     """
 
     def __init__(self, data, G=100, alpha=3, bbox=[-6,6], periodic=False, Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, pt_method=None, num_pt_samples=0,fix_t_at_t_star=False):
+                 print_t=False, tolerance=1E-6, resolution=0.1,deft_seed=None, pt_method=None, num_pt_samples=0,fix_t_at_t_star=False):
 
         # set class attributes
         self.data = data
@@ -184,12 +188,13 @@ class Deft1D:
         self.DT_MAX = DT_MAX
         self.print_t = print_t
         self.tolerance = tolerance
+        self.deft_seed = deft_seed
         self.resolution = resolution
         self.pt_method = pt_method
         self.num_pt_samples = num_pt_samples
         self.fix_t_at_t_star = fix_t_at_t_star
-
         self.outcome_good = False
+        self.results = None
 
     def fit(self):
 
@@ -197,32 +202,47 @@ class Deft1D:
         try:
             self.results = deft_1d.run(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
-                                       DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tollerance,
+                                       DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
                                        num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
-            print('Succeeded!  t_star = %.2f' % self.results.t_star)
-            print(self.pt_method)
+
+            #return results
+            print('Deft1D ran successfully')
+            print(self.results.__dict__.get('Q_samples'))
 
         except:
             # include include message with more details here
             print('Deft fit failed')
 
     def get_Results(self):
-        return self.results
+        if self.results is not None:
+            # return the dictionary containing results
+            return self.results.__dict__
+        else:
+            print("Deft results are none. Please run fit first.")
 
-    def get_Qtar(self):
-        # double get this
-        return self.results.results.Q_star
+    def get_Qstar(self):
+        if self.results is not None:
+            return self.results.__dict__.get('Q_star')
+        else:
+            print("Q_star is none. Please run fit first.")
 
     def get_Qsampled(self):
-        pass
+        if self.results is not None and self.num_pt_samples is not 0:
+            return self.results.__dict__.get('Q_samples')
+        else:
+            print("Please ensure fit is run and that number of posterior samples is not 0.")
 
     def get_params(self):
-        # return constructor parameters
-        pass
+        # return dict of constructor parameters
+        return self.__dict__
 
     def set_params(self):
         pass
 
 
-print(Field1D.__doc__)
+#import numpy as np
+#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+#deftObject = Deft1D(data)
+#deftObject.fit()
+#print(deftObject.get_params)
