@@ -260,8 +260,8 @@ class Deft1D:
         else:
             try:
                 return self.__getattribute__(key)
-            except:
-                print("Get Params: Invalid parameter key")
+            except AttributeError as e:
+                print("Get Params:",e)
 
     def set_params(self,parameter,value):
         # ensure that dummy parameters can't be set.
@@ -271,14 +271,15 @@ class Deft1D:
 set params needs to be able to take dict
 '''
 
-#import numpy as np
-#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
-#deft = Deft1D(data)
-#deft.fit()
+import numpy as np
+data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+deft = Deft1D(data)
+deft.fit()
 #deft.get_params()
 #deft.get_results()
 #deft.get_Qsampled()
 #deft.get_params('resolution')
+deft.get_params('invalid_key')
 
 #field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
 #print(field.evaluate(0.75))
