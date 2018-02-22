@@ -171,7 +171,8 @@ class Deft1D:
         returns the results object
     get_Qstar():
         returns the Qstar attribute from results
-    get_Qsampled(): ?
+    get_Qsampled():
+        returns posterior samples of the density
     """
 
     def __init__(self, data, G=100, alpha=3, bbox=[-6,6], periodic=False, Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0,
@@ -208,7 +209,6 @@ class Deft1D:
 
             #return results
             print('Deft1D ran successfully')
-            print(self.results.__dict__.get('Q_samples'))
 
         except:
             # include include message with more details here
@@ -237,12 +237,6 @@ class Deft1D:
         # return dict of constructor parameters
         return self.__dict__
 
-    def set_params(self):
-        pass
-
-
-#import numpy as np
-#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
-#deftObject = Deft1D(data)
-#deftObject.fit()
-#print(deftObject.get_params)
+    def set_params(self,parameter,value):
+        # ensure that dummy parameters can't be set.
+        self.__setattr__(parameter, value)
