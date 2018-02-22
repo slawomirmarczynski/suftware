@@ -112,6 +112,7 @@ class Deft1D:
     deft1d
 
     parameters
+    ----------
     data: array like
         User input data for which Deft1D will estimate the density
     G: (int) number of grid points
@@ -156,8 +157,11 @@ class Deft1D:
         if True, than posterior samples drawn at t_star
         if False, posterior sampling done among t near t_star
 
-    :parameter
-    test_param: (float) some test parameter
+    attributes
+    ----------
+    *** Note ***: all parameters are attributes except for results.
+    results: (dict)
+        contains the results of the deft fit.
 
     methods
     -------
@@ -175,7 +179,7 @@ class Deft1D:
         returns posterior samples of the density
     """
 
-    def __init__(self, data, G=100, alpha=3, bbox=[-6,6], periodic=False, Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0,
+    def __init__(self, data, G=100, alpha=3, bbox=None, periodic=False, Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1,deft_seed=None, pt_method=None, num_pt_samples=0,fix_t_at_t_star=False):
 
         # set class attributes
@@ -194,32 +198,48 @@ class Deft1D:
         self.pt_method = pt_method
         self.num_pt_samples = num_pt_samples
         self.fix_t_at_t_star = fix_t_at_t_star
-        self.outcome_good = False
         self.results = None
 
     def fit(self):
 
         # Run deft_1d
         try:
+            # ensure that number of posterior samples aren't zero when
+            # pt_method is 'Lap+W', 'Lap', or 'MMC'
+            if (self.pt_method == 'Lap+W' or self.pt_method == 'Lap') and self.num_pt_samples is 0:
+                self.num_pt_samples = 1000
+            elif self.pt_method == 'MMC' and self.num_pt_samples is 0:
+                self.num_pt_samples = 100
+
+            # set reasonable bounding box based on data, unless user provides bbox.
+            # Could be changed.
+            if self.bbox is None:
+                data_spread = np.max(self.data) - np.min(self.data)
+                bbox_left = int(np.min(self.data) - 0.2 * data_spread)
+                bbox_right = int(np.max(self.data) + 0.2 * data_spread)
+                self.bbox = [bbox_left, bbox_right]
+
             self.results = deft_1d.run(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
                                        DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
                                        num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
 
-            #return results
             print('Deft1D ran successfully')
+            # should fit return results?
+            return self.results
+
 
         except:
             # include include message with more details here
             print('Deft fit failed')
 
-    def get_Results(self):
+    def get_results(self):
         if self.results is not None:
             # return the dictionary containing results
             return self.results.__dict__
         else:
-            print("Deft results are none. Please run fit first.")
+            print("Get Results: Deft results are none. Please run fit first.")
 
     def get_Qstar(self):
         if self.results is not None:
@@ -231,12 +251,42 @@ class Deft1D:
         if self.results is not None and self.num_pt_samples is not 0:
             return self.results.__dict__.get('Q_samples')
         else:
-            print("Please ensure fit is run and that number of posterior samples is not 0.")
+            print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
 
-    def get_params(self):
-        # return dict of constructor parameters
-        return self.__dict__
+    def get_params(self,key=None):
+        if key is None:
+            # if no key provided, return all parameters
+            return self.__dict__
+        else:
+            try:
+                return self.__getattribute__(key)
+            except:
+                print("Get Params: Invalid parameter key")
 
     def set_params(self,parameter,value):
         # ensure that dummy parameters can't be set.
         self.__setattr__(parameter, value)
+
+'''
+set params needs to be able to take dict
+'''
+
+#import numpy as np
+#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+#deft = Deft1D(data)
+#deft.fit()
+#deft.get_params()
+#deft.get_results()
+#deft.get_Qsampled()
+#deft.get_params('resolution')
+
+#field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
+#print(field.evaluate(0.75))
+#density = Density1D(field)
+#print(density.evaluate(0.75))
+
+#print(deftObject.get_results()['phi_star'])
+#print(deftObject.get_params('alpha'))
+#print(deftObject.get_params())
+##deftObject.set_params('G',10)
+#print(deftObject.get_params())
