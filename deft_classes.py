@@ -263,31 +263,52 @@ class Deft1D:
             except AttributeError as e:
                 print("Get Params:",e)
 
-    def set_params(self,parameter,value):
-        # ensure that dummy parameters can't be set.
-        self.__setattr__(parameter, value)
+    # should check if parameter exists in __dict__
+    def set_params(self,parameter=None,value=None, **kwargs):
+        # if no dictionary provided
+        if bool(kwargs) is False:
+            self.__setattr__(parameter, value)
+        else:
+            for key in kwargs:
+                self.__setattr__(key, kwargs[key])
 
-'''
-set params needs to be able to take dict
-'''
 
+# Use cases/tests
 import numpy as np
+# load data
 data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+# initialize deft object
 deft = Deft1D(data)
+# run fit
 deft.fit()
-#deft.get_params()
-#deft.get_results()
-#deft.get_Qsampled()
-#deft.get_params('resolution')
-deft.get_params('invalid_key')
+
+# get all parameters
+deft.get_params()
+
+# get deft results
+deft.get_results()
+
+# get Q_samples
+deft.get_Qsampled()
+
+# get parameter by key
+deft.get_params('resolution')
+
+# set individual parameters by key, value
+deft.set_params('G',10)
+
+# set params via dict
+d = {"G":10,"alpha":2}
+deft.set_params(**d)
+#print(deft.get_params())
 
 #field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
 #print(field.evaluate(0.75))
 #density = Density1D(field)
 #print(density.evaluate(0.75))
 
-#print(deftObject.get_results()['phi_star'])
-#print(deftObject.get_params('alpha'))
-#print(deftObject.get_params())
-##deftObject.set_params('G',10)
-#print(deftObject.get_params())
+#print(deft.get_results()['phi_star'])
+#print(deft.get_params('alpha'))
+#print(deft.get_params())
+#deft.set_params('G',10)
+#print(deft.get_params())
