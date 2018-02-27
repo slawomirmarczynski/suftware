@@ -6,9 +6,11 @@ import multiprocessing as mp
 import itertools
 import time
 
-import deft_core
-import maxent
-import utils
+
+from deft_code import deft_core
+from deft_code import maxent
+from deft_code import utils
+from deft_code.utils import DeftError
 
 x_MIN = -500
 
@@ -563,7 +565,7 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel, pt_s
 # Sample probable densities using posterior probability
 def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star):
 
-    if pt_method == 'Lap':
+    if pt_method == 'Lap' or 'Lap+W':
         method, go_parallel = Laplace_approach, False
     if pt_method == 'Lap+P':
         method, go_parallel = Laplace_approach, True
@@ -617,3 +619,110 @@ def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_
 
     # Return Q samples along with their weights
     return Q_samples, phi_samples, phi_weights
+
+# Check inputs
+def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
+                 resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
+
+    # Make sure data is valid
+    if not isinstance(data, utils.ARRAY):
+        raise DeftError('/inputs/ data must be an array: data = %s' % type(data))
+    if not (len(data) > 0):
+        raise DeftError('/inputs/ data must have length > 0: data = %s' % data)
+    for i in range(len(data)):
+        if isinstance(data[i], bool):
+            raise DeftError('/inputs/ data must contain numbers: data = %s' % data)
+        if not isinstance(data[i], utils.NUMBER):
+            raise DeftError('/inputs/ data must contain numbers: data = %s' % data)
+    data_spread = max(data) - min(data)
+    if not np.isfinite(data_spread):
+        raise DeftError('/inputs/ data_spread is not finite: data_spread = %s' % data_spread)
+    if not (data_spread > 0):
+        raise DeftError('/inputs/ data_spread is not > 0: data_spread = %s' % data_spread)
+
+    # Make sure G is valid
+    if isinstance(G, bool):
+        raise DeftError('/inputs/ G must be an integer: G = %s' % type(G))
+    if not isinstance(G, int):
+        raise DeftError('/inputs/ G must be an integer: G = %s' % type(G))
+    if not (G >= 10):
+        raise DeftError('/inputs/ G must be >= 10: G = %s' % G)
+
+    # Make sure alpha is valid
+    if isinstance(alpha, bool):
+        raise DeftError('/inputs/ alpha must be an integer: alpha = %s' % type(alpha))
+    if not isinstance(alpha, int):
+        raise DeftError('/inputs/ alpha must be an integer: alpha = %s' % type(alpha))
+    if not ((alpha >= 1) and (alpha <= 5)):
+        raise DeftError('/inputs/ alpha must be 1 <= alpha <= 5: alpha = %s' % alpha)
+
+    # Make sure bbox is valid
+    if not isinstance(bbox, utils.ARRAY):
+        raise DeftError('/inputs/ bbox must be an array: bbox = %s' % type(bbox))
+    if not (len(bbox) == 2):
+        raise DeftError('/inputs/ bbox must have length 2: bbox = %s' % bbox)
+    for i in range(2):
+        if isinstance(bbox[i], bool):
+            raise DeftError('/inputs/ bbox must contain numbers: bbox = %s' % bbox)
+        if not isinstance(bbox[i], utils.NUMBER):
+            raise DeftError('/inputs/ bbox must contain numbers: bbox = %s' % bbox)
+    if not (bbox[0] < bbox[1]):
+        raise DeftError('/inputs/ bbox[1] is not > bbox[0]: bbox = %s' % bbox)
+
+    # Make sure periodic is valid
+    if not isinstance(periodic, bool):
+        raise DeftError('/inputs/ periodic must be a boolean: periodic = %s' % type(periodic))
+
+    # Make sure Z_eval is valid
+    #Z_evals = ['Lap', 'Lap+Sam', 'Lap+Sam+P', 'GLap', 'GLap+P', 'GLap+Sam', 'GLap+Sam+P', 'Lap+Fey']
+    Z_evals = ['Lap', 'Lap+Sam', 'Lap+Fey']
+    if not (Z_eval in Z_evals):
+        raise DeftError('/inputs/ Z_eval must be in %s: Z_eval = %s' % (Z_evals,Z_eval))
+
+    # Make sure DT_MAX is valid
+    if not isinstance(DT_MAX, float):
+        raise DeftError('/inputs/ DT_MAX must be a float: DT_MAX = %s' % type(DT_MAX))
+    if not (DT_MAX > 0):
+        raise DeftError('/inputs/ DT_MAX must be > 0: DT_MAX = %s' % DT_MAX)
+
+    # Make sure print_t is valid
+    if not isinstance(print_t, bool):
+        raise DeftError('/inputs/ print_t must be a boolean: print_t = %s' % type(print_t))
+
+    # Make sure tollerance is valid
+    if not isinstance(tollerance, float):
+        raise DeftError('/inputs/ tollerance must be a float: tollerance = %s' % type(tollerance))
+    if not (tollerance > 0):
+        raise DeftError('/inputs/ tollerance must be > 0: tollerance = %s' % tollerance)
+
+    # Make sure resolution is valid
+    if not isinstance(resolution, float):
+        raise DeftError('/inputs/ resolution must be a float: resolution = %s' % type(resolution))
+    if not (resolution > 0):
+        raise DeftError('/inputs/ resolution must be > 0: resolution = %s' % resolution)
+
+    # Make sure deft_seed is valid
+    if isinstance(deft_seed, bool):
+        raise DeftError('/inputs/ deft_seed must be either None or an integer: deft_seed = %s' % type(deft_seed))
+    if not ((deft_seed is None) or isinstance(deft_seed, int)):
+        raise DeftError('/inputs/ deft_seed must be either None or an integer: deft_seed = %s' % type(deft_seed))
+    if (deft_seed is not None) and ((deft_seed < 0) or (deft_seed > 2**32-1)):
+        raise DeftError('/inputs/ deft_seed must be 0 <= deft_seed <= 2**32-1: deft_seed = %s' % deft_seed)
+
+    # Make sure pt_method is valid
+    #pt_methods = [None, 'Lap', 'Lap+P', 'Lap+W', 'Lap+W+P', 'GLap', 'GLap+P', 'GLap+W', 'GLap+W+P', 'MMC']
+    pt_methods = [None, 'Lap', 'Lap+W', 'Lap+W']
+    if not (pt_method in pt_methods):
+        raise DeftError('/inputs/ pt_method must be in %s: pt_method = %s' % (pt_methods,pt_method))
+
+    # Make sure fix_t_at_t_star is valid
+    if not isinstance(fix_t_at_t_star, bool):
+        raise DeftError('/inputs/ fix_t_at_t_star must be a boolean: fix_t_at_t_star = %s' % type(fix_t_at_t_star))
+
+    # Make sure num_pt_samples is valid
+    if isinstance(num_pt_samples, bool):
+        raise DeftError('/inputs/ num_pt_samples must be an integer: num_pt_samples = %s' % type(num_pt_samples))
+    if not isinstance(num_pt_samples, int):
+        raise DeftError('/inputs/ num_pt_samples must be an integer: num_pt_samples = %s' % type(num_pt_samples))
+    if not (num_pt_samples >= 0):
+        raise DeftError('/inputs/ num_pt_samples must be >= 0: num_pt_samples = %s' % num_pt_samples)

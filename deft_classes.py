@@ -3,6 +3,7 @@ import numpy as np
 import scipy as sp
 from deft_code import utils
 from deft_code import deft_1d
+from deft_code.supplements import inputs_check
 
 """
 This module contains the classes Deft1D, Field1D, and Density1D
@@ -30,10 +31,7 @@ class Deft1D:
         method of evaluation of partition function. Possible Z_eval values:
         'Lap'         : Laplace approximation (default)
         'Lap+Imp' : Laplace approximation + importance sampling
-        REMOVE 'GLap[+P]'    : generalized Laplace approximation
-        REMOVE 'GLap+Sam[+P]': generalized Laplace approximation + importance sampling
         'Lap+Fey'     : Laplace approximation + Feynman diagrams
-        REMOVE Note: [+P] means this task can be done in parallel
     num_Z_samples: (int) -> 'num_samples_for_Z'
         *** Note *** this parameter works only when Z_eval is 'Lap+Sam'
         number of samples for the evaluation of the partition function.
@@ -46,16 +44,15 @@ class Deft1D:
         specify random seed for posterior sampling methods
     max_t_step: (float) ->
         maximum dt step size on the map curve
-    max_log_evidence_ratio_drop: FILL THIS IN
+    max_log_evidence_ratio_drop: (float)
+        stop criterion for traversing the map curve; deft stops when i.e.:
+        log_evidence_max - current_log_evidence >  max_log_evidence_ratio_drop
     tolerance: (float)
         Value which species convergence of phi
     posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
          None       : no sampling will be performed (default)
         'Lap'   : ....
         'Lap+Imp'   : sampling from Laplace approximation + importance weight
-        REMOVE 'GLap[+P]'  : sampling from generalized Laplace approximation + importance weight
-        REMOVE 'MMC'       : sampling using Metropolis Monte Carlo
-        REMOVE Note: [+P] means this task can be done in parallel
     num_posterior_samples: (int)
         number of posterior samples.
 
@@ -114,6 +111,21 @@ class Deft1D:
         self.fix_t_at_t_star = sample_only_at_l_star
         self.results = None
 
+        # set reasonable bounding box based on data, unless user provides bbox.
+        # Could be changed.
+        if self.bbox is None:
+            data_spread = np.max(self.data) - np.min(self.data)
+            bbox_left = int(np.min(self.data) - 0.2 * data_spread)
+            bbox_right = int(np.max(self.data) + 0.2 * data_spread)
+            self.bbox = [bbox_left, bbox_right]
+
+        # Check inputs
+        inputs_check(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
+                     periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
+                     print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
+                     deft_seed=self.deft_seed, pt_method=self.pt_method,
+                     fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples)
+
     def fit(self):
 
         # Run deft_1d
@@ -122,18 +134,6 @@ class Deft1D:
             # pt_method is 'Lap+W', 'Lap', or 'MMC'
             if (self.pt_method == 'Lap+W' or self.pt_method == 'Lap') and self.num_pt_samples is 0:
                 self.num_pt_samples = 1000
-            elif self.pt_method == 'MMC' and self.num_pt_samples is 0:
-                self.num_pt_samples = 100
-
-            # set reasonable bounding box based on data, unless user provides bbox.
-            # Could be changed.
-            if self.bbox is None:
-                data_spread = np.max(self.data) - np.min(self.data)
-                bbox_left = int(np.min(self.data) - 0.2 * data_spread)
-                bbox_right = int(np.max(self.data) + 0.2 * data_spread)
-                self.bbox = [bbox_left, bbox_right]
-
-            # *** NOTE *** inputs check will likely go here.
 
             self.results = deft_1d.run(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
@@ -329,6 +329,8 @@ class Density1D:
 
 import sys
 # Use cases/tests
+
+#print(Deft1D.__doc__)
 
 # load data
 data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
