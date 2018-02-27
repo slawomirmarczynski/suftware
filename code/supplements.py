@@ -627,36 +627,72 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
                  resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
 
     # Make sure data is valid
-    if not isinstance(data, utils.ARRAY):
-        raise DeftError('/inputs/ data must be an array: data = %s' % type(data))
-    if not (len(data) > 0):
-        raise DeftError('/inputs/ data must have length > 0: data = %s' % data)
-    for i in range(len(data)):
-        if isinstance(data[i], bool):
-            raise DeftError('/inputs/ data must contain numbers: data = %s' % data)
-        if not isinstance(data[i], utils.NUMBER):
-            raise DeftError('/inputs/ data must contain numbers: data = %s' % data)
-    data_spread = max(data) - min(data)
-    if not np.isfinite(data_spread):
-        raise DeftError('/inputs/ data_spread is not finite: data_spread = %s' % data_spread)
-    if not (data_spread > 0):
-        raise DeftError('/inputs/ data_spread is not > 0: data_spread = %s' % data_spread)
+    try:
+        if not isinstance(data, utils.ARRAY):
+            raise DeftError('Input check failed, data must be of type array: data = %s' % type(data))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (len(data) > 0):
+            raise DeftError('Input check failed, data must have length > 0: data = %s' % data)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        for i in range(len(data)):
+            if not isinstance(data[i], utils.NUMBER):
+                raise DeftError('Input check failed. data must contain numbers: data = %s' % data)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        data_spread = max(data) - min(data)
+        if not np.isfinite(data_spread):
+            raise DeftError('Input check failed. Data[max]-Data[min] is not finite: Data spread = %s' % data_spread)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (data_spread > 0):
+            raise DeftError('Input check failed. Data[max]-Data[min] must be > 0: data_spread = %s' % data_spread)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure G is valid
-    if isinstance(G, bool):
-        raise DeftError('/inputs/ G must be an integer: G = %s' % type(G))
-    if not isinstance(G, int):
-        raise DeftError('/inputs/ G must be an integer: G = %s' % type(G))
-    if not (G >= 10):
-        raise DeftError('/inputs/ G must be >= 10: G = %s' % G)
+    try:
+        if not isinstance(G, int):
+            raise DeftError('Input check failed. Parameter "num_grid_points" must be an integer: num_grid_points = %s' % type(G))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (G >= 10):
+            raise DeftError('Input check failed. Parameter "num_grid_points" must be >= 10: num_grid_points = %s' % G)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure alpha is valid
-    if isinstance(alpha, bool):
-        raise DeftError('/inputs/ alpha must be an integer: alpha = %s' % type(alpha))
-    if not isinstance(alpha, int):
-        raise DeftError('/inputs/ alpha must be an integer: alpha = %s' % type(alpha))
-    if not ((alpha >= 1) and (alpha <= 5)):
-        raise DeftError('/inputs/ alpha must be 1 <= alpha <= 5: alpha = %s' % alpha)
+    try:
+        if not isinstance(alpha, int):
+            raise DeftError('Input check failed. Parameter "alpha" must be an integer: alpha = %s' % type(alpha))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not ((alpha >= 1) and (alpha <= 5)):
+            raise DeftError('Input check failed. Parameter "alpha" must be 1 <= alpha <= 5: alpha = %s' % alpha)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure bbox is valid
     try:
@@ -775,19 +811,35 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         sys.exit(1)
 
     # Make sure pt_method is valid
-    #pt_methods = [None, 'Lap', 'Lap+P', 'Lap+W', 'Lap+W+P', 'GLap', 'GLap+P', 'GLap+W', 'GLap+W+P', 'MMC']
     pt_methods = [None, 'Lap', 'Lap+W', 'Lap+W']
-    if not (pt_method in pt_methods):
-        raise DeftError('/inputs/ pt_method must be in %s: pt_method = %s' % (pt_methods,pt_method))
+
+    try:
+        if not (pt_method in pt_methods):
+            raise DeftError('Input check failed. posterior_sampling_method must be in %s: posterior_sampling_method = %s' % (pt_methods,pt_method))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure fix_t_at_t_star is valid
-    if not isinstance(fix_t_at_t_star, bool):
-        raise DeftError('/inputs/ fix_t_at_t_star must be a boolean: fix_t_at_t_star = %s' % type(fix_t_at_t_star))
+
+    try:
+        if not isinstance(fix_t_at_t_star, bool):
+            raise DeftError('Input check failed. Parameter "sample_only_at_l_star" must be a boolean: sample_only_at_l_star = %s' % type(fix_t_at_t_star))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure num_pt_samples is valid
-    if isinstance(num_pt_samples, bool):
-        raise DeftError('/inputs/ num_pt_samples must be an integer: num_pt_samples = %s' % type(num_pt_samples))
-    if not isinstance(num_pt_samples, int):
-        raise DeftError('/inputs/ num_pt_samples must be an integer: num_pt_samples = %s' % type(num_pt_samples))
-    if not (num_pt_samples >= 0):
-        raise DeftError('/inputs/ num_pt_samples must be >= 0: num_pt_samples = %s' % num_pt_samples)
+    try:
+        if not isinstance(num_pt_samples, int):
+            raise DeftError('Input check failed. Parameter "num_posterior_samples" must be an integer: num_posterior_samples = %s' % type(num_pt_samples))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (num_pt_samples >= 0):
+            raise DeftError('Input check failed. Parameter "num_posterior_samples" must be >= 0: num_posterior_samples = %s' % num_pt_samples)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
