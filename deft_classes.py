@@ -17,23 +17,23 @@ class Deft1D:
     ----------
     data: array like
         User input data for which Deft1D will estimate the density
-    G: (int) number of grid points
+    num_grid_points: (int) number of grid points
     alpha: (int)
         smoothness parameter. Represents the order of the
         derivative in the action
-    bbox: ([int,int])
+    bounding_box: ([int,int])
         bounding box for density estimation
     periodic: (boolean)
         Enforce periodic boundary conditions via True or False
-    Z_eval: (string)
+    Z_evaluation_method: (string)
         method of evaluation of partition function. Possible Z_eval values:
         'Lap'         : Laplace approximation (default)
-        'Lap+Sam[+P]' : Laplace approximation + importance sampling
-        'GLap[+P]'    : generalized Laplace approximation
-        'GLap+Sam[+P]': generalized Laplace approximation + importance sampling
+        'Lap+Imp' : Laplace approximation + importance sampling
+        REMOVE 'GLap[+P]'    : generalized Laplace approximation
+        REMOVE 'GLap+Sam[+P]': generalized Laplace approximation + importance sampling
         'Lap+Fey'     : Laplace approximation + Feynman diagrams
-        Note: [+P] means this task can be done in parallel
-    num_Z_samples: (int)
+        REMOVE Note: [+P] means this task can be done in parallel
+    num_Z_samples: (int) -> 'num_samples_for_Z'
         *** Note *** this parameter works only when Z_eval is 'Lap+Sam'
         number of samples for the evaluation of the partition function.
         More samples will help to evaluate a better Q*. More samples
@@ -41,21 +41,24 @@ class Deft1D:
         for the evaluation of the partition function is used.
     resolution (float):
         Specifies max distance between neighboring points on the MAP curve
-    deft_seed: (int)
+    seed: (int)
         specify random seed for posterior sampling methods
-    DT_MAX: (float)
+    max_t_step: (float) ->
         maximum dt step size on the map curve
+    max_log_evidence_ratio_drop: FILL THIS IN
     tolerance: (float)
         Value which species convergence of phi
-    pt_method: (string) Methods of posterior sampling. Possible values:
+    posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
          None       : no sampling will be performed (default)
-        'Lap[+P]'   : sampling from Laplace approximation + importance weight
-        'GLap[+P]'  : sampling from generalized Laplace approximation + importance weight
-        'MMC'       : sampling using Metropolis Monte Carlo
-        Note: [+P] means this task can be done in parallel
-    num_pt_samples: (int)
+        'Lap'   : ....
+        'Lap+Imp'   : sampling from Laplace approximation + importance weight
+        REMOVE 'GLap[+P]'  : sampling from generalized Laplace approximation + importance weight
+        REMOVE 'MMC'       : sampling using Metropolis Monte Carlo
+        REMOVE Note: [+P] means this task can be done in parallel
+    num_posterior_samples: (int)
         number of posterior samples.
-    fix_t_at_t_star: (boolean)
+
+    sample_only_at_l_star: (boolean)
         if True, than posterior samples drawn at t_star
         if False, posterior sampling done among t near t_star
 
@@ -151,9 +154,17 @@ class Deft1D:
         else:
             print("Get Results: Deft results are none. Please run fit first.")
 
+    # returns a Density1D object
     def get_Qstar(self):
+
         if self.results is not None:
-            return self.results.__dict__.get('Q_star')
+
+            # if the actual evaluated Q_star array needs to be returned, do following:
+            #return self.results.__dict__.get('Q_star')
+
+            field1D = Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+            density = Density1D(field1D)
+            return density
         else:
             print("Q_star is none. Please run fit first.")
 
@@ -292,30 +303,33 @@ import numpy as np
 # load data
 data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
 # initialize deft object
-deft = Deft1D(data,pt_method='Lap+W')
+deft = Deft1D(data)
 # run fit
 deft.fit()
+
+Qstar = deft.get_Qstar()
+print(Qstar)
 
 # get one parameter value
 #print(deft.get_params('G'))
 
 # get all parameters
-deft.get_params()
+#print(deft.get_params())
 
 # get parameter by key
-deft.get_params('resolution')
+#deft.get_params('resolution')
 
 # get Q_star
-deft.get_Qstar()
+#deft.get_Qstar()
 
 # get Q_samples
 #deft.get_Qsampled()
 
 # get deft results
-deft.get_results()
+#deft.get_results()
 
 # get deft result by key
-deft.get_results('phi_star')
+#deft.get_results('phi_star')
 
 # access particular results pythonically
 #print(deft.get_results()['phi_star'])
@@ -329,11 +343,17 @@ deft.get_results('phi_star')
 #print(deft.get_Qsampled())
 
 
-field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
+#field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
 #print(field.evaluate(0.75))
 
-density = Density1D(field)
-#density.evaluate(0.5)
+#density = Density1D(field)
+#print(density.evaluate(0.5))
+
+#print(density.evaluate(0.5))
+
+# should result density object
+#Q_star = deft.get_Qstar()
+#print(Q_star)
 
 #print(deft.get_results()['phi_star'])
 #print(deft.get_params('alpha'))
