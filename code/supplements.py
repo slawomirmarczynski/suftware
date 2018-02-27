@@ -5,6 +5,7 @@ from scipy.sparse import diags
 import multiprocessing as mp
 import itertools
 import time
+import sys
 
 
 from deft_code import deft_core
@@ -620,6 +621,7 @@ def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_
     # Return Q samples along with their weights
     return Q_samples, phi_samples, phi_weights
 
+
 # Check inputs
 def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
                  resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
@@ -657,57 +659,120 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         raise DeftError('/inputs/ alpha must be 1 <= alpha <= 5: alpha = %s' % alpha)
 
     # Make sure bbox is valid
-    if not isinstance(bbox, utils.ARRAY):
-        raise DeftError('/inputs/ bbox must be an array: bbox = %s' % type(bbox))
-    if not (len(bbox) == 2):
-        raise DeftError('/inputs/ bbox must have length 2: bbox = %s' % bbox)
-    for i in range(2):
-        if isinstance(bbox[i], bool):
-            raise DeftError('/inputs/ bbox must contain numbers: bbox = %s' % bbox)
-        if not isinstance(bbox[i], utils.NUMBER):
-            raise DeftError('/inputs/ bbox must contain numbers: bbox = %s' % bbox)
-    if not (bbox[0] < bbox[1]):
-        raise DeftError('/inputs/ bbox[1] is not > bbox[0]: bbox = %s' % bbox)
+    try:
+        if not isinstance(bbox, utils.ARRAY):
+            raise TypeError
+
+    except TypeError as e:
+        print('Input check failed:  bounding box must be an array: Current bounding box type = %s' % type(bbox))
+        sys.exit(1)
+
+    try:
+        if not (len(bbox) == 2):
+            raise DeftError('Input check failed. Bounding box must have length 2. Current length = %d' %len(bbox))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        for i in range(2):
+            if not isinstance(bbox[i], utils.NUMBER):
+                raise DeftError('Input check failed. Bounding box must contain numbers: Bounding box entered = %s' % bbox)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (bbox[0] < bbox[1]):
+            raise DeftError('Inputs check failed. bounding-box[1] should be greater than bounding-box[0]: bbox = %s' % bbox)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure periodic is valid
-    if not isinstance(periodic, bool):
-        raise DeftError('/inputs/ periodic must be a boolean: periodic = %s' % type(periodic))
+    try:
+        if not isinstance(periodic, bool):
+            raise DeftError('Input check failed. Parameter "periodic" must be of type boolean: periodic = %s' % type(periodic))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure Z_eval is valid
-    #Z_evals = ['Lap', 'Lap+Sam', 'Lap+Sam+P', 'GLap', 'GLap+P', 'GLap+Sam', 'GLap+Sam+P', 'Lap+Fey']
     Z_evals = ['Lap', 'Lap+Sam', 'Lap+Fey']
-    if not (Z_eval in Z_evals):
-        raise DeftError('/inputs/ Z_eval must be in %s: Z_eval = %s' % (Z_evals,Z_eval))
+    try:
+        if not (Z_eval in Z_evals):
+            raise DeftError('Input check failed. Z_evaluation_method must be in %s: Z_evaluation_method = %s' % (Z_evals,Z_eval))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure DT_MAX is valid
-    if not isinstance(DT_MAX, float):
-        raise DeftError('/inputs/ DT_MAX must be a float: DT_MAX = %s' % type(DT_MAX))
-    if not (DT_MAX > 0):
-        raise DeftError('/inputs/ DT_MAX must be > 0: DT_MAX = %s' % DT_MAX)
+    try:
+        if not isinstance(DT_MAX, utils.NUMBER):
+            raise DeftError('Input check failed. Parameter "max_t_step" must be a number: max_t_step = %s' % type(DT_MAX))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (DT_MAX > 0):
+            raise DeftError('Input check failed. Parameter "max_t_step" must be > 0: max_t_step = %s' % DT_MAX)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure print_t is valid
-    if not isinstance(print_t, bool):
-        raise DeftError('/inputs/ print_t must be a boolean: print_t = %s' % type(print_t))
+    try:
+        if not isinstance(print_t, bool):
+            raise DeftError('Input check failed. Parameter "print_t" must be a boolean: print_t = %s' % type(print_t))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure tollerance is valid
-    if not isinstance(tollerance, float):
-        raise DeftError('/inputs/ tollerance must be a float: tollerance = %s' % type(tollerance))
-    if not (tollerance > 0):
-        raise DeftError('/inputs/ tollerance must be > 0: tollerance = %s' % tollerance)
+    try:
+        if not isinstance(tollerance, float):
+            raise DeftError('Input check failed. Parameter "tolerance" must be a float: tolerance = %s' % type(tollerance))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (tollerance > 0):
+            raise DeftError('Input check failed. Parameter "tolerance" must be > 0: tolerance = %s' % tollerance)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure resolution is valid
-    if not isinstance(resolution, float):
-        raise DeftError('/inputs/ resolution must be a float: resolution = %s' % type(resolution))
-    if not (resolution > 0):
-        raise DeftError('/inputs/ resolution must be > 0: resolution = %s' % resolution)
+    try:
+        if not isinstance(resolution, utils.NUMBER):
+            raise DeftError('Input check failed. Parameter "resolution" must be a number: resolution = %s' % type(resolution))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if not (resolution > 0):
+            raise DeftError('Input check failed. Parameter "resolution" must be > 0: resolution = %s' % resolution)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure deft_seed is valid
-    if isinstance(deft_seed, bool):
-        raise DeftError('/inputs/ deft_seed must be either None or an integer: deft_seed = %s' % type(deft_seed))
-    if not ((deft_seed is None) or isinstance(deft_seed, int)):
-        raise DeftError('/inputs/ deft_seed must be either None or an integer: deft_seed = %s' % type(deft_seed))
-    if (deft_seed is not None) and ((deft_seed < 0) or (deft_seed > 2**32-1)):
-        raise DeftError('/inputs/ deft_seed must be 0 <= deft_seed <= 2**32-1: deft_seed = %s' % deft_seed)
+    try:
+        if deft_seed is not None and not isinstance(deft_seed, int):
+            raise DeftError('Input check failed. Parameter "seed" must be either None or an integer: seed = %s' % type(deft_seed))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+    try:
+        if (deft_seed is not None) and ((deft_seed < 0) or (deft_seed > 2**32-1)):
+            raise DeftError('Input checks failed. Parameter "Seed" must be 0 <= deft_seed <= 2**32-1: deft_seed = %s' % deft_seed)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
 
     # Make sure pt_method is valid
     #pt_methods = [None, 'Lap', 'Lap+P', 'Lap+W', 'Lap+W+P', 'GLap', 'GLap+P', 'GLap+W', 'GLap+W+P', 'MMC']
