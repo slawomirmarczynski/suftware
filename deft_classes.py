@@ -1,4 +1,5 @@
 from scipy import interpolate
+import numpy as np
 import scipy as sp
 from deft_code import utils
 from deft_code import deft_1d
@@ -76,33 +77,41 @@ class Deft1D:
         returns the parameters used in the Deft1D constructor
     set_params():
         set parameters for the constructor
+    get_h():
+        returns grid step size
+    get_bounding_box():
+        return bounding box
+    get_grid():
+        returns the grid as a numpy array
     get_Results():
         returns the results object
+    get_phiStar():
+        returns the Field1D object
     get_Qstar():
-        returns the Qstar attribute from results
+        returns Qstar as a Density1D object
     get_Qsampled():
         returns posterior samples of the density
     """
 
-    def __init__(self, data, G=100, alpha=3, bbox=None, periodic=False, Z_eval='Lap', num_Z_samples=0, DT_MAX=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1,deft_seed=None, pt_method=None, num_pt_samples=0,fix_t_at_t_star=False):
+    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box=None, periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method=None, num_posterior_samples=0, sample_only_at_l_star=False):
 
         # set class attributes
         self.data = data
-        self.G = G
+        self.G = num_grid_points
         self.alpha = alpha
-        self.bbox = bbox
+        self.bbox = bounding_box
         self.periodic = periodic
-        self.Z_eval = Z_eval
+        self.Z_eval = Z_evaluation_method
         self.num_Z_samples = num_Z_samples
-        self.DT_MAX = DT_MAX
+        self.DT_MAX = max_t_step
         self.print_t = print_t
         self.tolerance = tolerance
-        self.deft_seed = deft_seed
+        self.deft_seed = seed
         self.resolution = resolution
-        self.pt_method = pt_method
-        self.num_pt_samples = num_pt_samples
-        self.fix_t_at_t_star = fix_t_at_t_star
+        self.pt_method = posterior_sampling_method
+        self.num_pt_samples = num_posterior_samples
+        self.fix_t_at_t_star = sample_only_at_l_star
         self.results = None
 
     def fit(self):
@@ -154,17 +163,37 @@ class Deft1D:
         else:
             print("Get Results: Deft results are none. Please run fit first.")
 
+    # get step size
+    def get_h(self):
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        del counts
+        # h = bc[1]-bc[0]
+        return bin_centers[1]-bin_centers[0]
+
+    # return bounding box
+    def get_bounding_box(self):
+        return self.bbox
+
+    # return xs of grid
+    def get_grid(self):
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        del counts
+        # h = bc[1]-bc[0]
+        return bin_centers
+
+    # returns a Field1D object
+    def get_phiStar(self):
+
+        if self.results is not None:
+            return Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        else:
+            print("phiStar is none. Please run fit first.")
+
     # returns a Density1D object
     def get_Qstar(self):
 
         if self.results is not None:
-
-            # if the actual evaluated Q_star array needs to be returned, do following:
-            #return self.results.__dict__.get('Q_star')
-
-            field1D = Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
-            density = Density1D(field1D)
-            return density
+            return Density1D(self.get_phiStar())
         else:
             print("Q_star is none. Please run fit first.")
 
@@ -244,6 +273,7 @@ class Field1D:
         # handle value
         except ValueError:
             print(" The x value is out of the interpolation range.")
+            return sp.nan
 
 
 class Density1D:
@@ -284,7 +314,6 @@ class Density1D:
 
     def __init__(self, Field1D):
         self.Field1D = Field1D
-        # the 0.1's are heuristic numbers that seem to work well with interp1d
         self.xs = self.Field1D.bin_centers
         self.h = self.xs[1]-self.xs[0]
         self.Z = sp.sum(self.h * sp.exp(-self.Field1D.evaluate(self.xs)))
@@ -294,12 +323,13 @@ class Density1D:
             # return Q(x)
             return sp.exp(-self.Field1D.evaluate(x)) / self.Z
         except:
-            print("Error: please x value out of interpolation range")
+            print("Error: x value out of interpolation range")
+            return sp.nan
 
 
 import sys
 # Use cases/tests
-import numpy as np
+
 # load data
 data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
 # initialize deft object
@@ -309,6 +339,15 @@ deft.fit()
 
 Qstar = deft.get_Qstar()
 print(Qstar)
+# check why 0.01 and 0.02 is failing
+print(Qstar.evaluate(0.03))
+
+print(deft.get_h())
+print(deft.get_bounding_box())
+
+print(deft.get_grid())
+
+#print(deft.get_results())
 
 # get one parameter value
 #print(deft.get_params('G'))
