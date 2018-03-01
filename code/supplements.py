@@ -679,12 +679,14 @@ def clean_data(data):
         print(e)
         sys.exit(1)
 
+    # min difference between sorted, unique, adjacent values
+    # should h be smaller than this value?
+    
+    min_h = np.min(np.diff(np.sort(np.unique(data))))
 
-    # find unique values, find smallest spacing between adjacent unique values, h
-    # should be smaller than that distance
 
     # return cleaned data
-    return data
+    return data, min_h
 
 
 # Check inputs
@@ -700,8 +702,7 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     try:
-        #if not (G >= 10):
-        if not (G >= 0):
+        if not (G >= 10):
             raise DeftError('Input check failed. Parameter "num_grid_points" must be >= 10: num_grid_points = %s' % G)
     except DeftError as e:
         print(e)
@@ -716,8 +717,8 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     try:
-        if not ((alpha >= 1) and (alpha <= 5)):
-            raise DeftError('Input check failed. Parameter "alpha" must be 1 <= alpha <= 5: alpha = %s' % alpha)
+        if not ((alpha >= 1) and (alpha <= 4)):
+            raise DeftError('Input check failed. Parameter "alpha" must be 1 <= alpha <= 4: alpha = %s' % alpha)
     except DeftError as e:
         print(e)
         sys.exit(1)
