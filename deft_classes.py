@@ -95,7 +95,7 @@ class Deft1D:
     """
 
     def __init__(self, data, num_grid_points=100, alpha=3, bounding_box=None, periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=2, sample_only_at_l_star=False):
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False):
 
         # set class attributes
         self.data = data
@@ -208,6 +208,7 @@ class Deft1D:
 
     def get_Qsampled(self,get_sample_number=None, get_first_n_samples=None):
 
+        # ensure parameters are legal
         if self.results is not None and self.num_pt_samples is not 0:
             try:
                 if not isinstance(get_sample_number,int) and get_sample_number is not None:
@@ -216,33 +217,60 @@ class Deft1D:
                 print(e)
                 sys.exit(1)
 
+            try:
+                if not isinstance(get_first_n_samples,int) and get_first_n_samples is not None:
+                    raise DeftError('Q_sample syntax error. Please ensure get_first_n_samples is of type int')
+            except DeftError as e:
+                print(e)
+                sys.exit(1)
+
+            if get_sample_number is not None and get_first_n_samples is not None:
+                print("Q_sample Warning: both parameters (get_sample_number, get_first_n_samples) used, please use only one parameter.")
+
+            # return a single sample chosen by the user
             if get_sample_number is not None:
-                if get_sample_number > 0 and get_sample_number <= self.num_pt_samples:
+
+                if get_sample_number >= 0 and get_sample_number < self.num_pt_samples:
                     # return Q_sample specified by the user.
                     return Density1D(Field1D(deft.get_results()['phi_samples'][:, get_sample_number],self.G,self.bbox))
-                elif get_sample_number <= 0:
-                    print("Q_sample error: Please set get_sample_number > 0")
+                elif get_sample_number < 0:
+                    print("Q_sample error: Please set get_sample_number >= 0, exiting...")
+                    # need to exit in this case because evaluate will throw an error.
                     sys.exit()
-                elif get_sample_number>self.num_pt_samples:
-                    print('Please enter a sample number less than number of posterior samples')
+                elif get_sample_number >= self.num_pt_samples:
+                    print('Q_sample error: Please ensure get_sample_number < number of posterior samples, exiting...')
+                    # need to exit in this case because evaluate will throw an error.
+                    sys.exit()
 
+            # get first n samples. This method could be modified to return a range of samples
             elif get_first_n_samples is not None:
-                # form field out of this and return densities
-                return deft.get_results()['phi_samples'][:, :get_first_n_samples]
+
+                if get_first_n_samples < 0:
+                    print("Q_sample: please set 'get_first_n_samples' > 0")
+                    sys.exit()
+
+                elif get_first_n_samples > self.num_pt_samples:
+                    print("Q_sample: please set 'get_first_n_samples' < number of posterior samples")
+                    sys.exit()
+
+                elif get_first_n_samples >= 0:
+                    # list containing samples
+                    Q_Samples = []
+                    for sampleIndex in range(get_first_n_samples):
+                        Q_Samples.append(Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex],self.G,self.bbox)))
+                    print("Warning, returning list of Density objects; use index while using evaluate")
+                    return Q_Samples
 
             # get all samples
             else:
                 # return all samples here
-                pass
+                Q_Samples = []
+                for sampleIndex in range(self.num_pt_samples):
+                    Q_Samples.append(
+                        Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
+                print("Warning, returning list of Density objects; use index while using evaluate")
+                return Q_Samples
 
-
-            # to get all samples
-            #print(deft.get_results()['phi_samples'])
-
-            # fix shapes to for samples to be (G,) not (G,num_samples)
-            #print(np.shape(np.ravel((self.results.__dict__.get('phi_samples')))))
-            #return Field1D(np.ravel(self.results.__dict__.get('phi_samples')), self.G, self.bbox)
-            #return self.results.__dict__.get('Q_samples')
         else:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
 
@@ -390,10 +418,16 @@ deft = Deft1D(data)
 # run fit
 deft.fit()
 
-#print(deft.get_results()['Q_samples'])
 
-Q_sample = deft.get_Qsampled(get_sample_number=1)
-print(Q_sample.evaluate(0.5))
+#Qstar = deft.get_Qstar()
+#print(Qstar.evaluate(0.1))
+#print(deft.get_results()['Q_star'])
+
+Q_samples = deft.get_Qsampled()
+#print(Q_samples)
+#Q_samples = deft.get_Qsampled(get_sample_number=-1)
+#print(Q_samples)
+#print(Q_sample.evaluate(0.5))
 
 
 # to get column x/ sample x, do deft.get_results()['phi_samples'][:,1]
