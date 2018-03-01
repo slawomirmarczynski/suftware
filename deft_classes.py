@@ -4,6 +4,7 @@ import scipy as sp
 from deft_code import utils
 from deft_code import deft_1d
 from deft_code.supplements import inputs_check
+from deft_code.supplements import clean_data
 from deft_code.utils import DeftError
 import sys
 
@@ -115,6 +116,9 @@ class Deft1D:
         self.fix_t_at_t_star = sample_only_at_l_star
         self.results = None
 
+        # clean input data
+        self.data = clean_data(data)
+
         # set reasonable bounding box based on data, unless user provides bbox.
         # Could be changed.
         if self.bbox is None:
@@ -124,7 +128,7 @@ class Deft1D:
             self.bbox = [bbox_left, bbox_right]
 
         # Check inputs
-        inputs_check(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
+        inputs_check(G=self.G, alpha=self.alpha, bbox=self.bbox,
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
                      print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
                      deft_seed=self.deft_seed, pt_method=self.pt_method,
@@ -412,7 +416,10 @@ import matplotlib.pyplot as plt
 #print(Deft1D.__doc__)
 
 # load data
-data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
+#data = np.loadtxt('./data/old_faithful_eruption_times.dat')
+data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
+
 # initialize deft object
 deft = Deft1D(data)
 # run fit

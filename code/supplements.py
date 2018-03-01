@@ -622,17 +622,31 @@ def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_
     return Q_samples, phi_samples, phi_weights
 
 
-# Check inputs
-def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
-                 resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
+# This method will be used to clean user input data; it's for use with the API.
+def clean_data(data):
 
-    # Make sure data is valid
     try:
-        if not isinstance(data, utils.ARRAY):
-            raise DeftError('Input check failed, data must be of type array: data = %s' % type(data))
+        # if data is a list or set, cast into numpy array
+        if type(data) == list or type(data) == set:
+            data = np.array(data)
+        # if data already np array, do nothing
+        elif type(data) == np.ndarray:
+            pass
+        # think about whether the following is a good idea
+        elif type(data) != np.ndarray:
+            data = np.array(data)
+        else:
+            raise DeftError("Error: could not cast data into an np.array")
     except DeftError as e:
         print(e)
         sys.exit(1)
+
+    # remove nan's from the np data array
+    data = data[~np.isnan(data)]
+    # remove positive or negative infinite values from the np data array
+    data = data[~np.isinf(data)]
+    # remove complex numbers from data
+    data = data[~np.iscomplex(data)]
 
     try:
         if not (len(data) > 0):
@@ -641,6 +655,7 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         print(e)
         sys.exit(1)
 
+    # ensure data are numbers
     try:
         for i in range(len(data)):
             if not isinstance(data[i], utils.NUMBER):
@@ -664,6 +679,18 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         print(e)
         sys.exit(1)
 
+
+    # find unique values, find smallest spacing between adjacent unique values, h
+    # should be smaller than that distance
+
+    # return cleaned data
+    return data
+
+
+# Check inputs
+def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
+                 resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
+
     # Make sure G is valid
     try:
         if not isinstance(G, int):
@@ -673,7 +700,8 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         sys.exit(1)
 
     try:
-        if not (G >= 10):
+        #if not (G >= 10):
+        if not (G >= 0):
             raise DeftError('Input check failed. Parameter "num_grid_points" must be >= 10: num_grid_points = %s' % G)
     except DeftError as e:
         print(e)
@@ -765,7 +793,7 @@ def inputs_check(data, G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, toller
         print(e)
         sys.exit(1)
 
-    # Make sure tollerance is valid
+    # Make sure tolerance is valid
     try:
         if not isinstance(tollerance, float):
             raise DeftError('Input check failed. Parameter "tolerance" must be a float: tolerance = %s' % type(tollerance))
