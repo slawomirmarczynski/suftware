@@ -4,6 +4,8 @@ import scipy as sp
 from deft_code import utils
 from deft_code import deft_1d
 from deft_code.supplements import inputs_check
+from deft_code.utils import DeftError
+import sys
 
 """
 This module contains the classes Deft1D, Field1D, and Density1D
@@ -46,7 +48,7 @@ class Deft1D:
         maximum dt step size on the map curve
     max_log_evidence_ratio_drop: (float)
         stop criterion for traversing the map curve; deft stops when i.e.:
-        log_evidence_max - current_log_evidence >  max_log_evidence_ratio_drop
+        max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
     tolerance: (float)
         Value which species convergence of phi
     posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
@@ -80,9 +82,11 @@ class Deft1D:
         return bounding box
     get_grid():
         returns the grid as a numpy array
+    get_num_grid_points
+        returns the number of grid points
     get_Results():
         returns the results object
-    get_phiStar():
+    get_phi():
         returns the Field1D object
     get_Qstar():
         returns Qstar as a Density1D object
@@ -91,7 +95,7 @@ class Deft1D:
     """
 
     def __init__(self, data, num_grid_points=100, alpha=3, bounding_box=None, periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method=None, num_posterior_samples=0, sample_only_at_l_star=False):
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=2, sample_only_at_l_star=False):
 
         # set class attributes
         self.data = data
@@ -133,7 +137,8 @@ class Deft1D:
             # ensure that number of posterior samples aren't zero when
             # pt_method is 'Lap+W', 'Lap', or 'MMC'
             if (self.pt_method == 'Lap+W' or self.pt_method == 'Lap') and self.num_pt_samples is 0:
-                self.num_pt_samples = 1000
+                #self.num_pt_samples = 1000
+                self.num_pt_samples = 0
 
             self.results = deft_1d.run(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
@@ -174,6 +179,10 @@ class Deft1D:
     def get_bounding_box(self):
         return self.bbox
 
+    # return number of grid points
+    def get_num_grid_points(self):
+        return self.G
+
     # return xs of grid
     def get_grid(self):
         counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
@@ -182,24 +191,58 @@ class Deft1D:
         return bin_centers
 
     # returns a Field1D object
-    def get_phiStar(self):
+    def get_phi(self):
 
         if self.results is not None:
             return Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
         else:
-            print("phiStar is none. Please run fit first.")
+            print("phi is none. Please run fit first.")
 
     # returns a Density1D object
     def get_Qstar(self):
 
         if self.results is not None:
-            return Density1D(self.get_phiStar())
+            return Density1D(self.get_phi())
         else:
             print("Q_star is none. Please run fit first.")
 
-    def get_Qsampled(self):
+    def get_Qsampled(self,get_sample_number=None, get_first_n_samples=None):
+
         if self.results is not None and self.num_pt_samples is not 0:
-            return self.results.__dict__.get('Q_samples')
+            try:
+                if not isinstance(get_sample_number,int) and get_sample_number is not None:
+                    raise DeftError('Q_sample syntax error. Please ensure get_sample_number is of type int')
+            except DeftError as e:
+                print(e)
+                sys.exit(1)
+
+            if get_sample_number is not None:
+                if get_sample_number > 0 and get_sample_number <= self.num_pt_samples:
+                    # return Q_sample specified by the user.
+                    return Density1D(Field1D(deft.get_results()['phi_samples'][:, get_sample_number],self.G,self.bbox))
+                elif get_sample_number <= 0:
+                    print("Q_sample error: Please set get_sample_number > 0")
+                    sys.exit()
+                elif get_sample_number>self.num_pt_samples:
+                    print('Please enter a sample number less than number of posterior samples')
+
+            elif get_first_n_samples is not None:
+                # form field out of this and return densities
+                return deft.get_results()['phi_samples'][:, :get_first_n_samples]
+
+            # get all samples
+            else:
+                # return all samples here
+                pass
+
+
+            # to get all samples
+            #print(deft.get_results()['phi_samples'])
+
+            # fix shapes to for samples to be (G,) not (G,num_samples)
+            #print(np.shape(np.ravel((self.results.__dict__.get('phi_samples')))))
+            #return Field1D(np.ravel(self.results.__dict__.get('phi_samples')), self.G, self.bbox)
+            #return self.results.__dict__.get('Q_samples')
         else:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
 
@@ -327,7 +370,15 @@ class Density1D:
             return sp.nan
 
 
-import sys
+########################################################
+########################################################
+# WARNING THE FOLLOWING IS TEMPORARY AND WILL BE DELETED
+########################################################
+########################################################
+
+
+import matplotlib.pyplot as plt
+
 # Use cases/tests
 
 #print(Deft1D.__doc__)
@@ -339,15 +390,38 @@ deft = Deft1D(data)
 # run fit
 deft.fit()
 
-Qstar = deft.get_Qstar()
-print(Qstar)
+#print(deft.get_results()['Q_samples'])
+
+Q_sample = deft.get_Qsampled(get_sample_number=1)
+print(Q_sample.evaluate(0.5))
+
+
+# to get column x/ sample x, do deft.get_results()['phi_samples'][:,1]
+#print(deft.get_results()['phi_samples'][:,:2])
+# to get first n samples samples deft.get_results()['phi_samples'][:,:n], print warning if n> num_pt_samples
+#print(deft.get_results()['phi_samples'][:,:3])
+
+# to get all samples
+#print(deft.get_results()['phi_samples'])
+#Qstar = deft.get_Qstar()
+
+
+#Q_samples = deft.get_Qsampled()
+#print(Q_samples.evaluate(0.1))
+#print(Qstar)
 # check why 0.01 and 0.02 is failing
-print(Qstar.evaluate(0.03))
+#print(Qstar.evaluate(0.5))
+#Qstar.evaluate(0.34)
+xs = deft.get_grid()
 
-print(deft.get_h())
-print(deft.get_bounding_box())
 
-print(deft.get_grid())
+#plt.plot(xs,Qstar.evaluate(xs),'o')
+#plt.show()
+
+#print(deft.get_h())
+#print(deft.get_bounding_box())
+
+#print(deft.get_grid())
 
 #print(deft.get_results())
 
