@@ -95,7 +95,7 @@ class Deft1D:
         returns posterior samples of the density
     """
 
-    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box=None, periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
+    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False):
 
         # set class attributes
@@ -119,13 +119,12 @@ class Deft1D:
         # clean input data
         self.data, self.min_h = clean_data(data)
 
-        # set reasonable bounding box based on data, unless user provides bbox.
-        # Could be changed.
-        if self.bbox is None:
-            data_spread = np.max(self.data) - np.min(self.data)
-            bbox_left = int(np.min(self.data) - 0.2 * data_spread)
-            bbox_right = int(np.max(self.data) + 0.2 * data_spread)
-            self.bbox = [bbox_left, bbox_right]
+        # make sure G (and therefore step-size is appropriate set based on data).
+        if self.bbox !='Auto':
+            if (self.G!= int((self.bbox[1] - self.bbox[0]) / self.min_h) and int((self.bbox[1] - self.bbox[0]) / self.min_h)<=1000):
+                self.G = int((self.bbox[1] - self.bbox[0]) / self.min_h)
+                print('Warning, updating value of num_grid_points based on bounding box entered: ',self.G)
+
 
         # Check inputs
         inputs_check(G=self.G, alpha=self.alpha, bbox=self.bbox,
@@ -133,6 +132,12 @@ class Deft1D:
                      print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
                      deft_seed=self.deft_seed, pt_method=self.pt_method,
                      fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples)
+
+        if self.bbox == 'Auto':
+            data_spread = np.max(self.data) - np.min(self.data)
+            bbox_left = int(np.min(self.data) - 0.2 * data_spread)
+            bbox_right = int(np.max(self.data) + 0.2 * data_spread)
+            self.bbox = [bbox_left, bbox_right]
 
     def fit(self):
 
@@ -148,7 +153,7 @@ class Deft1D:
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
                                        DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
-                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star,min_h=self.min_h)
+                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
 
             print('Deft1D ran successfully')
             return self.results
@@ -174,7 +179,7 @@ class Deft1D:
 
     # get step size
     def get_h(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox, min_h=self.min_h)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers[1]-bin_centers[0]
@@ -189,7 +194,7 @@ class Deft1D:
 
     # return xs of grid
     def get_grid(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox, min_h=self.min_h)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers
@@ -333,9 +338,9 @@ class Field1D:
     """
 
     # constructor: calls the interp1d function which default to
-    def __init__(self,phi, G, bbox,min_h=np.inf):
+    def __init__(self,phi, G, bbox):
 
-        counts, self.bin_centers = utils.histogram_counts_1d(phi, G, bbox,min_h=min_h)
+        counts, self.bin_centers = utils.histogram_counts_1d(phi, G, bbox)
         self.interpolated_phi = interpolate.interp1d(self.bin_centers, phi)
         # delete counts since they are not needed in this class
         del counts
@@ -458,7 +463,7 @@ print('h: ',deft.get_h())
 # check why 0.01 and 0.02 is failing
 #print(Qstar.evaluate(0.5))
 #Qstar.evaluate(0.34)
-xs = deft.get_grid()
+#xs = deft.get_grid()
 
 
 #plt.plot(xs,Qstar.evaluate(xs),'o')

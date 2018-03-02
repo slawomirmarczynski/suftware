@@ -11,10 +11,10 @@ import json
 from scipy.interpolate import interp1d
 
 # Import deft-related code
-import deft_core
-import utils
-import laplacian
-import maxent
+from deft_code import deft_core
+from deft_code import utils
+from deft_code import laplacian
+from deft_code import maxent
 
 # Imports for KDE
 #import sklearn
@@ -22,7 +22,7 @@ import maxent
 #from sklearn.grid_search import GridSearchCV
 
 # Import error handling
-from utils import DeftError
+from deft_code.utils import DeftError
 
 class Results(): pass;
 
@@ -216,7 +216,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
     if t_start < -10.0:
         t_start /= 2
-    print('t_start = %.2f' % t_start)
+    #print('t_start = %.2f' % t_start)
     if print_t:
         print('t_start = %0.2f' % t_start)
     
@@ -265,6 +265,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     Q_star_func = lambda x: sp.exp(-phi_star_func(x)) / Z
     results.Q_star_func = Q_star_func
 
+    # XXX REMOVE
     # Compute differential entropy in bits
     entropy_start_time = time.clock()
     if not (pt_method is None):
@@ -281,6 +282,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
         results.e_mean = np.mean(entropies)
         results.e_std = np.std(entropies)
         results.entropy_compute_time = time.clock() - entropy_start_time
+    # XXX
 
     # Record execution time
     results.copy_compute_time = copy_compute_time

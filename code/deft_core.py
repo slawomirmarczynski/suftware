@@ -6,31 +6,30 @@ from scipy.linalg import det, eigh, solve, eigvalsh, inv
 import scipy.optimize as opt
 import time
 
-import maxent
-import utils
-import supplements
+from deft_code import utils
+from deft_code import supplements
+from deft_code import maxent
 
 # Import error handling
-from utils import DeftError
+# from utils import DeftError
+from deft_code.utils import DeftError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
-T_MAX = 40 
+T_MAX = 40
 T_MIN = -40
 LOG_E_RANGE = 20
 PHI_MAX = utils.PHI_MAX
 PHI_MIN = utils.PHI_MIN
 MAX_DS = -1E-3
-PHI_STD_REG = utils.PHI_STD_REG 
+PHI_STD_REG = utils.PHI_STD_REG
 
 
 class Results():
-
     pass
 
 
 # Represents a point along the MAP curve
 class MAP_curve_point:
-
     def __init__(self, t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details=False):
         self.t = t
         self.phi = phi
@@ -38,12 +37,11 @@ class MAP_curve_point:
         self.log_E = log_E
         self.sample_mean = sample_mean
         self.sample_mean_std_dev = sample_mean_std_dev
-        #self.details = details
+        # self.details = details
 
 
 # Represents the MAP curve
 class MAP_curve:
-
     def __init__(self):
         self.points = []
         self._is_sorted = False
@@ -83,7 +81,7 @@ class MAP_curve:
         log_Es = sp.array([p.log_E for p in self.points])
         ts = sp.array([p.t for p in self.points])
         if finite:
-            indices = (log_Es > -np.Inf)*(ts > -np.Inf)*(ts < np.Inf)
+            indices = (log_Es > -np.Inf) * (ts > -np.Inf) * (ts < np.Inf)
             return log_Es[indices], ts[indices]
         else:
             return log_Es, ts
@@ -94,7 +92,6 @@ class MAP_curve:
 #
 # Evaluate the action of a field given smoothness criteria
 def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
-    
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/action/ phi is not real: phi = %s' % phi)
@@ -103,7 +100,7 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
     # Make sure t is valid
     if not np.isreal(t):
         raise DeftError('/action/ t is not real: t = %s' % t)
-    #if not np.isfinite(t):
+    # if not np.isfinite(t):
     #    raise DeftError('/action/ t is not finite: t = %s' % t)
     # Make sure phi_in_kernel is valid
     if not isinstance(phi_in_kernel, bool):
@@ -111,8 +108,8 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
         raise DeftError('/action/ regularized must be a boolean: regularized = %s' % type(regularized))
-    
-    G = 1.*len(R)
+
+    G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
     quasiQ_col = sp.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
@@ -121,27 +118,27 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
     ones_col = sp.mat(sp.ones(int(G))).T
 
     if phi_in_kernel:
-        S_mat = G*R_col.T*phi_col + G*ones_col.T*quasiQ_col
+        S_mat = G * R_col.T * phi_col + G * ones_col.T * quasiQ_col
     else:
-        S_mat = 0.5*sp.exp(-t)*phi_col.T*Delta_sparse*phi_col + G*R_col.T*phi_col + G*ones_col.T*quasiQ_col
+        S_mat = 0.5 * sp.exp(
+            -t) * phi_col.T * Delta_sparse * phi_col + G * R_col.T * phi_col + G * ones_col.T * quasiQ_col
 
     if regularized:
-        S_mat += 0.5*(phi_col.T*phi_col)/(N*PHI_STD_REG**2)
+        S_mat += 0.5 * (phi_col.T * phi_col) / (N * PHI_STD_REG ** 2)
 
-    S = S_mat[0,0]
+    S = S_mat[0, 0]
 
     # Make sure S is valid
     if not np.isreal(S):
-        raise DeftError('/action/ S is not real at t = %s: S = %s' % (t,S))
+        raise DeftError('/action/ S is not real at t = %s: S = %s' % (t, S))
     if not np.isfinite(S):
-        raise DeftError('/action/ S is not finite at t = %s: S = %s' % (t,S))
-    
+        raise DeftError('/action/ S is not finite at t = %s: S = %s' % (t, S))
+
     return S
 
 
 # Evaluate action gradient w.r.t. a field given smoothness criteria
 def gradient(phi, R, Delta, t, N, regularized=False):
-    
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/gradient/ phi is not real: phi = %s' % phi)
@@ -155,32 +152,31 @@ def gradient(phi, R, Delta, t, N, regularized=False):
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
         raise DeftError('/gradient/ regularized must be a boolean: regularized = %s' % type(regularized))
-    
-    G = 1.*len(R)
+
+    G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
     quasiQ_col = sp.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
     phi_col = sp.mat(phi).T
     R_col = sp.mat(R).T
-    grad_col = sp.exp(-t)*Delta_sparse*phi_col + G*R_col - G*quasiQ_col
+    grad_col = sp.exp(-t) * Delta_sparse * phi_col + G * R_col - G * quasiQ_col
 
     if regularized:
-        grad_col += phi_col/(N*PHI_STD_REG**2)
+        grad_col += phi_col / (N * PHI_STD_REG ** 2)
 
     grad = sp.array(grad_col).ravel()
 
     # Make sure grad is valid
     if not all(np.isreal(grad)):
-        raise DeftError('/gradient/ grad is not real at t = %s: grad = %s' % (t,grad))
+        raise DeftError('/gradient/ grad is not real at t = %s: grad = %s' % (t, grad))
     if not all(np.isfinite(grad)):
-        raise DeftError('/gradient/ grad is not finite at t = %s: grad = %s' % (t,grad))
+        raise DeftError('/gradient/ grad is not finite at t = %s: grad = %s' % (t, grad))
 
     return grad
 
 
 # Evaluate action hessian w.r.t. a field given smoothness criteria. NOTE: returns sparse matrix, not dense matrix!
 def hessian(phi, R, Delta, t, N, regularized=False):
-    
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/hessian/ phi is not real: phi = %s' % phi)
@@ -194,14 +190,14 @@ def hessian(phi, R, Delta, t, N, regularized=False):
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
         raise DeftError('/hessian/ regularized must be a boolean: regularized = %s' % type(regularized))
-    
-    G = 1.*len(R)
+
+    G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
     Delta_sparse = Delta.get_sparse_matrix()
-    H = sp.exp(-t)*Delta_sparse + G*diags(quasiQ,0)
+    H = sp.exp(-t) * Delta_sparse + G * diags(quasiQ, 0)
 
     if regularized:
-        H += diags(np.ones(int(G)),0)/(N*PHI_STD_REG**2)
+        H += diags(np.ones(int(G)), 0) / (N * PHI_STD_REG ** 2)
 
     # Make sure H is valid ?
     return H
@@ -209,13 +205,12 @@ def hessian(phi, R, Delta, t, N, regularized=False):
 
 # Compute the log of ptgd at maxent
 def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
-
     # Make sure phi_M is valid
     if not all(np.isreal(phi_M)):
         raise DeftError('/log_ptgd_at_maxent/ phi_M is not real: phi_M = %s' % phi_M)
     if not all(np.isfinite(phi_M)):
         raise DeftError('/log_ptgd_at_maxent/ phi_M is not finite: phi_M = %s' % phi_M)
-    
+
     kernel_dim = Delta._kernel_dim
     M = utils.field_to_prob(phi_M)
     M_on_kernel = sp.zeros([kernel_dim, kernel_dim])
@@ -223,12 +218,12 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
     lambdas = Delta._eigenvalues
     for a in range(int(kernel_dim)):
         for b in range(int(kernel_dim)):
-            psi_a = sp.ravel(kernel_basis[:,a])
-            psi_b = sp.ravel(kernel_basis[:,b])
-            M_on_kernel[a,b] = sp.sum(psi_a*psi_b*M)
+            psi_a = sp.ravel(kernel_basis[:, a])
+            psi_b = sp.ravel(kernel_basis[:, b])
+            M_on_kernel[a, b] = sp.sum(psi_a * psi_b * M)
 
     # Compute log Occam factor at infinity
-    log_Occam_at_infty = - 0.5*sp.log(det(M_on_kernel)) - 0.5*sp.sum(sp.log(lambdas[kernel_dim:]))
+    log_Occam_at_infty = - 0.5 * sp.log(det(M_on_kernel)) - 0.5 * sp.sum(sp.log(lambdas[kernel_dim:]))
 
     # Make sure log_Occam_at_infty is valid
     if not np.isreal(log_Occam_at_infty):
@@ -239,7 +234,7 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
                         log_Occam_at_infty)
 
     # Compute the log likelihood at infinity
-    log_likelihood_at_infty = - N*sp.sum(phi_M*R) - N
+    log_likelihood_at_infty = - N * sp.sum(phi_M * R) - N
 
     # Make sure log_likelihood_at_infty is valid
     if not np.isreal(log_likelihood_at_infty):
@@ -293,7 +288,6 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
 
 # Computes the log of ptgd at t
 def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
-
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/log_ptgd/ phi is not real: phi = %s' % phi)
@@ -304,37 +298,37 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
         raise DeftError('/log_ptgd/ t is not real: t = %s' % t)
     if not np.isfinite(t):
         raise DeftError('/log_ptgd/ t is not finite: t = %s' % t)
-    
-    G = 1.*len(phi)
-    alpha = 1.*Delta._alpha
-    kernel_dim = 1.*Delta._kernel_dim
-    H = hessian(phi, R, Delta, t, N) 
-    H_prime = H.todense()*sp.exp(t)
 
-    S = action(phi, R, Delta, t, N) 
+    G = 1. * len(phi)
+    alpha = 1. * Delta._alpha
+    kernel_dim = 1. * Delta._kernel_dim
+    H = hessian(phi, R, Delta, t, N)
+    H_prime = H.todense() * sp.exp(t)
+
+    S = action(phi, R, Delta, t, N)
 
     # First try computing log determinant straight away
     log_det = sp.log(det(H_prime))
-    
+
     # If failed, try computing the sum of eigenvalues, forcing the eigenvalues to be real and non-negative
     if not (np.isreal(log_det) and np.isfinite(log_det)):
         lambdas = abs(eigvalsh(H_prime))
-        log_det = sp.sum(sp.log(lambdas)) 
-    
-    # Make sure log_det is valid
+        log_det = sp.sum(sp.log(lambdas))
+
+        # Make sure log_det is valid
     if not np.isreal(log_det):
-        raise DeftError('/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t,log_det))
+        raise DeftError('/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t, log_det))
     if not np.isfinite(log_det):
-        raise DeftError('/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t,log_det))
-    
+        raise DeftError('/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t, log_det))
+
     # Compute contribution from finite t
-    log_ptgd = -(N/G)*S + 0.5*kernel_dim*t - 0.5*log_det
+    log_ptgd = -(N / G) * S + 0.5 * kernel_dim * t - 0.5 * log_det
 
     # Make sure log_ptgd is valid
     if not np.isreal(log_ptgd):
-        raise DeftError('/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t,log_ptgd))
+        raise DeftError('/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t, log_ptgd))
     if not np.isfinite(log_ptgd):
-        raise DeftError('/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t,log_ptgd))
+        raise DeftError('/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t, log_ptgd))
 
     # If requested, incorporate corrections to the partition function
     num_samples = num_Z_samples
@@ -365,9 +359,9 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 
     # Make sure correction is valid
     if not np.isreal(correction):
-        raise DeftError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t,correction))
+        raise DeftError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
     if not np.isfinite(correction):
-        raise DeftError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t,correction))
+        raise DeftError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
 
     log_ptgd += correction
 
@@ -385,7 +379,6 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 
 # Computes predictor step
 def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
-
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/compute_predictor_step/ phi is not real: phi = %s' % phi)
@@ -402,56 +395,55 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 
     # Get current probability distribution
     Q = utils.field_to_prob(phi)
-    G = 1.*len(Q)
+    G = 1. * len(Q)
 
     # Get hessian
     H = hessian(phi, R, Delta, t, N)
 
     # Compute rho, which indicates direction of step
-    rho = G*spsolve(H, Q-R)
+    rho = G * spsolve(H, Q - R)
 
     # Make sure rho is valid
     if not all(np.isreal(rho)):
-        raise DeftError('/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t,rho))
+        raise DeftError('/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t, rho))
     if not all(np.isfinite(rho)):
-        raise DeftError('/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t,rho))
+        raise DeftError('/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
 
-    denom = sp.sqrt(sp.sum(rho*Q*rho))
+    denom = sp.sqrt(sp.sum(rho * Q * rho))
 
     # Make sure denom is valid
     if not np.isreal(denom):
-        raise DeftError('/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t,denom))
+        raise DeftError('/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t, denom))
     if not np.isfinite(denom):
-        raise DeftError('/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t,denom))
+        raise DeftError('/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t, denom))
     if not (denom > 0):
-        raise DeftError('/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t,denom))
+        raise DeftError('/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t, denom))
 
     # Compute dt based on value of epsilon (the resolution)
-    dt = direction*resolution/denom
+    dt = direction * resolution / denom
     while abs(dt) > DT_MAX:
-        dt /= 2.0 
+        dt /= 2.0
 
-    # Return phi_new and new t_new. WARNING: IT IS NOT YET CLEAR THAT PHI_NEW ISN'T INSANE
-    phi_new = phi + rho*dt
+        # Return phi_new and new t_new. WARNING: IT IS NOT YET CLEAR THAT PHI_NEW ISN'T INSANE
+    phi_new = phi + rho * dt
     t_new = t + dt
 
     # Make sure phi_new is valid
     if not all(np.isreal(phi_new)):
-        raise DeftError('/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new,phi_new))
+        raise DeftError('/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new, phi_new))
     if not all(np.isfinite(phi_new)):
-        raise DeftError('/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new,phi_new))
+        raise DeftError('/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new, phi_new))
     # Make sure t_new is valid
     if not np.isreal(t_new):
         raise DeftError('/compute_predictor_step/ t_new is not real: t_new = %s' % t_new)
     if not np.isfinite(t_new):
         raise DeftError('/compute_predictor_step/ t_new is not finite: t_new = %s' % t_new)
-    
+
     return phi_new, t_new
 
 
 # Computes corrector step
 def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=False):
-
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise DeftError('/compute_corrector_step/ phi is not real: phi = %s' % phi)
@@ -466,7 +458,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
     if not isinstance(report_num_steps, bool):
         raise DeftError('/compute_corrector_step/ report_num_steps must be a boolean: report_num_steps = %s' %
                         type(report_num_steps))
-    
+
     # Evaluate the probability distribution
     Q = utils.field_to_prob(phi)
 
@@ -480,7 +472,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Compute the gradient
         v = gradient(phi, R, Delta, t, N)
-        
+
         # Compute the hessian
         H = hessian(phi, R, Delta, t, N)
 
@@ -489,12 +481,12 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Make sure dphi is valid
         if not all(np.isreal(dphi)):
-            raise DeftError('/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t,dphi))
+            raise DeftError('/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t, dphi))
         if not all(np.isfinite(dphi)):
-            raise DeftError('/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t,dphi))
+            raise DeftError('/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
 
         # Compute corresponding change in action
-        dS = sp.sum(dphi*v)
+        dS = sp.sum(dphi * v)
 
         # If we're already very close to the max, then dS will be close to zero. In this case, we're done already
         if dS > MAX_DS:
@@ -506,48 +498,48 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
             # Make sure beta is valid
             if beta < 1E-50:
-                raise DeftError('/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t,beta))
+                raise DeftError('/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t, beta))
 
-            # Compute new phi 
-            phi_new = phi + beta*dphi
+            # Compute new phi
+            phi_new = phi + beta * dphi
 
             # If new phi is insane, decrease beta
             if any(phi_new < PHI_MIN) or any(phi_new > PHI_MAX):
                 num_backtracks += 1
-                beta *= 0.5 
+                beta *= 0.5
                 continue
 
             # Compute new action
             S_new = action(phi_new, R, Delta, t, N)
 
-            # Check for linear regime 
-            if S_new-S <= 0.5*beta*dS:
+            # Check for linear regime
+            if S_new - S <= 0.5 * beta * dS:
                 break
 
             # If not in linear regime, backtrack value of beta
             else:
                 num_backtracks += 1
-                beta *= 0.5  
+                beta *= 0.5
                 continue
 
         # Make sure phi_new is valid
         if not all(np.isreal(phi_new)):
-            raise DeftError('/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t,phi_new))
+            raise DeftError('/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t, phi_new))
         if not all(np.isfinite(phi_new)):
-            raise DeftError('/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t,phi_new))
+            raise DeftError('/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t, phi_new))
 
         # Compute new Q
         Q_new = utils.field_to_prob(phi_new)
 
         # Break out of loop if Q_new is close enough to Q
-        gd = utils.geo_dist(Q_new,Q)
+        gd = utils.geo_dist(Q_new, Q)
         if gd < tollerance:
             break
-        
+
         # Break out of loop with warning if S_new > S.
         # Should not happen, but not fatal if it does. Just means less precision
         # ACTUALLY, THIS SHOULD NEVER HAPPEN!
-        elif S_new-S > 0:
+        elif S_new - S > 0:
             raise DeftError('/compute_corrector_step/ S_new > S at t = %s: terminating corrector steps' % t)
 
         # Otherwise, continue with corrector step
@@ -571,14 +563,14 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 
     Args:
 
-        R (numpy.narray): 
+        R (numpy.narray):
             The data histogram
 
-        Delta (Smoothness_operator instance): 
+        Delta (Smoothness_operator instance):
             Effectiely defines smoothness
 
-        resolution (float): 
-            Specifies max distance between neighboring points on the 
+        resolution (float):
+            Specifies max distance between neighboring points on the
             MAP curve
 
     Returns:
@@ -601,7 +593,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     #
 
     # Get normalized histogram and corresponding field
-    R = R/sum(R)
+    R = R / sum(R)
     phi_R = utils.prob_to_field(R)
     log_E_R = -np.Inf
     t_R = np.Inf
@@ -617,7 +609,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     phi_infty, success = maxent.compute_maxent_field(R, kernel_basis)
 
     # Convert maxent field to probability distribution
-    M = utils.field_to_prob(phi_infty) 
+    M = utils.field_to_prob(phi_infty)
 
     # Compute the maxent log_ptgd. Important to keep this around to compute log_E at finite t
     log_ptgd_M, w_sample_mean_M, w_sample_mean_std_M = \
@@ -639,7 +631,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     phi_start = compute_corrector_step(phi_infty, R, Delta, t_start, N, tollerance)
 
     # Convert starting field to probability distribution
-    Q_start = utils.field_to_prob(phi_start) 
+    Q_start = utils.field_to_prob(phi_start)
 
     # Compute log ptgd
     log_ptgd_start, w_sample_mean_start, w_sample_mean_std_start = \
@@ -661,11 +653,11 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     #
 
     # This is to indicate how iteration in t is terminated
-    break_t_loop = [True,True] # = [Q_M, Q_R]; True = thru geo_dist, False = thru log_E
-    
+    break_t_loop = [True, True]  # = [Q_M, Q_R]; True = thru geo_dist, False = thru log_E
+
     # Trace MAP curve in both directions
-    for direction in [-1,+1]:
-        
+    for direction in [-1, +1]:
+
         # Start iteration from central point
         phi = phi_start
         t = t_start
@@ -673,7 +665,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
         log_E = log_E_start
         w_sample_mean = w_sample_mean_start
         w_sample_mean_std_dev = w_sample_mean_std_start
-        
+
         if direction == -1:
             Q_end = M
         else:
@@ -681,20 +673,22 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 
         log_ptgd0 = log_ptgd_start
         slope = np.sign(0)
-        
+
         # Keep stepping in direction until reach the specified endpoint
         while True:
 
             # Test distance to endpoint
-            if utils.geo_dist(Q_end,Q) <= resolution:
+            if utils.geo_dist(Q_end, Q) <= resolution:
                 if direction == -1:
-                    print('Q_end = M: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end,Q),resolution))
+                    pass
+                    #print('Q_end = M: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end, Q), resolution))
                 else:
-                    print('Q_end = R: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end,Q),resolution))
+                    pass
+                    #print('Q_end = R: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end, Q), resolution))
                 break
 
-            # Take predictor step 
-            phi_pre, t_new = compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX) 
+            # Take predictor step
+            phi_pre, t_new = compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX)
 
             # If phi_pre is insane, start iterating from phi instead
             if any(phi_pre > PHI_MAX) or any(phi_pre < PHI_MIN):
@@ -715,24 +709,24 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 
             # Take step
             t = t_new
-            Q = Q_new   
+            Q = Q_new
             phi = phi_new
             log_E = log_E_new
             w_sample_mean = w_sample_mean_new
             w_sample_mean_std = w_sample_mean_std_new
-            
+
             # Adjust max log evidence ratio
             log_E_max = log_E if (log_E > log_E_max) else log_E_max
 
             # Terminate if log_E is too small. But don't count the t=-inf endpoint when computing log_E_max
             if log_E_new < log_E_max - LOG_E_RANGE:
                 if direction == -1:
-                    print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
-                          (log_E_new,log_E_max,LOG_E_RANGE))
+                    #print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
+                    #      (log_E_new, log_E_max, LOG_E_RANGE))
                     break_t_loop[0] = False
                 else:
-                    print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
-                          (log_E_new,log_E_max,LOG_E_RANGE))
+                    #print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
+                    #      (log_E_new, log_E_max, LOG_E_RANGE))
                     break_t_loop[1] = False
                 # Add new point to map curve
                 if print_t:
@@ -743,23 +737,23 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             slope_new = np.sign(log_ptgd_new - log_ptgd0)
             # Terminate if t is too negative or too positive
             if t < T_MIN:
-                print('Q_end = M: t (%.2f) < T_MIN (%.2f)' % (t,T_MIN))
+                print('Q_end = M: t (%.2f) < T_MIN (%.2f)' % (t, T_MIN))
                 break_t_loop[0] = False
                 break
             elif t > T_MAX:
-                print('Q_end = R: t (%.2f) > T_MAX (%.2f)' % (t,T_MAX))
-                break_t_loop[1] = False
-                break   
-            elif (direction == +1) and (t > 0) and (np.sign(slope_new*slope) < 0) and (log_ptgd_new > log_ptgd0):
-                print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
-                      (t,log_ptgd_new,log_ptgd0))
+                print('Q_end = R: t (%.2f) > T_MAX (%.2f)' % (t, T_MAX))
                 break_t_loop[1] = False
                 break
-            elif (direction == +1) and (np.sign(slope_new*slope) < 0) and (log_ptgd_new > log_ptgd0 + LOG_E_RANGE):
-                print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + LOG_E_RANGE (%.2f) at t = %.2f' %
-                      (log_ptgd_new,log_ptgd0,LOG_E_RANGE,t))
+            elif (direction == +1) and (t > 0) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0):
+                print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
+                      (t, log_ptgd_new, log_ptgd0))
                 break_t_loop[1] = False
-                break                
+                break
+            elif (direction == +1) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0 + LOG_E_RANGE):
+                print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + LOG_E_RANGE (%.2f) at t = %.2f' %
+                      (log_ptgd_new, log_ptgd0, LOG_E_RANGE, t))
+                break_t_loop[1] = False
+                break
             log_ptgd0 = log_ptgd_new
             slope = slope_new
 
@@ -786,17 +780,17 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     The core algorithm of DEFT, used for both 1D and 2D density estmation.
 
     Args:
-        counts_array (numpy.ndarray): 
+        counts_array (numpy.ndarray):
             A scipy array of counts. All counts must be nonnegative.
 
-        Delta (Smoothness_operator instance): 
+        Delta (Smoothness_operator instance):
             An operator providing the definition of 'smoothness' used by DEFT
     """
-    
+
     # Make sure details is valid
     if not isinstance(details, bool):
         raise DeftError('/deft_core.run/ details must be a boolean: details = %s' % type(details))
-    
+
     # Get number of gridpoints and kernel dimension from smoothness operator
     G = Delta.get_G()
     kernel_dim = Delta.get_kernel_dim()
@@ -804,16 +798,16 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Make sure counts_array is valid
     if not (len(counts_array) == G):
         raise DeftError('/deft_core.run/ counts_array must have length %d: len(counts_array) = %d' %
-                        (G,len(counts_array)))
+                        (G, len(counts_array)))
     if not all(counts_array >= 0):
         raise DeftError('/deft_core.run/ counts_array is not non-negative: counts_array = %s' % counts_array)
-    if not (sum(counts_array>0) > kernel_dim):
+    if not (sum(counts_array > 0) > kernel_dim):
         raise DeftError('/deft_core.run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
-                        (sum(counts_array>0),kernel_dim))
+                        (sum(counts_array > 0), kernel_dim))
 
     # Get number of data points and normalize histogram
     N = sum(counts_array)
-    R = 1.0*counts_array/N
+    R = 1.0 * counts_array / N
 
     #
     # Compute the MAP curve
@@ -844,6 +838,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     if not (pt_method is None):
         Q_samples, phi_samples, phi_weights = \
             supplements.posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star)
+            
+
 
     #
     # Package results
@@ -851,7 +847,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Create a container
     results = Results()
-    
+
     # Fill in info that's guaranteed to be there
     results.phi_star = phi_star
     results.Q_star = Q_star
