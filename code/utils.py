@@ -173,15 +173,24 @@ def grid_info_from_bin_edges_1d(bin_edges):
     return bbox, h, bin_centers
 
 
-def grid_info_from_bbox_and_G(bbox, G):
+def grid_info_from_bbox_and_G(bbox, G,min_h=np.inf):
     bin_edges = np.linspace(bbox[0], bbox[1], num=G+1, endpoint=True)
     h = bin_edges[1]-bin_edges[0]
     bin_centers = bin_edges[:-1]+h/2.
+
+    if min_h < h:
+        G = int((bbox[1] - bbox[0]) / min_h)
+        # max value for G shouldn't exceed 1000
+        if G <= 1000:
+            bin_edges = np.linspace(bbox[0], bbox[1], num=G + 1, endpoint=True)
+            h = bin_edges[1] - bin_edges[0]
+            bin_centers = bin_edges[:-1] + h / 2.
+
     return h, bin_centers, bin_edges
 
 
 # Make a 1d histogram. Bounding box is optional
-def histogram_counts_1d(data, G, bbox, normalized=False):
+def histogram_counts_1d(data, G, bbox, normalized=False, min_h=np.inf):
 
     # Make sure normalized is valid
     if not isinstance(normalized, bool):
@@ -202,7 +211,7 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
     cropped_data = data[0]
 
     # Get grid info from bbox and G
-    h, bin_centers, bin_edges = grid_info_from_bbox_and_G(bbox, G)
+    h, bin_centers, bin_edges = grid_info_from_bbox_and_G(bbox, G,min_h=min_h)
 
     # Make sure h is valid
     if not (h > 0):

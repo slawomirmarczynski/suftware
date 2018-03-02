@@ -117,7 +117,7 @@ class Deft1D:
         self.results = None
 
         # clean input data
-        self.data = clean_data(data)
+        self.data, self.min_h = clean_data(data)
 
         # set reasonable bounding box based on data, unless user provides bbox.
         # Could be changed.
@@ -148,7 +148,7 @@ class Deft1D:
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
                                        DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
-                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
+                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star,min_h=self.min_h)
 
             print('Deft1D ran successfully')
             return self.results
@@ -174,7 +174,7 @@ class Deft1D:
 
     # get step size
     def get_h(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox, min_h=self.min_h)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers[1]-bin_centers[0]
@@ -189,7 +189,7 @@ class Deft1D:
 
     # return xs of grid
     def get_grid(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox, min_h=self.min_h)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers
@@ -333,9 +333,9 @@ class Field1D:
     """
 
     # constructor: calls the interp1d function which default to
-    def __init__(self,phi, G, bbox):
+    def __init__(self,phi, G, bbox,min_h=np.inf):
 
-        counts, self.bin_centers = utils.histogram_counts_1d(phi, G, bbox)
+        counts, self.bin_centers = utils.histogram_counts_1d(phi, G, bbox,min_h=min_h)
         self.interpolated_phi = interpolate.interp1d(self.bin_centers, phi)
         # delete counts since they are not needed in this class
         del counts
@@ -425,12 +425,17 @@ deft = Deft1D(data)
 # run fit
 deft.fit()
 
+#print('G: ',deft.get_num_grid_points())
+print('h: ',deft.get_h())
+#print(deft.get_bounding_box())
+#print(deft.get_grid())
+
 
 #Qstar = deft.get_Qstar()
 #print(Qstar.evaluate(0.1))
 #print(deft.get_results()['Q_star'])
 
-Q_samples = deft.get_Qsampled()
+#Q_samples = deft.get_Qsampled()
 #print(Q_samples)
 #Q_samples = deft.get_Qsampled(get_sample_number=-1)
 #print(Q_samples)
