@@ -692,6 +692,14 @@ def clean_data(data):
 def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
                  resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
 
+    # Make sure alpha is valid
+    try:
+        if not isinstance(alpha, int):
+            raise DeftError('Input check failed. Parameter "alpha" must be an integer: alpha = %s' % type(alpha))
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
     # Make sure G is valid
     try:
         if not isinstance(G, int):
@@ -701,21 +709,14 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     try:
-        if not (G >= 10 and G <= 1000):
-            raise DeftError('Input check failed. Parameter "num_grid_points" must between [10, 1000]: num_grid_points = %s' % G)
-    except DeftError as e:
-        print(e)
-        sys.exit(1)
-
-    # Make sure alpha is valid
-    try:
-        if not isinstance(alpha, int):
-            raise DeftError('Input check failed. Parameter "alpha" must be an integer: alpha = %s' % type(alpha))
+        if not (G >= 2*alpha and G <= 1000):
+            raise DeftError('Input check failed. Parameter "num_grid_points" must between [2*alpha, 1000]: num_grid_points = %s' % G)
     except DeftError as e:
         print(e)
         sys.exit(1)
 
     try:
+        # the following values of alpha are used in the paper
         if not ((alpha >= 1) and (alpha <= 4)):
             raise DeftError('Input check failed. Parameter "alpha" must be 1 <= alpha <= 4: alpha = %s' % alpha)
     except DeftError as e:
@@ -724,31 +725,35 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
 
     # Make sure bbox is valid
     try:
-        if not isinstance(bbox, utils.ARRAY):
+        if not (bbox=='Auto' or isinstance(bbox,tuple)):
             raise TypeError
 
     except TypeError as e:
-        print('Input check failed:  bounding box must be an array: Current bounding box type = %s' % type(bbox))
+        print('Input check failed:  bounding box must be "Auto" or a 2-tuple of floats \nCurrent bounding box type = %s' % type(bbox))
         sys.exit(1)
 
     try:
-        if not (len(bbox) == 2):
-            raise DeftError('Input check failed. Bounding box must have length 2. Current length = %d' %len(bbox))
+        if bbox!='Auto':
+            if not (len(bbox) == 2):
+                print('bbox: ',bbox)
+                raise DeftError('Input check failed. Bounding box must have length 2. Current length = %d' %len(bbox))
     except DeftError as e:
         print(e)
         sys.exit(1)
 
     try:
-        for i in range(2):
-            if not isinstance(bbox[i], utils.NUMBER):
-                raise DeftError('Input check failed. Bounding box must contain numbers: Bounding box entered = %s' % bbox)
+        if bbox != 'Auto':
+            for i in range(2):
+                if not isinstance(bbox[i], utils.NUMBER):
+                    raise DeftError('Input check failed. Bounding box must contain numbers: Bounding box entered = %s' % bbox)
     except DeftError as e:
         print(e)
         sys.exit(1)
 
     try:
-        if not (bbox[0] < bbox[1]):
-            raise DeftError('Inputs check failed. bounding-box[1] should be greater than bounding-box[0]: bbox = %s' % bbox)
+        if bbox != 'Auto':
+            if not (bbox[0] < bbox[1]):
+                raise DeftError('Inputs check failed. bounding-box[1] should be greater than bounding-box[0].')
     except DeftError as e:
         print(e)
         sys.exit(1)
