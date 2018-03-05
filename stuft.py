@@ -41,16 +41,16 @@ class Deft1D:
         More samples will help to evaluate a better Q*. More samples
         will also make calculation slower. 0 means the laplace approximation
         for the evaluation of the partition function is used.
-    resolution (float):
+    resolution (positive float):
         Specifies max distance between neighboring points on the MAP curve
     seed: (int)
         specify random seed for posterior sampling methods
-    max_t_step: (float) ->
+    max_t_step: (non-negative float) ->
         maximum dt step size on the map curve
     max_log_evidence_ratio_drop: (float)
         stop criterion for traversing the map curve; deft stops when i.e.:
         max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
-    tolerance: (float)
+    tolerance: (positive float)
         Value which species convergence of phi
     posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
          None       : no sampling will be performed (default)
