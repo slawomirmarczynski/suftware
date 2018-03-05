@@ -54,9 +54,9 @@ class Deft1D:
         Value which species convergence of phi
     posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
          None       : no sampling will be performed (default)
-        'Lap'   : ....
-        'Lap+Imp'   : sampling from Laplace approximation + importance weight
-    num_posterior_samples: (int)
+        'Lap'   : Laplace sampling method
+        'Lap+Imp'   : sampling from Laplace approximation + importance re-sampling weights
+    num_posterior_samples: (non-negative int)
         number of posterior samples.
 
     sample_only_at_l_star: (boolean)
@@ -93,10 +93,16 @@ class Deft1D:
         returns Qstar as a Density1D object
     get_Qsampled():
         returns posterior samples of the density
+        keyword arguments:
+            get_sample_number (non-negative int)
+                returns the posterior sample specified by argument
+            get_first_n_samples (non negative int)
+                return the first n samples specified by argument
     """
 
     def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False):
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False,
+                 max_log_evidence_ratio_drop=20):
 
         # set class attributes
         self.data = data
@@ -114,6 +120,7 @@ class Deft1D:
         self.pt_method = posterior_sampling_method
         self.num_pt_samples = num_posterior_samples
         self.fix_t_at_t_star = sample_only_at_l_star
+        self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
         self.results = None
 
         # clean input data
@@ -130,7 +137,8 @@ class Deft1D:
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
                      print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
                      deft_seed=self.deft_seed, pt_method=self.pt_method,
-                     fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples)
+                     fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples,
+                     max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
         if self.bbox == 'Auto':
             data_spread = np.max(self.data) - np.min(self.data)
@@ -152,7 +160,8 @@ class Deft1D:
                                        periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
                                        DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
-                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star)
+                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star,
+                                       max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
             print('Deft1D ran successfully')
             return self.results
@@ -430,7 +439,7 @@ deft = Deft1D(data)
 deft.fit()
 
 #print('G: ',deft.get_num_grid_points())
-print('h: ',deft.get_h())
+#print('h: ',deft.get_h())
 #print(deft.get_bounding_box())
 #print(deft.get_grid())
 
@@ -441,9 +450,9 @@ print('h: ',deft.get_h())
 
 #Q_samples = deft.get_Qsampled()
 #print(Q_samples)
-#Q_samples = deft.get_Qsampled(get_sample_number=-1)
+#Q_samples = deft.get_Qsampled(get_sample_number=1)
 #print(Q_samples)
-#print(Q_sample.evaluate(0.5))
+#print(Q_samples.evaluate(0.5))
 
 
 # to get column x/ sample x, do deft.get_results()['phi_samples'][:,1]

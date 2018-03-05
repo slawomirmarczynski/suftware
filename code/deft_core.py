@@ -17,7 +17,6 @@ from deft_code.utils import DeftError
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
 T_MAX = 40
 T_MIN = -40
-LOG_E_RANGE = 20
 PHI_MAX = utils.PHI_MAX
 PHI_MIN = utils.PHI_MIN
 MAX_DS = -1E-3
@@ -558,7 +557,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
 
 # The core algorithm of DEFT, used for both 1D and 2D density estimation
-def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution):
+def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution, max_log_evidence_ratio_drop):
     """ Traces the map curve in both directions
 
     Args:
@@ -719,14 +718,14 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             log_E_max = log_E if (log_E > log_E_max) else log_E_max
 
             # Terminate if log_E is too small. But don't count the t=-inf endpoint when computing log_E_max
-            if log_E_new < log_E_max - LOG_E_RANGE:
+            if log_E_new < log_E_max - max_log_evidence_ratio_drop:
                 if direction == -1:
-                    #print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
-                    #      (log_E_new, log_E_max, LOG_E_RANGE))
+                    #print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
+                    #      (log_E_new, log_E_max, max_log_evidence_ratio_drop))
                     break_t_loop[0] = False
                 else:
-                    #print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - LOG_E_RANGE (%.2f)' %
-                    #      (log_E_new, log_E_max, LOG_E_RANGE))
+                    #print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
+                    #      (log_E_new, log_E_max, max_log_evidence_ratio_drop))
                     break_t_loop[1] = False
                 # Add new point to map curve
                 if print_t:
@@ -749,9 +748,9 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
                       (t, log_ptgd_new, log_ptgd0))
                 break_t_loop[1] = False
                 break
-            elif (direction == +1) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0 + LOG_E_RANGE):
-                print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + LOG_E_RANGE (%.2f) at t = %.2f' %
-                      (log_ptgd_new, log_ptgd0, LOG_E_RANGE, t))
+            elif (direction == +1) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0 + max_log_evidence_ratio_drop):
+                print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + max_log_evidence_ratio_drop (%.2f) at t = %.2f' %
+                      (log_ptgd_new, log_ptgd0, max_log_evidence_ratio_drop, t))
                 break_t_loop[1] = False
                 break
             log_ptgd0 = log_ptgd_new
@@ -775,7 +774,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 # Core DEFT algorithm
 #
 def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-        tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star, details=False):
+        tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop, details=False):
     """
     The core algorithm of DEFT, used for both 1D and 2D density estmation.
 
@@ -814,7 +813,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     #
 
     start_time = time.clock()
-    map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution)
+    map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution,max_log_evidence_ratio_drop)
     end_time = time.clock()
     map_curve_compute_time = end_time - start_time
     if print_t:

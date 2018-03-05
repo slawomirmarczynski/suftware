@@ -174,7 +174,7 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 # The main DEFT algorithm in 1D.
 #
 def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, tollerance,
-        resolution, deft_seed, pt_method, num_pt_samples, fix_t_at_t_star):
+        resolution, deft_seed, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
 
     # Start clock
     start_time = time.clock()
@@ -222,7 +222,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     
     # Do DEFT density estimation
     core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-                                 tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star)
+                                 tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop)
 
     # Fill in results
     copy_start_time = time.clock()

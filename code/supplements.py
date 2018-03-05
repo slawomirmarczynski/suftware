@@ -690,7 +690,7 @@ def clean_data(data):
 
 # Check inputs
 def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
-                 resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples):
+                 resolution, deft_seed, pt_method, fix_t_at_t_star, num_pt_samples,max_log_evidence_ratio_drop):
 
     # Make sure alpha is valid
     try:
@@ -873,6 +873,15 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
     try:
         if not (num_pt_samples >= 0):
             raise DeftError('Input check failed. Parameter "num_posterior_samples" must be >= 0: num_posterior_samples = %s' % num_pt_samples)
+    except DeftError as e:
+        print(e)
+        sys.exit(1)
+
+
+    # ensure that max_log_evidence_ratio is a float
+    try:
+        if not isinstance(max_log_evidence_ratio_drop, utils.NUMBER):
+            raise DeftError('Input check failed. Parameter "max_log_evidence_ratio" must be a number: tolerance = %s' % type(max_log_evidence_ratio_drop))
     except DeftError as e:
         print(e)
         sys.exit(1)
