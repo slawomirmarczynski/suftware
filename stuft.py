@@ -125,7 +125,6 @@ class Deft1D:
                 self.G = int((self.bbox[1] - self.bbox[0]) / self.min_h)
                 print('Warning, updating value of num_grid_points based on bounding box entered: ',self.G)
 
-
         # Check inputs
         inputs_check(G=self.G, alpha=self.alpha, bbox=self.bbox,
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
