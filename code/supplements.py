@@ -575,7 +575,7 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel, pt_s
 # Sample probable densities using posterior probability
 def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star):
 
-    if pt_method == 'Lap' or 'Lap+W':
+    if pt_method == 'Lap' or 'Lap+Imp':
         method, go_parallel = Laplace_approach, False
     if pt_method == 'Lap+P':
         method, go_parallel = Laplace_approach, True
@@ -776,7 +776,7 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     # Make sure Z_eval is valid
-    Z_evals = ['Lap', 'Lap+Sam', 'Lap+Fey']
+    Z_evals = ['Lap', 'Lap+Imp', 'Lap+Fey']
     try:
         if not (Z_eval in Z_evals):
             raise DeftError('Input check failed. Z_evaluation_method must be in %s: Z_evaluation_method = %s' % (Z_evals,Z_eval))
@@ -853,7 +853,7 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     # Make sure pt_method is valid
-    pt_methods = [None, 'Lap', 'Lap+W', 'Lap+W']
+    pt_methods = [None, 'Lap', 'Lap+Imp']
 
     try:
         if not (pt_method in pt_methods):
