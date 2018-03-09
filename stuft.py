@@ -1,3 +1,5 @@
+"""This module contains the classes Deft1D, Field1D, and Density1D See doc-strings for each class for details"""
+
 from scipy import interpolate
 import numpy as np
 import scipy as sp
@@ -8,11 +10,6 @@ from deft_code.supplements import clean_data
 from deft_code.utils import DeftError
 import sys
 
-"""
-This module contains the classes Deft1D, Field1D, and Density1D
-See doc-strings for each class for details
-"""
-
 
 class Deft1D:
     """This class will serve as the interface for running
@@ -20,87 +17,89 @@ class Deft1D:
 
     parameters
     ----------
-    data: array like
-        User input data for which Deft1D will estimate the density
-    num_grid_points: (int) number of grid points
+    data: (array like)
+        User input data for which Deft1D will estimate the density.
+    num_grid_points: (int)
+        Number of grid points.
     alpha: (int)
-        smoothness parameter. Represents the order of the
-        derivative in the action
+        Smoothness parameter. Represents the order of the
+        derivative in the action.
     bounding_box: ([int,int])
-        bounding box for density estimation
+        Bounding box for density estimation.
     periodic: (boolean)
-        Enforce periodic boundary conditions via True or False
+        Enforce periodic boundary conditions via True or False.
     Z_evaluation_method: (string)
-        method of evaluation of partition function. Possible Z_eval values:
-        'Lap'         : Laplace approximation (default)
-        'Lap+Imp' : Laplace approximation + importance sampling
-        'Lap+Fey'     : Laplace approximation + Feynman diagrams
+        Method of evaluation of partition function. Possible values:
+        'Lap'      : Laplace approximation (default).
+        'Lap+Imp'  : Laplace approximation + importance sampling.
+        'Lap+Fey'  : Laplace approximation + Feynman diagrams.
     num_Z_samples: (int) -> 'num_samples_for_Z'
-        *** Note *** this parameter works only when Z_eval is 'Lap+Sam'
-        number of samples for the evaluation of the partition function.
-        More samples will help to evaluate a better Q*. More samples
-        will also make calculation slower. 0 means the laplace approximation
-        for the evaluation of the partition function is used.
-    resolution (positive float):
-        Specifies max distance between neighboring points on the MAP curve
+        *** Note *** This parameter works only when Z_evaluation_method is 'Lap+Imp'.
+        Number of samples for the evaluation of the partition function.
+        More samples will help to evaluate a better density. More samples
+        will also make calculation slower. num_samples_for_Z = 0 means the Laplace
+        approximation for the evaluation of the partition function is used.
+    resolution: (positive float)
+        Specifies max distance between neighboring points on the MAP curve.
     seed: (int)
-        specify random seed for posterior sampling methods
-    max_t_step: (non-negative float) ->
-        maximum dt step size on the map curve
+        Specify random seed for evaluation of the partition function
+        and for the posterior sampling.
+    max_t_step: (non-negative float)
+        Maximum t step size on the MAP curve.
     max_log_evidence_ratio_drop: (float)
-        stop criterion for traversing the map curve; deft stops when i.e.:
+        Stop criterion for traversing the MAP curve; deft stops when:
         max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
     tolerance: (positive float)
-        Value which species convergence of phi
-    posterior_sampling_method: (string) Methods of posterior sampling. Possible values:
-         None       : no sampling will be performed (default)
-        'Lap'   : Laplace sampling method
-        'Lap+Imp'   : sampling from Laplace approximation + importance re-sampling weights
+        Value which species convergence of phi.
+    posterior_sampling_method: (string)
+        Methods of posterior sampling. Possible values:
+        None        : no sampling will be performed.
+        'Lap'       : Laplace sampling.
+        'Lap+Imp'   : Laplace sampling + importance weights (default).
     num_posterior_samples: (non-negative int)
-        number of posterior samples.
-
+        Number of posterior samples.
     sample_only_at_l_star: (boolean)
-        if True, than posterior samples drawn at t_star
-        if False, posterior sampling done among t near t_star
+        If True : posterior samples drawn at l_star.
+        If False: posterior sampling done among l near l_star.
 
     attributes
     ----------
     *** Note ***: all parameters are attributes except for results.
     results: (dict)
-        contains the results of the deft fit.
+        Contains the results of deft.
 
     methods
     -------
     fit(data, **kwargs):
-        calls the run method in the deft_1d module
+        Fit the data using deft for density estimation.
     get_params():
-        returns the parameters used in the Deft1D constructor
+        Returns the parameters used in the constructor.
     set_params():
-        set parameters for the constructor
+        Set parameters for the constructor.
     get_h():
-        returns grid step size
+        Returns grid bin width.
     get_bounding_box():
-        return bounding box
+        Return bounding box.
     get_grid():
-        returns the grid as a numpy array
+        Returns the grid as a numpy array.
     get_num_grid_points
-        returns the number of grid points
-    get_Results():
-        returns the results object
+        Returns the number of grid points.
+    get_results():
+        Returns the results object.
     get_phi():
-        returns the Field1D object
+        Returns the Field1D object.
     get_Qstar():
-        returns Qstar as a Density1D object
+        Returns Qstar as a Density1D object.
     get_Qsampled():
-        returns posterior samples of the density
+        Returns posterior samples of the density.
         keyword arguments:
-            get_sample_number (non-negative int)
+            get_sample_number: (non-negative int)
                 returns the posterior sample specified by argument
             get_first_n_samples (non negative int)
                 return the first n samples specified by argument
     """
 
-    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False, Z_evaluation_method='Lap', num_Z_samples=0, max_t_step=1.0,
+    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False, Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20):
 
@@ -111,7 +110,7 @@ class Deft1D:
         self.bbox = bounding_box
         self.periodic = periodic
         self.Z_eval = Z_evaluation_method
-        self.num_Z_samples = num_Z_samples
+        self.num_Z_samples = num_samples_for_Z
         self.DT_MAX = max_t_step
         self.print_t = print_t
         self.tolerance = tolerance
@@ -249,7 +248,8 @@ class Deft1D:
 
                 if get_sample_number >= 0 and get_sample_number < self.num_pt_samples:
                     # return Q_sample specified by the user.
-                    return Density1D(Field1D(deft.get_results()['phi_samples'][:, get_sample_number],self.G,self.bbox))
+                    return Density1D(Field1D(self.get_results()['phi_samples'][:, get_sample_number], self.G, self.bbox))
+                    #return Density1D(Field1D(deft.get_results()['phi_samples'][:, get_sample_number],self.G,self.bbox))
                 elif get_sample_number < 0:
                     print("Q_sample error: Please set get_sample_number >= 0, exiting...")
                     # need to exit in this case because evaluate will throw an error.
@@ -274,7 +274,7 @@ class Deft1D:
                     # list containing samples
                     Q_Samples = []
                     for sampleIndex in range(get_first_n_samples):
-                        Q_Samples.append(Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex],self.G,self.bbox)))
+                        Q_Samples.append(Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex],self.G,self.bbox)))
                     print("Warning, returning list of Density objects; use index while using evaluate")
                     return Q_Samples
 
@@ -284,7 +284,8 @@ class Deft1D:
                 Q_Samples = []
                 for sampleIndex in range(self.num_pt_samples):
                     Q_Samples.append(
-                        Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
+                        #Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
+                        Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
                 print("Warning, returning list of Density objects; use index while using evaluate")
                 return Q_Samples
 
@@ -298,6 +299,7 @@ class Deft1D:
         else:
             try:
                 return self.__getattribute__(key)
+                #return self.__getattr__(key)
             except AttributeError as e:
                 print("Get Params:",e)
 
@@ -422,11 +424,10 @@ class Density1D:
 ########################################################
 
 
+
 import matplotlib.pyplot as plt
 
 # Use cases/tests
-
-#print(Deft1D.__doc__)
 
 # load data
 #data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
@@ -435,8 +436,27 @@ data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
 
 # initialize deft object
 deft = Deft1D(data)
+
 # run fit
 deft.fit()
+
+#deft.get_params('alpha')
+#print(deft.__module__)
+
+#python 2. fix for get/set params
+#print(deft.__dict__['G'])
+#deft.__dict__['G'] = 10
+#print(deft.__dict__['G'])
+
+#print(deft.get_params('Gs'))
+
+
+
+import pprint
+
+#print(pprint.pprint(dir(deft)))
+
+#print(deft.get_params('alpha'))
 
 #print('G: ',deft.get_num_grid_points())
 #print('h: ',deft.get_h())
@@ -485,6 +505,8 @@ deft.fit()
 #print(deft.get_results())
 
 # get one parameter value
+#deft.get_results()
+
 #print(deft.get_params('G'))
 
 # get all parameters
@@ -512,8 +534,11 @@ deft.fit()
 #deft.set_params('G',10)
 
 # set parameters via dictionary
+#print(deft.get_params())
 #d = {"G":10,"alpha":2}
 #deft.set_params(**d)
+#print(deft.get_params())
+
 #print(deft.get_Qsampled())
 
 
