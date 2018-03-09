@@ -33,7 +33,7 @@ class Deft1D:
         'Lap'      : Laplace approximation (default).
         'Lap+Imp'  : Laplace approximation + importance sampling.
         'Lap+Fey'  : Laplace approximation + Feynman diagrams.
-    num_Z_samples: (int) -> 'num_samples_for_Z'
+    num_samples_for_Z: (int)
         *** Note *** This parameter works only when Z_evaluation_method is 'Lap+Imp'.
         Number of samples for the evaluation of the partition function.
         More samples will help to evaluate a better density. More samples
@@ -104,29 +104,29 @@ class Deft1D:
                  max_log_evidence_ratio_drop=20):
 
         # set class attributes
-        self.G = num_grid_points
+        self.num_grid_points = num_grid_points
         self.alpha = alpha
-        self.bbox = bounding_box
+        self.bounding_box = bounding_box
         self.periodic = periodic
-        self.Z_eval = Z_evaluation_method
-        self.num_Z_samples = num_samples_for_Z
-        self.DT_MAX = max_t_step
+        self.Z_evaluation_method = Z_evaluation_method
+        self.num_samples_for_Z = num_samples_for_Z
+        self.max_t_step = max_t_step
         self.print_t = print_t
         self.tolerance = tolerance
-        self.deft_seed = seed
+        self.seed = seed
         self.resolution = resolution
-        self.pt_method = posterior_sampling_method
-        self.num_pt_samples = num_posterior_samples
-        self.fix_t_at_t_star = sample_only_at_l_star
+        self.posterior_sampling_method = posterior_sampling_method
+        self.num_posterior_samples = num_posterior_samples
+        self.sample_only_at_l_star = sample_only_at_l_star
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
         self.results = None
 
         # Check inputs
-        inputs_check(G=self.G, alpha=self.alpha, bbox=self.bbox,
-                     periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
+        inputs_check(G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
+                     periodic=self.periodic, Z_eval=self.Z_evaluation_method, DT_MAX=self.max_t_step,
                      print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
-                     deft_seed=self.deft_seed, pt_method=self.pt_method,
-                     fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples,
+                     deft_seed=self.seed, pt_method=self.posterior_sampling_method,
+                     fix_t_at_t_star=self.sample_only_at_l_star, num_pt_samples=self.num_posterior_samples,
                      max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
     def fit(self,data):
@@ -138,31 +138,24 @@ class Deft1D:
             # clean input data
             self.data, self.min_h = clean_data(data)
 
-            if self.bbox == 'Auto':
+            if self.bounding_box == 'Auto':
                 data_spread = np.max(self.data) - np.min(self.data)
                 bbox_left = int(np.min(self.data) - 0.2 * data_spread)
                 bbox_right = int(np.max(self.data) + 0.2 * data_spread)
-                self.bbox = [bbox_left, bbox_right]
+                self.bounding_box = [bbox_left, bbox_right]
 
             # make sure G (and therefore step-size is appropriate set based on data).
-            elif self.bbox != 'Auto':
-                if (self.G != int((self.bbox[1] - self.bbox[0]) / self.min_h) and int(
-                            (self.bbox[1] - self.bbox[0]) / self.min_h) <= 1000):
-                    self.G = int((self.bbox[1] - self.bbox[0]) / self.min_h)
-                    print('Warning, updating value of num_grid_points based on bounding box entered: ', self.G)
+            elif self.bounding_box != 'Auto':
+                if (self.num_grid_points != int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h) and int(
+                            (self.bounding_box[1] - self.bounding_box[0]) / self.min_h) <= 1000):
+                    self.num_grid_points = int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h)
+                    print('Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
 
-
-            # ensure that number of posterior samples aren't zero when
-            # pt_method is 'Lap+W', 'Lap', or 'MMC'
-            if (self.pt_method == 'Lap+W' or self.pt_method == 'Lap') and self.num_pt_samples is 0:
-                #self.num_pt_samples = 1000
-                self.num_pt_samples = 0
-
-            self.results = deft_1d.run(data=self.data, G=self.G, alpha=self.alpha, bbox=self.bbox,
-                                       periodic=self.periodic, Z_eval=self.Z_eval, num_Z_samples=self.num_Z_samples,
-                                       DT_MAX=self.DT_MAX, print_t=self.print_t, tollerance=self.tolerance,
-                                       resolution=self.resolution, deft_seed=self.deft_seed, pt_method=self.pt_method,
-                                       num_pt_samples=self.num_pt_samples, fix_t_at_t_star=self.fix_t_at_t_star,
+            self.results = deft_1d.run(data=self.data, G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
+                                       periodic=self.periodic, Z_eval=self.Z_evaluation_method, num_Z_samples=self.num_samples_for_Z,
+                                       DT_MAX=self.max_t_step, print_t=self.print_t, tollerance=self.tolerance,
+                                       resolution=self.resolution, deft_seed=self.seed, pt_method=self.posterior_sampling_method,
+                                       num_pt_samples=self.num_posterior_samples, fix_t_at_t_star=self.sample_only_at_l_star,
                                        max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
             print('Deft1D ran successfully')
@@ -180,8 +173,8 @@ class Deft1D:
             return self.results.__dict__
         elif self.results is not None and key is not None:
             try:
-                #return self.results.__dict__.get(key)
-                return self.results.__getattribute__(key)
+                return self.results.__dict__.get(key)
+                #return self.results.__getattribute__(key)
             except AttributeError as e:
                 print("Get results:",e)
         else:
@@ -189,22 +182,22 @@ class Deft1D:
 
     # get step size
     def get_h(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers[1]-bin_centers[0]
 
     # return bounding box
     def get_bounding_box(self):
-        return self.bbox
+        return self.bounding_box
 
     # return number of grid points
     def get_num_grid_points(self):
-        return self.G
+        return self.num_grid_points
 
     # return xs of grid
     def get_grid(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
         del counts
         # h = bc[1]-bc[0]
         return bin_centers
@@ -213,7 +206,7 @@ class Deft1D:
     def get_phi_star(self):
 
         if self.results is not None:
-            return Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
+            return Field1D(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
         else:
             print("phi is none. Please run fit first.")
 
@@ -228,7 +221,7 @@ class Deft1D:
     def get_Q_samples(self, get_sample_number=None, get_first_n_samples=None):
 
         # ensure parameters are legal
-        if self.results is not None and self.num_pt_samples is not 0:
+        if self.results is not None and self.num_posterior_samples is not 0:
             try:
                 if not isinstance(get_sample_number,int) and get_sample_number is not None:
                     raise DeftError('Q_sample syntax error. Please ensure get_sample_number is of type int')
@@ -249,15 +242,14 @@ class Deft1D:
             # return a single sample chosen by the user
             if get_sample_number is not None:
 
-                if get_sample_number >= 0 and get_sample_number < self.num_pt_samples:
+                if get_sample_number >= 0 and get_sample_number < self.num_posterior_samples:
                     # return Q_sample specified by the user.
-                    return Density1D(Field1D(self.get_results()['phi_samples'][:, get_sample_number], self.G, self.bbox))
-                    #return Density1D(Field1D(deft.get_results()['phi_samples'][:, get_sample_number],self.G,self.bbox))
+                    return Density1D(Field1D(self.get_results()['phi_samples'][:, get_sample_number], self.num_grid_points, self.bounding_box))
                 elif get_sample_number < 0:
                     print("Q_sample error: Please set get_sample_number >= 0, exiting...")
                     # need to exit in this case because evaluate will throw an error.
                     sys.exit()
-                elif get_sample_number >= self.num_pt_samples:
+                elif get_sample_number >= self.num_posterior_samples:
                     print('Q_sample error: Please ensure get_sample_number < number of posterior samples, exiting...')
                     # need to exit in this case because evaluate will throw an error.
                     sys.exit()
@@ -269,7 +261,7 @@ class Deft1D:
                     print("Q_sample: please set 'get_first_n_samples' > 0")
                     sys.exit()
 
-                elif get_first_n_samples > self.num_pt_samples:
+                elif get_first_n_samples > self.num_posterior_samples:
                     print("Q_sample: please set 'get_first_n_samples' < number of posterior samples")
                     sys.exit()
 
@@ -277,7 +269,7 @@ class Deft1D:
                     # list containing samples
                     Q_Samples = []
                     for sampleIndex in range(get_first_n_samples):
-                        Q_Samples.append(Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex],self.G,self.bbox)))
+                        Q_Samples.append(Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
                     print("Warning, returning list of Density objects; use index while using evaluate")
                     return Q_Samples
 
@@ -285,10 +277,9 @@ class Deft1D:
             else:
                 # return all samples here
                 Q_Samples = []
-                for sampleIndex in range(self.num_pt_samples):
+                for sampleIndex in range(self.num_posterior_samples):
                     Q_Samples.append(
-                        #Density1D(Field1D(deft.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
-                        Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.G, self.bbox)))
+                        Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
                 print("Warning, returning list of Density objects; use index while using evaluate")
                 return Q_Samples
 
@@ -309,24 +300,46 @@ class Deft1D:
                     # attribute retrieval for python 2 and older
                     return self.__dict__[key]
 
-            except AttributeError as e:
-                print("Get Params:",e)
+            except (AttributeError, KeyError) as e:
+                print("Get Params: parameter does not exist: ",e)
 
     # should check if parameter exists in __dict__
     def set_params(self,parameter=None,value=None, **kwargs):
         # if no dictionary provided
         if bool(kwargs) is False:
-            if '__setattr__' in dir(self):
-                self.__setattr__(parameter, value)
-            else:
-                self.__dict__[parameter] = value
+
+            # check validity of parameter key
+            try:
+                if not parameter in self.__dict__:
+                    raise DeftError('Error in set params: setting invalid parameter, '+parameter)
+
+                elif '__setattr__' in dir(self):
+                    self.__setattr__(parameter, value)
+                else:
+                    self.__dict__[parameter] = value
+
+            except DeftError as e:
+                print(e)
+                #sys.exit(1)
+
         else:
-            if '__setattr__' in dir(self):
+
+            # check validity of parameter dictionary
+            try:
                 for key in kwargs:
-                    self.__setattr__(key, kwargs[key])
-            else:
-                for key in kwargs:
-                    self.__dict__[key] = kwargs[key]
+
+                    if not key in self.__dict__.keys():
+                        raise DeftError('Error in set params: setting invalid parameter, ' + key)
+
+                    elif '__setattr__' in dir(self):
+                        self.__setattr__(key, kwargs[key])
+                    else:
+                        self.__dict__[key] = kwargs[key]
+            except DeftError as e:
+                print(e)
+                #sys.exit(1)
+
+
 
 
 class Field1D:
@@ -431,145 +444,3 @@ class Density1D:
         except:
             print("Error: x value out of interpolation range")
             return sp.nan
-
-
-########################################################
-########################################################
-# WARNING THE FOLLOWING IS TEMPORARY AND WILL BE DELETED
-########################################################
-########################################################
-
-
-
-import matplotlib.pyplot as plt
-
-# Use cases/tests
-
-# load data
-#data = np.loadtxt('./data/old_faithful_eruption_times.dat').astype(np.float)
-#data = np.loadtxt('./data/old_faithful_eruption_times.dat')
-data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
-
-# initialize deft object
-deft = Deft1D()
-
-# run fit
-deft.fit(data)
-
-#print(deft.get_params('G'))
-
-#print(deft.__module__)
-
-
-
-#print(deft.get_params('Gs'))
-
-
-
-import pprint
-
-#print(pprint.pprint(dir(deft)))
-
-#print(deft.get_params('alpha'))
-
-#print('G: ',deft.get_num_grid_points())
-#print('h: ',deft.get_h())
-#print(deft.get_bounding_box())
-#print(deft.get_grid())
-
-
-#Qstar = deft.get_Q_star()
-#print(Qstar.evaluate(0.1))
-#print(deft.get_results()['Q_star'])
-
-#Q_samples = deft.get_Q_samples()
-#print(Q_samples)
-#Q_samples = deft.get_Q_samples(get_sample_number=1)
-#print(Q_samples)
-#print(Q_samples.evaluate(0.5))
-
-
-# to get column x/ sample x, do deft.get_results()['phi_samples'][:,1]
-#print(deft.get_results()['phi_samples'][:,:2])
-# to get first n samples samples deft.get_results()['phi_samples'][:,:n], print warning if n> num_pt_samples
-#print(deft.get_results()['phi_samples'][:,:3])
-
-# to get all samples
-#print(deft.get_results()['phi_samples'])
-#Qstar = deft.get_Q_star()
-
-
-#Q_samples = deft.get_Q_samples()
-#print(Q_samples.evaluate(0.1))
-#print(Qstar)
-# check why 0.01 and 0.02 is failing
-#print(Qstar.evaluate(0.5))
-#Qstar.evaluate(0.34)
-#xs = deft.get_grid()
-
-
-#plt.plot(xs,Qstar.evaluate(xs),'o')
-#plt.show()
-
-#print(deft.get_h())
-#print(deft.get_bounding_box())
-
-#print(deft.get_grid())
-
-#print(deft.get_results())
-
-# get one parameter value
-#deft.get_results()
-
-#print(deft.get_params('G'))
-
-# get all parameters
-#print(deft.get_params())
-
-# get parameter by key
-#deft.get_params('resolution')
-
-# get Q_star
-#deft.get_Q_star()
-
-# get Q_samples
-#deft.get_Q_samples()
-
-# get deft results
-#deft.get_results()
-
-# get deft result by key
-#deft.get_results('phi_star')
-
-# access particular results pythonically
-#print(deft.get_results()['phi_star'])
-
-# set individual parameters by key, value
-#deft.set_params('G',10)
-
-# set parameters via dictionary
-#print(deft.get_params())
-d = {"G":10,"alpha":2}
-deft.set_params(**d)
-print(deft.get_params())
-
-#print(deft.get_Q_samples())
-
-
-#field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
-#print(field.evaluate(0.75))
-
-#density = Density1D(field)
-#print(density.evaluate(0.5))
-
-#print(density.evaluate(0.5))
-
-# should result density object
-#Q_star = deft.get_Q_star()
-#print(Q_star)
-
-#print(deft.get_results()['phi_star'])
-#print(deft.get_params('alpha'))
-#print(deft.get_params())
-#deft.set_params('G',10)
-#print(deft.get_params())
