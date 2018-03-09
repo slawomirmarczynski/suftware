@@ -100,7 +100,7 @@ class Deft1D:
     """
 
     def __init__(self, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20):
 
         # set class attributes
@@ -301,8 +301,14 @@ class Deft1D:
             return self.__dict__
         else:
             try:
-                return self.__getattribute__(key)
-                #return self.__getattr__(key)
+
+                if '__getattribute__' in dir(self):
+                    # recommended way of retrieving attributes
+                    return self.__getattribute__(key)
+                else:
+                    # attribute retrieval for python 2 and older
+                    return self.__dict__[key]
+
             except AttributeError as e:
                 print("Get Params:",e)
 
@@ -310,10 +316,17 @@ class Deft1D:
     def set_params(self,parameter=None,value=None, **kwargs):
         # if no dictionary provided
         if bool(kwargs) is False:
-            self.__setattr__(parameter, value)
+            if '__setattr__' in dir(self):
+                self.__setattr__(parameter, value)
+            else:
+                self.__dict__[parameter] = value
         else:
-            for key in kwargs:
-                self.__setattr__(key, kwargs[key])
+            if '__setattr__' in dir(self):
+                for key in kwargs:
+                    self.__setattr__(key, kwargs[key])
+            else:
+                for key in kwargs:
+                    self.__dict__[key] = kwargs[key]
 
 
 class Field1D:
@@ -443,13 +456,11 @@ deft = Deft1D()
 # run fit
 deft.fit(data)
 
-#deft.get_params('alpha')
+#print(deft.get_params('G'))
+
 #print(deft.__module__)
 
-#python 2. fix for get/set params
-#print(deft.__dict__['G'])
-#deft.__dict__['G'] = 10
-#print(deft.__dict__['G'])
+
 
 #print(deft.get_params('Gs'))
 
@@ -538,9 +549,9 @@ import pprint
 
 # set parameters via dictionary
 #print(deft.get_params())
-#d = {"G":10,"alpha":2}
-#deft.set_params(**d)
-#print(deft.get_params())
+d = {"G":10,"alpha":2}
+deft.set_params(**d)
+print(deft.get_params())
 
 #print(deft.get_Q_samples())
 
