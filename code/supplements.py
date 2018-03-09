@@ -7,11 +7,19 @@ import itertools
 import time
 import sys
 
+if sys.version_info[0]==2:
+    # python 2 imports
+    import deft_core
+    import utils
+    import maxent
+    from deft_code.utils import DeftError
 
-from deft_code import deft_core
-from deft_code import maxent
-from deft_code import utils
-from deft_code.utils import DeftError
+else:
+    # python 3 imports
+    from deft_code import deft_core
+    from deft_code import maxent
+    from deft_code import utils
+    from deft_code.utils import DeftError
 
 x_MIN = -500
 
@@ -40,6 +48,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel, pt_samplin
     else:
         G = len(phi_t)
         H = deft_core.hessian(phi_t, R, Delta, t, N)
+        #H = deft_code.deft_core.hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N/G)
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
