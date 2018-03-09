@@ -86,11 +86,11 @@ class Deft1D:
         Returns the number of grid points.
     get_results():
         Returns the results object.
-    get_phi():
+    get_phi_star():
         Returns the Field1D object.
-    get_Qstar():
+    get_Q_star():
         Returns Qstar as a Density1D object.
-    get_Qsampled():
+    get_Q_samples():
         Returns posterior samples of the density.
         keyword arguments:
             get_sample_number: (non-negative int)
@@ -210,7 +210,7 @@ class Deft1D:
         return bin_centers
 
     # returns a Field1D object
-    def get_phi(self):
+    def get_phi_star(self):
 
         if self.results is not None:
             return Field1D(self.results.__dict__.get('phi_star'), self.G, self.bbox)
@@ -218,14 +218,14 @@ class Deft1D:
             print("phi is none. Please run fit first.")
 
     # returns a Density1D object
-    def get_Qstar(self):
+    def get_Q_star(self):
 
         if self.results is not None:
-            return Density1D(self.get_phi())
+            return Density1D(self.get_phi_star())
         else:
             print("Q_star is none. Please run fit first.")
 
-    def get_Qsampled(self,get_sample_number=None, get_first_n_samples=None):
+    def get_Q_samples(self, get_sample_number=None, get_first_n_samples=None):
 
         # ensure parameters are legal
         if self.results is not None and self.num_pt_samples is not 0:
@@ -467,13 +467,13 @@ import pprint
 #print(deft.get_grid())
 
 
-#Qstar = deft.get_Qstar()
+#Qstar = deft.get_Q_star()
 #print(Qstar.evaluate(0.1))
 #print(deft.get_results()['Q_star'])
 
-#Q_samples = deft.get_Qsampled()
+#Q_samples = deft.get_Q_samples()
 #print(Q_samples)
-#Q_samples = deft.get_Qsampled(get_sample_number=1)
+#Q_samples = deft.get_Q_samples(get_sample_number=1)
 #print(Q_samples)
 #print(Q_samples.evaluate(0.5))
 
@@ -485,10 +485,10 @@ import pprint
 
 # to get all samples
 #print(deft.get_results()['phi_samples'])
-#Qstar = deft.get_Qstar()
+#Qstar = deft.get_Q_star()
 
 
-#Q_samples = deft.get_Qsampled()
+#Q_samples = deft.get_Q_samples()
 #print(Q_samples.evaluate(0.1))
 #print(Qstar)
 # check why 0.01 and 0.02 is failing
@@ -519,10 +519,10 @@ import pprint
 #deft.get_params('resolution')
 
 # get Q_star
-#deft.get_Qstar()
+#deft.get_Q_star()
 
 # get Q_samples
-#deft.get_Qsampled()
+#deft.get_Q_samples()
 
 # get deft results
 #deft.get_results()
@@ -542,7 +542,7 @@ import pprint
 #deft.set_params(**d)
 #print(deft.get_params())
 
-#print(deft.get_Qsampled())
+#print(deft.get_Q_samples())
 
 
 #field = Field1D(deft.get_results()['phi_star'], deft.get_params('G'), deft.get_params('bbox'))
@@ -554,7 +554,7 @@ import pprint
 #print(density.evaluate(0.5))
 
 # should result density object
-#Q_star = deft.get_Qstar()
+#Q_star = deft.get_Q_star()
 #print(Q_star)
 
 #print(deft.get_results()['phi_star'])
