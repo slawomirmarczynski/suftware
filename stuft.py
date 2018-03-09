@@ -99,12 +99,11 @@ class Deft1D:
                 return the first n samples specified by argument
     """
 
-    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False, Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
+    def __init__(self, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+W', num_posterior_samples=5, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20):
 
         # set class attributes
-        self.data = data
         self.G = num_grid_points
         self.alpha = alpha
         self.bbox = bounding_box
@@ -122,15 +121,6 @@ class Deft1D:
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
         self.results = None
 
-        # clean input data
-        self.data, self.min_h = clean_data(data)
-
-        # make sure G (and therefore step-size is appropriate set based on data).
-        if self.bbox !='Auto':
-            if (self.G!= int((self.bbox[1] - self.bbox[0]) / self.min_h) and int((self.bbox[1] - self.bbox[0]) / self.min_h)<=1000):
-                self.G = int((self.bbox[1] - self.bbox[0]) / self.min_h)
-                print('Warning, updating value of num_grid_points based on bounding box entered: ',self.G)
-
         # Check inputs
         inputs_check(G=self.G, alpha=self.alpha, bbox=self.bbox,
                      periodic=self.periodic, Z_eval=self.Z_eval, DT_MAX=self.DT_MAX,
@@ -139,16 +129,29 @@ class Deft1D:
                      fix_t_at_t_star=self.fix_t_at_t_star, num_pt_samples=self.num_pt_samples,
                      max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
-        if self.bbox == 'Auto':
-            data_spread = np.max(self.data) - np.min(self.data)
-            bbox_left = int(np.min(self.data) - 0.2 * data_spread)
-            bbox_right = int(np.max(self.data) + 0.2 * data_spread)
-            self.bbox = [bbox_left, bbox_right]
-
-    def fit(self):
+    def fit(self,data):
 
         # Run deft_1d
         try:
+
+            self.data = data
+            # clean input data
+            self.data, self.min_h = clean_data(data)
+
+            if self.bbox == 'Auto':
+                data_spread = np.max(self.data) - np.min(self.data)
+                bbox_left = int(np.min(self.data) - 0.2 * data_spread)
+                bbox_right = int(np.max(self.data) + 0.2 * data_spread)
+                self.bbox = [bbox_left, bbox_right]
+
+            # make sure G (and therefore step-size is appropriate set based on data).
+            elif self.bbox != 'Auto':
+                if (self.G != int((self.bbox[1] - self.bbox[0]) / self.min_h) and int(
+                            (self.bbox[1] - self.bbox[0]) / self.min_h) <= 1000):
+                    self.G = int((self.bbox[1] - self.bbox[0]) / self.min_h)
+                    print('Warning, updating value of num_grid_points based on bounding box entered: ', self.G)
+
+
             # ensure that number of posterior samples aren't zero when
             # pt_method is 'Lap+W', 'Lap', or 'MMC'
             if (self.pt_method == 'Lap+W' or self.pt_method == 'Lap') and self.num_pt_samples is 0:
@@ -435,10 +438,10 @@ import matplotlib.pyplot as plt
 data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
 
 # initialize deft object
-deft = Deft1D(data)
+deft = Deft1D()
 
 # run fit
-deft.fit()
+deft.fit(data)
 
 #deft.get_params('alpha')
 #print(deft.__module__)
