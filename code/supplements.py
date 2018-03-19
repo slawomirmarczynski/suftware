@@ -734,7 +734,7 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
 
     # Make sure bbox is valid
     try:
-        if not (bbox=='Auto' or isinstance(bbox,tuple)):
+        if not (bbox=='Auto' or isinstance(bbox,tuple) or isinstance(bbox,list)):
             raise TypeError
 
     except TypeError as e:
