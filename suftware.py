@@ -165,7 +165,7 @@ class Deft1D:
                                            fix_t_at_t_star=self.sample_only_at_l_star,
                                            max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
-                print('Deft1D ran successfully')
+            print('Deft1D ran successfully')
 
             # this should be more specific
         except:
@@ -174,12 +174,12 @@ class Deft1D:
 
     def fit(self,data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
-                 max_log_evidence_ratio_drop=20, fit_now=False):
+                 max_log_evidence_ratio_drop=20):
 
         # Run deft_1d
         try:
 
-            if fit_now == True:
+            if self.fit_now == False:
                 # clean input data
                 data, min_h = clean_data(data)
 
@@ -203,7 +203,8 @@ class Deft1D:
                                            num_pt_samples=num_posterior_samples, fix_t_at_t_star=sample_only_at_l_star,
                                            max_log_evidence_ratio_drop=max_log_evidence_ratio_drop)
 
-                print('Deft1D ran successfully')
+                self.results = results
+                print('Deft1D fit ran successfully')
                 return results
 
             else:
