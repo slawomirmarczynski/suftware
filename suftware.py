@@ -24,7 +24,7 @@ class Deft1D:
     alpha: (int)
         Smoothness parameter. Represents the order of the
         derivative in the action.
-    bounding_box: ([int,int])
+    bounding_box: ((int,int) or [int,int])
         Bounding box for density estimation.
     periodic: (boolean)
         Enforce periodic boundary conditions via True or False.
@@ -61,6 +61,9 @@ class Deft1D:
     sample_only_at_l_star: (boolean)
         If True : posterior samples drawn at l_star.
         If False: posterior sampling done among l near l_star.
+    fit_now: (boolean)
+        If True: the data are fit in the constructor, no need to call fit method
+        If False: the fit method needs to be called separately to fit data
 
     attributes
     ----------
@@ -99,9 +102,9 @@ class Deft1D:
                 return the first n samples specified by argument
     """
 
-    def __init__(self, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
+    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
                  print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
-                 max_log_evidence_ratio_drop=20):
+                 max_log_evidence_ratio_drop=20,fit_now=True):
 
         # set class attributes
         self.num_grid_points = num_grid_points
@@ -119,7 +122,9 @@ class Deft1D:
         self.num_posterior_samples = num_posterior_samples
         self.sample_only_at_l_star = sample_only_at_l_star
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
+        self.data = data
         self.results = None
+        self.fit_now = fit_now
 
         # Check inputs
         inputs_check(G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
@@ -129,12 +134,8 @@ class Deft1D:
                      fix_t_at_t_star=self.sample_only_at_l_star, num_pt_samples=self.num_posterior_samples,
                      max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
-    def fit(self,data):
-
-        # Run deft_1d
         try:
 
-            self.data = data
             # clean input data
             self.data, self.min_h = clean_data(data)
 
@@ -149,22 +150,69 @@ class Deft1D:
                 if (self.num_grid_points != int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h) and int(
                             (self.bounding_box[1] - self.bounding_box[0]) / self.min_h) <= 1000):
                     self.num_grid_points = int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h)
-                    print('Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
+                    print(
+                    'Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
 
-            self.results = deft_1d.run(data=self.data, G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
-                                       periodic=self.periodic, Z_eval=self.Z_evaluation_method, num_Z_samples=self.num_samples_for_Z,
-                                       DT_MAX=self.max_t_step, print_t=self.print_t, tollerance=self.tolerance,
-                                       resolution=self.resolution, deft_seed=self.seed, pt_method=self.posterior_sampling_method,
-                                       num_pt_samples=self.num_posterior_samples, fix_t_at_t_star=self.sample_only_at_l_star,
-                                       max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
+            if fit_now == True:
 
-            print('Deft1D ran successfully')
-            return self.results
+                self.results = deft_1d.run(data=self.data, G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
+                                           periodic=self.periodic, Z_eval=self.Z_evaluation_method,
+                                           num_Z_samples=self.num_samples_for_Z,
+                                           DT_MAX=self.max_t_step, print_t=self.print_t, tollerance=self.tolerance,
+                                           resolution=self.resolution, deft_seed=self.seed,
+                                           pt_method=self.posterior_sampling_method,
+                                           num_pt_samples=self.num_posterior_samples,
+                                           fix_t_at_t_star=self.sample_only_at_l_star,
+                                           max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
+
+                print('Deft1D ran successfully')
+
+            # this should be more specific
+        except:
+            # include include message with more details here
+            print('Deft fit failed')
+
+    def fit(self,data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
+                 max_log_evidence_ratio_drop=20, fit_now=False):
+
+        # Run deft_1d
+        try:
+
+            if fit_now == True:
+                # clean input data
+                data, min_h = clean_data(data)
+
+                if bounding_box == 'Auto':
+                    data_spread = np.max(data) - np.min(data)
+                    bbox_left = int(np.min(data) - 0.2 * data_spread)
+                    bbox_right = int(np.max(data) + 0.2 * data_spread)
+                    bounding_box = [bbox_left, bbox_right]
+
+                # make sure G (and therefore step-size is appropriate set based on data).
+                elif bounding_box != 'Auto':
+                    if (num_grid_points != int((bounding_box[1] - bounding_box[0]) / min_h) and int(
+                                (bounding_box[1] - bounding_box[0]) / min_h) <= 1000):
+                        num_grid_points = int((bounding_box[1] - bounding_box[0]) / min_h)
+                        print('Warning, updating value of num_grid_points based on bounding box entered: ', num_grid_points)
+
+                results = deft_1d.run(data=data, G=num_grid_points, alpha=alpha, bbox=bounding_box,
+                                           periodic=periodic, Z_eval=Z_evaluation_method, num_Z_samples=num_samples_for_Z,
+                                           DT_MAX=max_t_step, print_t=print_t, tollerance=tolerance,
+                                           resolution=resolution, deft_seed=seed, pt_method=posterior_sampling_method,
+                                           num_pt_samples=num_posterior_samples, fix_t_at_t_star=sample_only_at_l_star,
+                                           max_log_evidence_ratio_drop=max_log_evidence_ratio_drop)
+
+                print('Deft1D ran successfully')
+                return results
+
+            else:
+                print("Fit can only be called if 'fit_now' in constructor is False. ")
+                sys.exit(0)
 
         # this should be more specific
         except:
             # include include message with more details here
-            # *** Ask what to do ***
             print('Deft fit failed')
 
     def get_results(self, key=None):
