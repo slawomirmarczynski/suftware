@@ -2,11 +2,12 @@ import scipy as sp
 import numpy as np
 from scipy.linalg import solve, det, norm
 
-import utils
-import laplacian
+from deft_code import utils
+from deft_code.utils import DeftError
+from deft_code import laplacian
 
 # Import error handling
-from utils import DeftError
+#from utils import DeftError
 
 PHI_STD_REG = utils.PHI_STD_REG 
 

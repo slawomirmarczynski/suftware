@@ -6,12 +6,17 @@ from scipy.linalg import det, eigh, solve, eigvalsh, inv
 import scipy.optimize as opt
 import time
 
+#import utils
+#import supplements
+#import maxent
+
+# python 3 imports
 from deft_code import utils
 from deft_code import supplements
 from deft_code import maxent
 
 # Import error handling
-# from utils import DeftError
+#from utils import DeftError
 from deft_code.utils import DeftError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence

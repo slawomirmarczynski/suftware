@@ -6,10 +6,11 @@ from scipy.linalg import det, eigh, qr
 from scipy.misc import comb
 import pickle
 
-import utils
+from deft_code import utils
 
 # Import error handling
-from utils import DeftError
+#from utils import DeftError
+from deft_code.utils import DeftError
 
 
 # Class container for Laplacian operators. Constructor computes spectrum.
