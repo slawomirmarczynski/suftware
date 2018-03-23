@@ -575,8 +575,9 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel, pt_s
 # Sample probable densities using posterior probability
 def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star):
 
-    if pt_method == 'Lap' or 'Lap+Imp':
+    if pt_method == 'Lap':
         method, go_parallel = Laplace_approach, False
+    '''
     if pt_method == 'Lap+P':
         method, go_parallel = Laplace_approach, True
     if pt_method == 'GLap':
@@ -585,6 +586,7 @@ def posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_
         method, go_parallel = GLaplace_approach, True
     if pt_method == 'MMC':
         method, go_parallel = Metropolis_Monte_Carlo, False
+    '''
 
     phi_samples = np.zeros([G,num_pt_samples])
     phi_weights = np.zeros(num_pt_samples)
@@ -853,7 +855,7 @@ def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
         sys.exit(1)
 
     # Make sure pt_method is valid
-    pt_methods = [None, 'Lap', 'Lap+Imp']
+    pt_methods = [None, 'Lap']
 
     try:
         if not (pt_method in pt_methods):

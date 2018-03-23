@@ -741,21 +741,21 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             slope_new = np.sign(log_ptgd_new - log_ptgd0)
             # Terminate if t is too negative or too positive
             if t < T_MIN:
-                print('Q_end = M: t (%.2f) < T_MIN (%.2f)' % (t, T_MIN))
+                #print('Q_end = M: t (%.2f) < T_MIN (%.2f)' % (t, T_MIN))
                 break_t_loop[0] = False
                 break
             elif t > T_MAX:
-                print('Q_end = R: t (%.2f) > T_MAX (%.2f)' % (t, T_MAX))
+                #print('Q_end = R: t (%.2f) > T_MAX (%.2f)' % (t, T_MAX))
                 break_t_loop[1] = False
                 break
             elif (direction == +1) and (t > 0) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0):
-                print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
-                      (t, log_ptgd_new, log_ptgd0))
+                #print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
+                #      (t, log_ptgd_new, log_ptgd0))
                 break_t_loop[1] = False
                 break
             elif (direction == +1) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0 + max_log_evidence_ratio_drop):
-                print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + max_log_evidence_ratio_drop (%.2f) at t = %.2f' %
-                      (log_ptgd_new, log_ptgd0, max_log_evidence_ratio_drop, t))
+                #print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + max_log_evidence_ratio_drop (%.2f) at t = %.2f' %
+                #      (log_ptgd_new, log_ptgd0, max_log_evidence_ratio_drop, t))
                 break_t_loop[1] = False
                 break
             log_ptgd0 = log_ptgd_new

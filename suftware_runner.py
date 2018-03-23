@@ -22,7 +22,21 @@ print(os.getcwd())
 data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
 
 # initialize deft object
-deft = suftware.Deft1D(data)
+deft = suftware.Deft1D(data,num_posterior_samples=200,bounding_box=(-10,10),posterior_sampling_method='Lap')
+
+Qstar = deft.get_Q_star()
+xs = deft.get_grid()
+plt.plot(xs,Qstar.evaluate(xs))
+
+Q_samples = deft.get_Q_samples()
+
+
+# make a plot using the grid
+xs = deft.get_grid()
+for s in range(200):
+    plt.plot(xs,Q_samples[s].evaluate(xs))
+#plt.plot(xs,Q_samples.evaluate(xs),'o')
+plt.show()
 
 # run fit
 #deft.fit(data)
@@ -49,17 +63,20 @@ grid = deft.get_grid()
 
 
 
-Qstar = deft.get_Q_star()
-Qstar.evaluate(0.1)
-deft.get_results()['Q_star']
+#Qstar = deft.get_Q_star()
+#Qstar.evaluate(0.2)
+deft.get_results()
+
+#print(deft.get_results()['phi_weights'])
+
 
 print(type(deft.get_results()['Q_star']))
-sys.exit()
+
 
 # Q_samples tests
 Q_samples = deft.get_Q_samples()
 Q_samples = deft.get_Q_samples(get_sample_number=1)
-Q_samples.evaluate(0.5)
+print(Q_samples.evaluate(0.5))
 # also works:
 #print(deft.get_results()['phi_samples'])
 
@@ -94,7 +111,8 @@ deft.set_params('num_grid_points',11)
 #d = {"alpha":2,"G":2}
 #deft.set_params(**d)
 
-#print(deft.get_params())
+print(deft.get_params())
+
 
 # parameters correctly
 d = {"num_grid_points":10,"alpha":2}
