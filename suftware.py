@@ -300,70 +300,33 @@ class Deft1D:
                 print(e)
                 sys.exit(1)
 
-            if get_sample_number is not None and get_first_n_samples is not None:
-                print("Q_sample Warning: both parameters (get_sample_number, get_first_n_samples) used, please use only one parameter.")
+            # return all samples here
+            Q_Samples = []
+            sample_weights = []
+            for sampleIndex in range(self.num_posterior_samples):
+                Q_Samples.append(
+                    Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
 
-            # return a single sample chosen by the user
-            if get_sample_number is not None:
+                sample_weights.append(self.get_results()['phi_weights'][sampleIndex])
 
-                if get_sample_number >= 0 and get_sample_number < self.num_posterior_samples:
-                    # return Q_sample specified by the user.
-                    return Density1D(Field1D(self.get_results()['phi_samples'][:, get_sample_number], self.num_grid_points, self.bounding_box))
-                elif get_sample_number < 0:
-                    print("Q_sample error: Please set get_sample_number >= 0, exiting...")
-                    # need to exit in this case because evaluate will throw an error.
-                    sys.exit()
-                elif get_sample_number >= self.num_posterior_samples:
-                    print('Q_sample error: Please ensure get_sample_number < number of posterior samples, exiting...')
-                    # need to exit in this case because evaluate will throw an error.
-                    sys.exit()
+            if importance_resampling:
 
-            # get first n samples. This method could be modified to return a range of samples
-            elif get_first_n_samples is not None:
+                indices = range(self.num_posterior_samples)
+                index_probs = sample_weights / sum(sample_weights)
+                weighted_sample_indices = np.random.choice(indices, size=self.num_posterior_samples, p=index_probs)
 
-                if get_first_n_samples < 0:
-                    print("Q_sample: please set 'get_first_n_samples' > 0")
-                    sys.exit()
-
-                elif get_first_n_samples > self.num_posterior_samples:
-                    print("Q_sample: please set 'get_first_n_samples' < number of posterior samples")
-                    sys.exit()
-
-                elif get_first_n_samples >= 0:
-                    # list containing samples
-                    Q_Samples = []
-                    for sampleIndex in range(get_first_n_samples):
-                        Q_Samples.append(Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
-                    print("Warning, returning list of Density objects; use index while using evaluate")
-                    return Q_Samples
-
-            # get all samples
-            else:
-                # return all samples here
-                Q_Samples = []
-                sample_weights = []
-                for sampleIndex in range(self.num_posterior_samples):
-                    Q_Samples.append(
-                        Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
-
-                    sample_weights.append(self.get_results()['phi_weights'][sampleIndex])
-
-                if importance_resampling:
-
-                    indices = range(self.num_posterior_samples)
-                    index_probs = sample_weights / sum(sample_weights)
-                    weighted_sample_indices = np.random.choice(indices, size=self.num_posterior_samples, p=index_probs)
-
-                    Q_samples_weighted = []
-                    for weight_index in weighted_sample_indices:
-                        Q_samples_weighted.append(Q_Samples[weight_index])
-
-                    return Q_samples_weighted
+                Q_samples_weighted = []
+                for weight_index in weighted_sample_indices:
+                    Q_samples_weighted.append(Q_Samples[weight_index])
 
                 print("Warning, returning list of Density objects; use index while using evaluate")
-                # we have samples Q_samples in a list
+                # return weight samples as default
+                return Q_samples_weighted
 
-                return Q_Samples
+            print("Warning, returning list of Density objects; use index while using evaluate")
+            # we have samples Q_samples in a list
+
+            return Q_Samples
 
         else:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")

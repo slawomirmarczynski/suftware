@@ -1,7 +1,7 @@
 import suftware
 import matplotlib.pyplot as plt
 import numpy as np
-
+import sys
 import os
 print(os.getcwd())
 
@@ -21,8 +21,10 @@ print(os.getcwd())
 #data = np.loadtxt('./data/old_faithful_eruption_times.dat')
 data = np.genfromtxt('./data/old_faithful_eruption_times.dat')
 
+posterior_samples = 200
+
 # initialize deft object
-deft = suftware.Deft1D(data,num_posterior_samples=200,bounding_box=(-10,10),posterior_sampling_method='Lap')
+deft = suftware.Deft1D(data,num_posterior_samples=posterior_samples,bounding_box=(-10,10),posterior_sampling_method='Lap')
 
 Qstar = deft.get_Q_star()
 xs = deft.get_grid()
@@ -33,10 +35,11 @@ Q_samples = deft.get_Q_samples()
 
 # make a plot using the grid
 xs = deft.get_grid()
-for s in range(200):
+for s in range(posterior_samples):
     plt.plot(xs,Q_samples[s].evaluate(xs))
 #plt.plot(xs,Q_samples.evaluate(xs),'o')
 plt.show()
+
 
 # run fit
 #deft.fit(data)
@@ -73,11 +76,6 @@ deft.get_results()
 print(type(deft.get_results()['Q_star']))
 
 
-# Q_samples tests
-Q_samples = deft.get_Q_samples()
-Q_samples = deft.get_Q_samples(get_sample_number=1)
-print(Q_samples.evaluate(0.5))
-# also works:
 #print(deft.get_results()['phi_samples'])
 
 
