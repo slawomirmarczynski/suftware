@@ -282,20 +282,13 @@ class Deft1D:
 
     # if importance_resampling == True:
     #   then
-    def get_Q_samples(self, importance_resampling=True, get_sample_number=None, get_first_n_samples=None):
+    def get_Q_samples(self, importance_resampling=True):
 
         # ensure parameters are legal
         if self.results is not None and self.num_posterior_samples is not 0:
             try:
-                if not isinstance(get_sample_number,int) and get_sample_number is not None:
-                    raise DeftError('Q_sample syntax error. Please ensure get_sample_number is of type int')
-            except DeftError as e:
-                print(e)
-                sys.exit(1)
-
-            try:
-                if not isinstance(get_first_n_samples,int) and get_first_n_samples is not None:
-                    raise DeftError('Q_sample syntax error. Please ensure get_first_n_samples is of type int')
+                if not isinstance(importance_resampling,bool):
+                    raise DeftError('Q_samples syntax error. Please ensure importance_resampling is of type bool')
             except DeftError as e:
                 print(e)
                 sys.exit(1)
