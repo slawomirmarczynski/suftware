@@ -1,13 +1,10 @@
 #!/usr/local/bin/python -W ignore
 import os.path
 import re
-import argparse
 import scipy as sp
 import numpy as np
 import sys
 import time
-#import gviz_api
-import json
 from scipy.interpolate import interp1d
 
 # Import deft-related code
@@ -16,56 +13,10 @@ from deft_code import utils
 from deft_code import laplacian
 from deft_code import maxent
 
-# Imports for KDE
-#import sklearn
-#from sklearn.neighbors import KernelDensity
-#from sklearn.grid_search import GridSearchCV
-
 # Import error handling
 from deft_code.utils import DeftError
 
 class Results(): pass;
-
-
-# Specify argument parser for DEFT and return arguments
-def get_commandline_arguments():
-    # Set up parser for commandline arguments
-    parser = argparse.ArgumentParser()
-
-    # Mandatory arguments
-    parser.add_argument('-i', '--input', dest='data_file', default='stdin', type=str, help='File containing input data. Default: standard input')
-
-    # Optional switch arguments
-    parser.add_argument('-R', '--histogram', action='store_true', help='Include histogram in output file.')
-    parser.add_argument('-M', '--max_ent', action='store_true', help='Include maximum entropy estimate in output file.')
-    parser.add_argument('-p', '--periodic', action='store_true', help='Enforce periodic boundary conditions.')
-    parser.add_argument('--json', action='store_true', help='Output data as a JSon string.')
-
-
-    # Optional input arguments
-    parser.add_argument('-a', '--alpha', type=int, default=3, help='Derivative to constrain.')
-    parser.add_argument('-G', '--num_gridpoints', default=100, help='Number of gridpoints to use.')
-    parser.add_argument('-e', '--epsilon', default=0.01, type=float, help='Geodesic distance spacing of computed densities along MAP curve.')
-    parser.add_argument('-t', '--tollerance', default=0.000001, type=float, help='Tollerance for termination of corrector steps.')
-    parser.add_argument('--Laplace', default=True, help='Use Laplace approximation? Or include Feynman diagrams?') 
-    parser.add_argument('-N', '--num_samples', default=20, type=int, help='Number of samples to draw from the posterior density')
-    parser.add_argument('--num_steps_per_sample', default=100, type=int, help='Number of steps per sample')
-    parser.add_argument('--num_thermalization_steps', default=1000, type=int, help='Number of thermalization steps')
-    parser.add_argument('--fix_t_at_t_star', default=False, help='Fix t at t_star when sampling?') 
-    parser.add_argument('--box_min', default=-sp.Inf, type=float)
-    parser.add_argument('--box_max', default=sp.Inf, type=float)
-    parser.add_argument('-c', '--map_curve_file', default='none', help='Name of MAP curve output file. Default: none.')
-    parser.add_argument('-o', '--output_file', help='specify name for output file. Otherwise output is written to stdout')
-    parser.add_argument('-l', '--length_scale', default='auto', help='Specify smoothness length scale: "auto" (default), "infinity", or a float.')
-    parser.add_argument('--no_output', action='store_true', help="No not give any output. Useful for debugging only.")
-    parser.add_argument('--errorbars', action='store_true', help="Return errorbars.")
-
-
-    # Parse arguments
-    args = parser.parse_args()
-
-    # Return arguments
-    return args
 
 # Draws a probability distribution from the bilateral Laplacian prior
 # You have to manually specify coefficients of nonconstant kernel components
@@ -298,87 +249,3 @@ def run(obj):
     results.deft_1d_compute_time = time.clock()-start_time
 
     return results
-
-#
-# Main program
-#
-if __name__ == '__main__':
-
-    # Get commandline arguments using argparse
-    args = get_commandline_arguments()
-
-    # Get data file handle
-    data_file_handle = get_data_file_handle(args.data_file)
-
-    # Retrieve data from file
-    data = load_data(data_file_handle)
-
-    # Set alpha
-    alpha = args.alpha
-
-    # Set the number of gridpoints
-    G = args.num_gridpoints
-
-    # Make sure data spans a finite interval
-    bbox = [args.box_min,args.box_max]
-
-    # Get periodic switch
-    periodic = args.periodic
-
-    # Compute DEFT density estimate
-    results = run( data, G=G, alpha=alpha, bbox=bbox, periodic=periodic, \
-                   Laplace=args.Laplace, num_samples=args.num_samples, \
-                   num_steps_per_sample=args.num_steps_per_sample, \
-                   num_thermalization_steps=args.num_thermalization_steps, \
-                   fix_t_at_t_star=args.fix_t_at_t_star)
-
-    # Do KDE estimate as well
-    #if args.kde:
-    #    Q_kde = kde(data, G, bbox)
-    
-    # Output results
-    Q_star = results.Q_star
-    x_grid = results.bin_centers
-    R = results.R
-    Q_samples = [[q for q in Q] for Q in results.Q_samples.T]
-    num_samples = len(Q_samples)
-
-    # Verify output
-    if not (len(Q_star) == G):
-        raise DeftError('Q_star is not of the right length: len(Q_star) = %d, not %d'%(len(Q_star),G))
-    if not (len(x_grid) == G):
-        raise DeftError('x_grid is not of the right length: len(x_grid) = %d, not %d'%(len(x_grid),G))
-    if not (len(R) == G):
-        raise DeftError('R is not of the right length: len(R) = %d, not %d'%(len(R),G))
-    
-    # Create dictionary to return as JSON object
-    results_dict = {
-        'Q_samples':Q_samples,
-        'Q_star':list(Q_star),
-        'x_grid':list(x_grid),
-        'R':list(R),
-        'h':results.h,
-        'G':results.G,
-        'L':results.L,
-        'alpha':alpha,
-        'box_min':bbox[0],
-        'box_max':bbox[1],
-        'periodic':periodic,
-        'entropies':list(results.entropies),
-        'e_mean':results.e_mean,
-        'e_std':results.e_std,
-        'N':results.N
-    }
-
-    # Output in JSon format
-    if args.json:
-        output_string = json.dumps(results_dict)
-
-    # Tab-delimited text. 
-    else:
-        output_string = '\n'.join(['%f\t%f\t%f'%(x,r,q) for x,r,q\
-                in zip(x_grid,R,Q_star)])
-
-    # Write output
-    if not args.no_output:
-        sys.stdout.write(output_string+'\n')

@@ -39,9 +39,11 @@
       <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1786">
-              <caret line="337" column="4" lean-forward="true" selection-start-line="337" selection-start-column="4" selection-end-line="337" selection-end-column="4" />
-              <folding />
+            <state relative-caret-position="202">
+              <caret line="23" column="29" lean-forward="false" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="29" />
+              <folding>
+                <element signature="e#34#48#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -74,6 +76,7 @@
       <find>posterior_sampling_method</find>
       <find>fit_now</find>
       <find>pt_method</find>
+      <find>get_command</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -310,7 +313,14 @@
       <option name="project" value="LOCAL" />
       <updated>1521991803182</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Removed option to pre-compute Laplacians">
+      <created>1521992093940</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1521992093940</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -391,7 +401,8 @@
     <MESSAGE value="Removed Deft1D.fit() and the fit_now option in the constructor" />
     <MESSAGE value="Simplified interface to supplements.inputs_check()" />
     <MESSAGE value="Simplified interface to deft_1d.run(). Now just takes a Deft1D object." />
-    <option name="LAST_COMMIT_MESSAGE" value="Simplified interface to deft_1d.run(). Now just takes a Deft1D object." />
+    <MESSAGE value="Removed option to pre-compute Laplacians" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed option to pre-compute Laplacians" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -555,9 +566,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1786">
-          <caret line="337" column="4" lean-forward="true" selection-start-line="337" selection-start-column="4" selection-end-line="337" selection-end-column="4" />
-          <folding />
+        <state relative-caret-position="202">
+          <caret line="23" column="29" lean-forward="false" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="29" />
+          <folding>
+            <element signature="e#34#48#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
