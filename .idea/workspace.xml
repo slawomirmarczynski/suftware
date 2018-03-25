@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/sim/simulate_data_1d.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/sim/simulate_data_2d.py" afterPath="" />
+    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="Removed 2">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data0" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data1" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data2" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data3" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data5" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data6" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data7" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data8" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data9" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/train-images-idx3-ubyte" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/suftware.py" afterPath="$PROJECT_DIR$/suftware.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,74 +33,6 @@
               <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
               <folding>
                 <element signature="e#177#213#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
-              <folding>
-                <element signature="e#34#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="density_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="field_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/field_1d.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1064">
-              <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-              <folding>
-                <element signature="e#34#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="laplacian.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/laplacian.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="11" column="28" lean-forward="false" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16188">
-              <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13794">
-              <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -165,6 +107,11 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
@@ -429,7 +376,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522001296550</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code">
+      <created>1522013795367</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1522013795367</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -460,9 +414,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13939634" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13939634" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16294643" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -529,7 +482,8 @@
     <MESSAGE value="Added interpolation capabilities to Density1D and Field1D" />
     <MESSAGE value="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py" />
     <MESSAGE value="More of the same." />
-    <option name="LAST_COMMIT_MESSAGE" value="More of the same." />
+    <MESSAGE value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -792,6 +746,14 @@
           <folding>
             <element signature="e#34#52#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/digits.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
