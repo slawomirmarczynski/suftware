@@ -1,6 +1,5 @@
 # "description":"Treatment length"
-# "box_min":0 
-# "box_max":800
+# "bbox":[0,800]
 # "units":"days"
 1
 1

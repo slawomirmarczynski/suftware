@@ -1,6 +1,5 @@
 # "description":"Old Faithful eruption times"
-# "box_min":1
-# "box_max":6
+# "bbox":[1,6]
 # "units":"minutes"
 3.600
 1.800

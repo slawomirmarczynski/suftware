@@ -1,6 +1,5 @@
 # "description":"Old Faithful waiting times"
-# "box_min":30
-# "box_max":110
+# "bbox":[30,110]
 # "units":"minutes"
 79
 54

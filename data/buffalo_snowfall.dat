@@ -1,6 +1,5 @@
 # "description":"Buffalo snowfall"
-# "box_min":0
-# "box_max":150
+# "bbox":[0,150]
 # "units":"inches"
 126.4
 82.4
