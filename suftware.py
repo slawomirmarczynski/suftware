@@ -7,3 +7,5 @@ from deft_code.density_1d import Density1D
 from deft_code.field_1d import Field1D
 
 from deft_code.simulate_data_1d import run as simulate_data_1d
+from deft_code.simulate_data_1d import VALID_DISTRIBUTIONS \
+    as simulate_1d_distribution_types

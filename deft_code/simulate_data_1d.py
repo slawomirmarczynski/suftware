@@ -6,6 +6,7 @@ import math
 import scipy as sp
 import scipy.stats as stats
 import sys
+from deft_code.utils import DeftError
 
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
@@ -30,38 +31,6 @@ vonmises
 MAX_NUM_SAMPLES = 1E6
 
 class Results(): pass;
-
-def get_commandline_arguments():
-    """ Specifies commandline arguments for simulate_data_1d.py """
-
-    # Set up parser for commandline arguments
-    parser = argparse.ArgumentParser()
-
-    # Which distribution to choose from
-    parser.add_argument('-d', '--distribution', dest='distribution', 
-        default='gaussian', choices=VALID_DISTRIBUTIONS)
-
-    # Number of data points to simulate
-    parser.add_argument('-N', '--num_datapoints', dest='num_datapoints', type=int, 
-        default=100, help='Number of data points to simulate.')
-
-    # Output file, if any
-    parser.add_argument('-o', '--output_file', default='stdout', 
-        help='Specify where to write data to. Default: stdout')
-
-    # Output data in JSON format if requested
-    parser.add_argument('-j', '--json', action='store_true', 
-        help='Output data as a JSON string.')
-
-    # Parse arguments
-    args = parser.parse_args()
-
-    # Add in defaults if necessary
-    if args.distribution==None:
-        args.distribution='gaussian'
-
-    # Return fixed-up argument to user
-    return args
 
 def gaussian_mixture(N,weights,mus,sigmas,bbox):
     assert bbox[1] > bbox[0]
@@ -89,14 +58,13 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
     # Return valuables
     return data, pdf_py, pdf_js
 
-
 def run(distribution_type='gaussian', N=100, seed=None, return_details=False):
     """
     Performs the primary task of this module: simulating 1D data
 
     Args:
         - distribution_type (str): The distribution from which to draw data.
-            Must be one of the options listed in VALID_DISTRIBUTIONS.
+            Must be one of these distributions:
         - N (int): The number of data points to simulate. Must be less than
             MAX_NUM_SAMPLES.
         - seed
@@ -258,59 +226,4 @@ def run(distribution_type='gaussian', N=100, seed=None, return_details=False):
         return data, details
     else:
         return data
-
-
-def main():
-    """ Commandline functionality of module. """
-
-    # Get commandline arguments
-    args = get_commandline_arguments()
-
-    # Make sure number of data points is reasonable
-    N = args.num_samples
-    assert N == int(N)
-    assert N > 0
-    assert N <= MAX_NUM_SAMPLES
-
-    # Generate data
-    data, settings = run(args.distribution, N)
-
-    # Set output stream
-    if args.output_file=='stdout':
-        out_stream = sys.stdout
-    else:
-        out_stream = open(args.output_file,'w')
-        assert out_stream, \
-            'Failed to open file "%s" for writing.'%args.output_file
-
-    # If requested, output json format
-    if args.json:
-
-        # Create dictionary to hold all output information
-        output_dict = settings
-        output_dict['data'] = list(data)
-
-        # Create JSON string and write to output
-        json_string = json.dumps(output_dict)
-        out_stream.write(json_string)
-
-    else:
-        # Format data as string
-        data_string = '\n'.join(['%f'%d for d in data])+'\n'
-
-        # Write bbox to stdout
-        out_stream.write('# box_min: %f\n'%settings['box_min'])
-        out_stream.write('# box_max: %f\n'%settings['box_max'])
-        out_stream.write('# alpha: %d\n'%settings['alpha'])
-        out_stream.write('# periodic: %s\n'%str(settings['periodic']))
-
-        # Write data to stdout
-        out_stream.write(data_string)
-
-    # Close output stream
-    out_stream.close()
-
-# Executed if run at the commandline
-if __name__ == '__main__':
-    main()
 

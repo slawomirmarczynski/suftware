@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="Removed 2">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data0" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data1" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data3" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data5" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data6" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data7" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data8" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/digits/data9" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/train-images-idx3-ubyte" afterPath="" />
+    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/deft_code/.#MCMC.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" afterPath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/suftware.py" afterPath="$PROJECT_DIR$/suftware.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,14 +16,58 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+            <state relative-caret-position="190">
+              <caret line="10" column="37" lean-forward="false" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
               <folding>
                 <element signature="e#177#213#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="simulate_data_1d.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-276">
+              <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+              <folding>
+                <element signature="e#18#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+              <folding>
+                <element signature="e#34#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="20" column="27" lean-forward="true" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3501">
+              <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -77,6 +111,7 @@
         <option value="$PROJECT_DIR$/deft_code/density_1d.py" />
         <option value="$PROJECT_DIR$/sim/simulate_data_1d.py" />
         <option value="$PROJECT_DIR$/suftware.py" />
+        <option value="$PROJECT_DIR$/deft_code/simulate_data_1d.py" />
       </list>
     </option>
   </component>
@@ -128,6 +163,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="SearchEverywhereHistoryKey" value="DeftError&#9;null&#9;null" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -383,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522013795367</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Removed 2d data stuff">
+      <created>1522014095168</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1522014095168</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -483,7 +526,8 @@
     <MESSAGE value="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py" />
     <MESSAGE value="More of the same." />
     <MESSAGE value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
+    <MESSAGE value="Removed 2d data stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed 2d data stuff" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -533,7 +577,7 @@
         <state relative-caret-position="1064">
           <caret line="70" column="0" lean-forward="true" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding>
-            <element signature="e#34#52#0" expanded="true" />
+            <element signature="e#34#52#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -551,7 +595,7 @@
         <state relative-caret-position="16188">
           <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -561,7 +605,7 @@
         <state relative-caret-position="13794">
           <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -604,7 +648,7 @@
         <state relative-caret-position="11001">
           <caret line="579" column="28" lean-forward="true" selection-start-line="579" selection-start-column="28" selection-end-line="579" selection-end-column="28" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -663,27 +707,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="22" column="29" lean-forward="false" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/suftware_runner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="874">
           <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13794">
-          <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -708,7 +735,7 @@
         <state relative-caret-position="16188">
           <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -718,7 +745,7 @@
         <state relative-caret-position="1064">
           <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding>
-            <element signature="e#34#52#0" expanded="true" />
+            <element signature="e#34#52#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -739,16 +766,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/digits.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -759,10 +776,46 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        <state relative-caret-position="190">
+          <caret line="10" column="37" lean-forward="false" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
           <folding>
             <element signature="e#177#213#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
+          <folding>
+            <element signature="e#34#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3501">
+          <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="20" column="27" lean-forward="true" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-276">
+          <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+          <folding>
+            <element signature="e#18#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
