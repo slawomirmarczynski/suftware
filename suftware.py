@@ -94,11 +94,24 @@ class Deft1D:
                 return the first n samples specified by argument
     """
 
-    def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=1e5, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None,  num_posterior_samples=100, sample_only_at_l_star=False,
+    def __init__(self,
+                 data,
+                 num_grid_points=100,
+                 alpha=3,
+                 bounding_box='Auto',
+                 periodic=False,
+                 Z_evaluation_method='Lap',
+                 num_samples_for_Z=1e5,
+                 max_t_step=1.0,
+                 print_t=False,
+                 tolerance=1E-6,
+                 resolution=0.1,
+                 seed=None,
+                 num_posterior_samples=100,
+                 sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20):
 
-        # set class attributes
+        # Record inputs in class attributes
         self.num_grid_points = num_grid_points
         self.alpha = alpha
         self.bounding_box = bounding_box
@@ -116,15 +129,8 @@ class Deft1D:
         self.data = data
         self.results = None
 
-        # Check inputs
-        inputs_check(G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
-                     periodic=self.periodic, Z_eval=self.Z_evaluation_method, DT_MAX=self.max_t_step,
-                     print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
-                     deft_seed=self.seed,
-                     fix_t_at_t_star=self.sample_only_at_l_star, num_pt_samples=self.num_posterior_samples,
-                     max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
-
-        #try:
+        # Validate inputs
+        inputs_check(self)
 
         # clean input data
         self.data, self.min_h = clean_data(data)
@@ -151,14 +157,22 @@ class Deft1D:
                 'Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
 
         # Fit to data
-        self.results = deft_1d.run(data=self.data, G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
-                                       periodic=self.periodic, Z_eval=self.Z_evaluation_method,
-                                       num_Z_samples=self.num_samples_for_Z,
-                                       DT_MAX=self.max_t_step, print_t=self.print_t, tollerance=self.tolerance,
-                                       resolution=self.resolution, deft_seed=self.seed,
-                                       num_pt_samples=self.num_posterior_samples,
-                                       fix_t_at_t_star=self.sample_only_at_l_star,
-                                       max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
+        self.results = deft_1d.run(data=self.data,
+                                   G=self.num_grid_points,
+                                   alpha=self.alpha,
+                                   bbox=self.bounding_box,
+                                   periodic=self.periodic,
+                                   Z_eval=self.Z_evaluation_method,
+                                   num_Z_samples=self.num_samples_for_Z,
+                                   DT_MAX=self.max_t_step,
+                                   print_t=self.print_t,
+                                   tollerance=self.tolerance,
+                                   resolution=self.resolution,
+                                   deft_seed=self.seed,
+                                   num_pt_samples=self.num_posterior_samples,
+                                   fix_t_at_t_star=self.sample_only_at_l_star,
+                                   max_log_evidence_ratio_drop=\
+                                       self.max_log_evidence_ratio_drop)
 
         #print('Deft1D ran successfully')
         self.grid = self.get_grid()

@@ -728,9 +728,23 @@ def clean_data(data):
 
 
 # Check inputs
-def inputs_check(G, alpha, bbox, periodic, Z_eval, DT_MAX, print_t, tollerance,
-                 resolution, deft_seed, fix_t_at_t_star,
-                 num_pt_samples, max_log_evidence_ratio_drop):
+def inputs_check(obj):
+
+    # Set variables
+    G = obj.num_grid_points
+    alpha = obj.alpha
+    bbox = obj.bounding_box
+    periodic = obj.periodic
+    Z_eval = obj.Z_evaluation_method
+    DT_MAX = obj.max_t_step
+    print_t = obj.print_t
+    tollerance = obj.tolerance
+    resolution = obj.resolution
+    deft_seed = obj.seed
+    fix_t_at_t_star = obj.sample_only_at_l_star
+    num_pt_samples = obj.num_posterior_samples
+    max_log_evidence_ratio_drop = obj.max_log_evidence_ratio_drop
+
     # Make sure alpha is valid
     try:
         if not isinstance(alpha, int):
