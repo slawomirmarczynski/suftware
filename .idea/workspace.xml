@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/density_1d.py" afterPath="$PROJECT_DIR$/deft_code/density_1d.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/field_1d.py" afterPath="$PROJECT_DIR$/deft_code/field_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/suftware.py" afterPath="$PROJECT_DIR$/suftware.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,11 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
+            <state relative-caret-position="209">
+              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -48,14 +46,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="density_1d.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="density_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="888">
-              <caret line="72" column="47" lean-forward="false" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
-              <folding>
-                <element signature="e#34#52#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="228">
+              <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -140,10 +136,10 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/deft_code/deft_core.py" />
         <option value="$PROJECT_DIR$/deft_code/supplements.py" />
-        <option value="$PROJECT_DIR$/suftware.py" />
         <option value="$PROJECT_DIR$/deft_code/field_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/density_1d.py" />
+        <option value="$PROJECT_DIR$/suftware.py" />
       </list>
     </option>
   </component>
@@ -417,7 +413,14 @@
       <option name="project" value="LOCAL" />
       <updated>1521996367821</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Added interpolation capabilities to Density1D and Field1D">
+      <created>1522000981420</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1522000981421</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -514,7 +517,8 @@
     <MESSAGE value="Fix so that num_posterior_samples=0 works" />
     <MESSAGE value="Moved the full Deft1D class to deft_1d.py, and make deft_1d.run() a class method. Refactor Density_1D -&gt; density_1d.py and Field_1D to field_1d.py" />
     <MESSAGE value="Removed class Results definition from deft_1d.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed class Results definition from deft_1d.py" />
+    <MESSAGE value="Added interpolation capabilities to Density1D and Field1D" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added interpolation capabilities to Density1D and Field1D" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -683,14 +687,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-5258">
@@ -703,11 +699,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="888">
-          <caret line="72" column="47" lean-forward="false" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="228">
+          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/suftware.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
