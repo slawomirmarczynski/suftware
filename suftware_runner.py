@@ -2,6 +2,10 @@ import suftware
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 import os
 print(os.getcwd())
 
