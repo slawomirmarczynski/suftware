@@ -51,11 +51,6 @@ class Deft1D:
         max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
     tolerance: (positive float)
         Value which species convergence of phi.
-    posterior_sampling_method: (string)
-        Methods of posterior sampling. Possible values:
-        None        : no sampling will be performed.
-        'Lap'       : Laplace sampling.
-        'Lap+Imp'   : Laplace sampling + importance weights (default).
     num_posterior_samples: (non-negative int)
         Number of posterior samples.
     sample_only_at_l_star: (boolean)
@@ -103,7 +98,7 @@ class Deft1D:
     """
 
     def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=1e5, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None,  num_posterior_samples=5, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,fit_now=True):
 
         # set class attributes
@@ -118,7 +113,6 @@ class Deft1D:
         self.tolerance = tolerance
         self.seed = seed
         self.resolution = resolution
-        self.posterior_sampling_method = posterior_sampling_method
         self.num_posterior_samples = num_posterior_samples
         self.sample_only_at_l_star = sample_only_at_l_star
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
@@ -130,7 +124,7 @@ class Deft1D:
         inputs_check(G=self.num_grid_points, alpha=self.alpha, bbox=self.bounding_box,
                      periodic=self.periodic, Z_eval=self.Z_evaluation_method, DT_MAX=self.max_t_step,
                      print_t=self.print_t, tollerance=self.tolerance, resolution=self.resolution,
-                     deft_seed=self.seed, pt_method=self.posterior_sampling_method,
+                     deft_seed=self.seed,
                      fix_t_at_t_star=self.sample_only_at_l_star, num_pt_samples=self.num_posterior_samples,
                      max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
@@ -173,7 +167,6 @@ class Deft1D:
                                        num_Z_samples=self.num_samples_for_Z,
                                        DT_MAX=self.max_t_step, print_t=self.print_t, tollerance=self.tolerance,
                                        resolution=self.resolution, deft_seed=self.seed,
-                                       pt_method=self.posterior_sampling_method,
                                        num_pt_samples=self.num_posterior_samples,
                                        fix_t_at_t_star=self.sample_only_at_l_star,
                                        max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
@@ -186,7 +179,7 @@ class Deft1D:
         #    print('Deft fit failed.')
 
     def fit(self,data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=0, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, posterior_sampling_method='Lap+Imp', num_posterior_samples=5, sample_only_at_l_star=False,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None, num_posterior_samples=5, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20):
 
         # Run deft_1d
@@ -212,7 +205,7 @@ class Deft1D:
                 results = deft_1d.run(data=data, G=num_grid_points, alpha=alpha, bbox=bounding_box,
                                            periodic=periodic, Z_eval=Z_evaluation_method, num_Z_samples=num_samples_for_Z,
                                            DT_MAX=max_t_step, print_t=print_t, tollerance=tolerance,
-                                           resolution=resolution, deft_seed=seed, pt_method=posterior_sampling_method,
+                                           resolution=resolution, deft_seed=seed,
                                            num_pt_samples=num_posterior_samples, fix_t_at_t_star=sample_only_at_l_star,
                                            max_log_evidence_ratio_drop=max_log_evidence_ratio_drop)
 
@@ -280,6 +273,17 @@ class Deft1D:
         else:
             print("Q_star is none. Please run fit first.")
 
+    # returns Q_star evaluated on the x-values provided
+    def evaluate_Q_star(self, xs=None):
+
+        # If xs are not provided use grid
+        if xs is None:
+            xs = self.get_grid()
+
+        # Evaluate Q_star on grid and return
+        Q_star = self.get_Q_star()
+        return Q_star.evaluate(xs)
+
     # if importance_resampling == True:
     #   then
     def get_Q_samples(self, importance_resampling=True):
@@ -323,6 +327,18 @@ class Deft1D:
 
         else:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
+
+    # returns Q_star evaluated on the x-values provided
+    def evaluate_Q_samples(self, xs=None):
+
+        # If xs are not provided use grid
+        if xs is None:
+            xs = self.get_grid()
+
+        # Evaluate Q_samples on grid and return
+        Q_samples = self.get_Q_samples()
+        return np.array([Q.evaluate(xs) for Q in Q_samples]).T
+
 
     def get_params(self,key=None):
         if key is None:

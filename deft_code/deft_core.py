@@ -779,7 +779,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 # Core DEFT algorithm
 #
 def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-        tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop, details=False):
+        tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop, details=False):
     """
     The core algorithm of DEFT, used for both 1D and 2D density estmation.
 
@@ -839,9 +839,9 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Do posterior sampling
     #
 
-    if not (pt_method is None):
+    if not (num_pt_samples == 0):
         Q_samples, phi_samples, phi_weights = \
-            supplements.posterior_sampling(points, R, Delta, N, G, pt_method, num_pt_samples, fix_t_at_t_star)
+            supplements.posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star)
             
 
 
@@ -868,7 +868,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     results.points = points
 
     # Include posterior sampling info if any sampling was performed
-    if not (pt_method is None):
+    if not (num_pt_samples == 0):
         results.num_pt_samples = num_pt_samples
         results.Q_samples = Q_samples
         results.phi_samples = phi_samples

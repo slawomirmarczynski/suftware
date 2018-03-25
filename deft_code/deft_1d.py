@@ -174,7 +174,7 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 # The main DEFT algorithm in 1D.
 #
 def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, tollerance,
-        resolution, deft_seed, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
+        resolution, deft_seed, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
 
     # Start clock
     start_time = time.clock()
@@ -222,7 +222,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     
     # Do DEFT density estimation
     core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-                                 tollerance, resolution, pt_method, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop)
+                                 tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop)
 
     # Fill in results
     copy_start_time = time.clock()
@@ -236,7 +236,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     results.l_star = h*(sp.exp(-results.t_star)*N)**(1/(2.*alpha))
     for p in results.map_curve.points:
         p.Q /= h
-    if not (pt_method is None):
+    if not (num_pt_samples == 0):
         results.Q_samples /= h
 
     # Get 1D-specific information
@@ -268,7 +268,7 @@ def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, 
     # XXX REMOVE
     # Compute differential entropy in bits
     entropy_start_time = time.clock()
-    if not (pt_method is None):
+    if not (num_pt_samples == 0):
         entropies = np.zeros(num_pt_samples)
         for i in range(results.Q_samples.shape[1]):
             Q = results.Q_samples[:,i].ravel()
