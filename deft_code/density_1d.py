@@ -52,16 +52,26 @@ class Density1D:
     density1DObject.evaluate(x)
     """
 
-    def __init__(self, Field1D):
-        self.Field1D = Field1D
-        self.xs = self.Field1D.bin_centers
-        self.h = self.xs[1]-self.xs[0]
-        self.Z = sp.sum(self.h * sp.exp(-self.Field1D.evaluate(self.xs)))
+    def __init__(self, field):
+        self.field = field
+        self.bounding_box = self.field.bounding_box
+        self.Z = sp.sum(self.field.grid_spacing * sp.exp(-self.field.phi))
 
-    def evaluate(self,x):
-        try:
-            # return Q(x)
-            return sp.exp(-self.Field1D.evaluate(x)) / self.Z
-        except:
-            print("Error: x value out of interpolation range")
-            return sp.nan
+    def evaluate(self, x, outside_bbox=0):
+
+        # Convert to numpy array
+        x = np.array(x)
+
+        # If dimension is zero, put in numpy array and rerun
+        if len(x.shape)==0:
+            array = self.evaluate(np.array([x]),
+                                  outside_bbox=outside_bbox)
+            return array[0]
+
+        # Otherwise, evaluate
+        else:
+            values = sp.exp(-self.field.evaluate(x)) / self.Z
+            if outside_bbox != 'interp':
+                indices = (x < self.bounding_box[0]) | (x > self.bounding_box[1])
+                values[indices] = outside_bbox
+            return values

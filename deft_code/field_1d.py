@@ -51,19 +51,20 @@ class Field1D:
     """
 
     # constructor: calls the interp1d function which default to
-    def __init__(self,phi, G, bbox):
+    def __init__(self, phi, grid, bounding_box):
 
-        counts, self.bin_centers = utils.histogram_counts_1d(phi, G, bbox)
-        self.interpolated_phi = interpolate.interp1d(self.bin_centers, phi)
-        # delete counts since they are not needed in this class
-        del counts
+        # Record input
+        self.phi = phi
+        self.grid = grid
+        self.grid_spacing = grid[1]-grid[0]
+        self.bounding_box = bounding_box
 
-    # method to evaluate the interpolant at a given x value
-    def evaluate(self,x):
-        # returns the interpolant at x
-        try:
-            return self.interpolated_phi.__call__(x)
-        # handle value
-        except ValueError:
-            print(" The x value is out of the interpolation range.")
-            return sp.nan
+        # Interpolate using extended grid and extended phi
+        self.evaluate = interpolate.interp1d(self.grid,
+                                             self.phi,
+                                             kind='cubic',
+                                             bounds_error=False,
+                                             fill_value='extrapolate',
+                                             assume_sorted=True)
+
+

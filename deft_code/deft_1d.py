@@ -171,7 +171,9 @@ class Deft1D:
         self.results_dict = self.get_results()
         self.histogram = self.results_dict['R']
         self.grid_spacing = self.get_h()
-        self.values = self.eval(self.grid)
+        self.Q_star = self.get_Q_star()
+        self.evaluate = self.Q_star.evaluate
+        self.values = self.evaluate(self.grid)
         self.sample_values = self.eval_samples(self.grid)
 
 
@@ -214,7 +216,7 @@ class Deft1D:
     def get_phi_star(self):
 
         if self.results is not None:
-            return Field1D(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
+            return Field1D(self.results.__dict__.get('phi_star'), self.grid, self.bounding_box)
         else:
             print("phi is none. Please run fit first.")
 
@@ -225,17 +227,6 @@ class Deft1D:
             return Density1D(self.get_phi_star())
         else:
             print("Q_star is none. Please run fit first.")
-
-    # returns Q_star evaluated on the x-values provided
-    def eval(self, xs=None):
-
-        # If xs are not provided use grid
-        if xs is None:
-            xs = self.get_grid()
-
-        # Evaluate Q_star on grid and return
-        Q_star = self.get_Q_star()
-        return Q_star.evaluate(xs)
 
     # Returns the histogram R
     def get_R(self):
@@ -260,7 +251,7 @@ class Deft1D:
             sample_weights = []
             for sampleIndex in range(self.num_posterior_samples):
                 Q_Samples.append(
-                    Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.num_grid_points, self.bounding_box)))
+                    Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
 
                 sample_weights.append(self.get_results()['phi_weights'][sampleIndex])
 
