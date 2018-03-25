@@ -173,8 +173,26 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 #
 # The main DEFT algorithm in 1D.
 #
-def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, tollerance,
-        resolution, deft_seed, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
+# def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, tollerance,
+#         resolution, deft_seed, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
+def run(obj):
+
+    # Extract information from Deft1D object
+    data = obj.data
+    G = obj.num_grid_points
+    alpha = obj.alpha
+    bbox = obj.bounding_box
+    periodic = obj.periodic
+    Z_eval = obj.Z_evaluation_method
+    num_Z_samples = obj.num_samples_for_Z
+    DT_MAX = obj.max_t_step
+    print_t = obj.print_t
+    tollerance = obj.tolerance
+    resolution = obj.resolution
+    deft_seed = obj.seed
+    num_pt_samples = obj.num_posterior_samples
+    fix_t_at_t_star = obj.sample_only_at_l_star
+    max_log_evidence_ratio_drop = obj.max_log_evidence_ratio_drop
 
     # Start clock
     start_time = time.clock()
