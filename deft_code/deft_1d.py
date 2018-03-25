@@ -118,28 +118,8 @@ def run(obj):
 
     phi_star_func = interp1d(extended_xgrid, extended_phi_star, kind='cubic')
     Z = sp.sum(h*sp.exp(-results.phi_star))
-    #Q_star_func = lambda(x): sp.exp(-phi_star_func(x))/Z
     Q_star_func = lambda x: sp.exp(-phi_star_func(x)) / Z
     results.Q_star_func = Q_star_func
-
-    # XXX REMOVE
-    # Compute differential entropy in bits
-    entropy_start_time = time.clock()
-    if not (num_pt_samples == 0):
-        entropies = np.zeros(num_pt_samples)
-        for i in range(results.Q_samples.shape[1]):
-            Q = results.Q_samples[:,i].ravel()
-            entropy = -sp.sum(h*Q*sp.log2(Q + utils.TINY_FLOAT64))
-            #for j in range(G):
-            #    entropy += -results.h*Q[j]*sp.log2(Q[j] + utils.TINY_FLOAT64)
-            entropies[i] = entropy
-
-        # Compute mean and variance of the differential entropy
-        results.entropies = entropies
-        results.e_mean = np.mean(entropies)
-        results.e_std = np.std(entropies)
-        results.entropy_compute_time = time.clock() - entropy_start_time
-    # XXX
 
     # Record execution time
     results.copy_compute_time = copy_compute_time
