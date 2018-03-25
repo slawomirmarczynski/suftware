@@ -287,8 +287,11 @@ class Deft1D:
             xs = self.get_grid()
 
         # Evaluate Q_samples on grid and return
-        Q_samples = self.get_Q_samples()
-        return np.array([Q.evaluate(xs) for Q in Q_samples]).T
+        if self.num_posterior_samples > 0:
+            Q_samples = self.get_Q_samples()
+            return np.array([Q.evaluate(xs) for Q in Q_samples]).T
+        else:
+            return None
 
 
     def get_params(self,key=None):
