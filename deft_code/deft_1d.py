@@ -173,8 +173,7 @@ def load_data(data_file_handle, MAX_NUM_DATA=1E6):
 #
 # The main DEFT algorithm in 1D.
 #
-# def run(data, G, alpha, bbox, periodic, Z_eval, num_Z_samples, DT_MAX, print_t, tollerance,
-#         resolution, deft_seed, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop):
+
 def run(obj):
 
     # Extract information from Deft1D object
@@ -209,19 +208,10 @@ def run(obj):
         op_type = '1d_periodic'
     else:
         op_type = '1d_bilateral'
-
-    # Check for Laplacian on disk. Otherwise, create de novo
-    laplacian_dir = '/Users/jkinney/github/15_deft/laplacians/'
-    file_name = '%s%s_alpha_%d_G_%d.pickle' % (laplacian_dir,op_type,alpha,G)
-    if os.path.isfile(file_name):
-        Delta = laplacian.load(file_name)
-        if print_t:
-            print('Laplacian loaded from disk')
-    else:
-        Delta = laplacian.Laplacian(op_type, alpha, G)
-        if print_t:
-            print('Laplacian computed de novo')
+    Delta = laplacian.Laplacian(op_type, alpha, G)
     laplacian_compute_time = time.clock() - laplacian_start_time
+    if print_t:
+        print('Laplacian computed de novo in %f sec.'%laplacian_compute_time)
 
     # Get histogram counts and grid centers
     counts, bin_centers = utils.histogram_counts_1d(data, G, bbox)
