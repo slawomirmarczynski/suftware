@@ -98,7 +98,7 @@ class Deft1D:
     """
 
     def __init__(self, data, num_grid_points=100, alpha=3, bounding_box='Auto', periodic=False,Z_evaluation_method='Lap', num_samples_for_Z=1e5, max_t_step=1.0,
-                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None,  num_posterior_samples=5, sample_only_at_l_star=False,
+                 print_t=False, tolerance=1E-6, resolution=0.1, seed=None,  num_posterior_samples=100, sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,fit_now=True):
 
         # set class attributes
@@ -171,7 +171,13 @@ class Deft1D:
                                        fix_t_at_t_star=self.sample_only_at_l_star,
                                        max_log_evidence_ratio_drop=self.max_log_evidence_ratio_drop)
 
-        print('Deft1D ran successfully')
+        #print('Deft1D ran successfully')
+        self.grid = self.get_grid()
+        self.results_dict = self.get_results()
+        self.histogram = self.results_dict['R']
+        self.grid_spacing = self.get_h()
+        self.values = self.eval(self.grid)
+        self.sample_values = self.eval_samples(self.grid)
 
             # this should be more specific
         #except:
@@ -210,6 +216,14 @@ class Deft1D:
                                            max_log_evidence_ratio_drop=max_log_evidence_ratio_drop)
 
                 self.results = results
+                self.grid = self.get_grid()
+                self.results_dict = self.get_results()
+                self.histogram = self.results_dict['R']
+                self.grid_spacing = self.get_h()
+                self.values = self.eval(self.grid)
+                self.sample_values = self.eval_samples(self.grid)
+                self.bounding_box = bounding_box
+                self.num_grid_points = num_grid_points
                 print('Deft1D fit ran successfully')
                 return results
 
@@ -220,7 +234,7 @@ class Deft1D:
         # this should be more specific
         except:
             # include include message with more details here
-            print('Deft fit failedx')
+            print('Deft fit failed')
 
     def get_results(self, key=None):
         if self.results is not None and key is None:
@@ -274,7 +288,7 @@ class Deft1D:
             print("Q_star is none. Please run fit first.")
 
     # returns Q_star evaluated on the x-values provided
-    def evaluate_Q_star(self, xs=None):
+    def eval(self, xs=None):
 
         # If xs are not provided use grid
         if xs is None:
@@ -283,6 +297,11 @@ class Deft1D:
         # Evaluate Q_star on grid and return
         Q_star = self.get_Q_star()
         return Q_star.evaluate(xs)
+
+    # Returns the histogram R
+    def get_R(self):
+        results_dict = self.get_results()
+        return results_dict['R']
 
     # if importance_resampling == True:
     #   then
@@ -316,11 +335,11 @@ class Deft1D:
                 for weight_index in weighted_sample_indices:
                     Q_samples_weighted.append(Q_Samples[weight_index])
 
-                print("Warning, returning list of Density objects; use index while using evaluate")
+                #print("Warning, returning list of Density objects; use index while using evaluate")
                 # return weight samples as default
                 return Q_samples_weighted
 
-            print("Warning, returning list of Density objects; use index while using evaluate")
+            #print("Warning, returning list of Density objects; use index while using evaluate")
             # we have samples Q_samples in a list
 
             return Q_Samples
@@ -329,7 +348,7 @@ class Deft1D:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
 
     # returns Q_star evaluated on the x-values provided
-    def evaluate_Q_samples(self, xs=None):
+    def eval_samples(self, xs=None):
 
         # If xs are not provided use grid
         if xs is None:
