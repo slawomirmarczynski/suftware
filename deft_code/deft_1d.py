@@ -18,8 +18,6 @@ from deft_code.utils import DeftError
 from deft_code.density_1d import Density1D
 from deft_code.field_1d import Field1D
 
-class Results(): pass;
-
 class Deft1D:
     """This class will serve as the interface for running
     deft1d
