@@ -27,9 +27,11 @@
       <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="133">
+              <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding>
+                <element signature="e#177#213#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -420,7 +422,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522000981421</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py">
+      <created>1522001091041</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1522001091041</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -518,7 +527,8 @@
     <MESSAGE value="Moved the full Deft1D class to deft_1d.py, and make deft_1d.run() a class method. Refactor Density_1D -&gt; density_1d.py and Field_1D to field_1d.py" />
     <MESSAGE value="Removed class Results definition from deft_1d.py" />
     <MESSAGE value="Added interpolation capabilities to Density1D and Field1D" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added interpolation capabilities to Density1D and Field1D" />
+    <MESSAGE value="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -539,7 +549,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="627">
           <caret line="33" column="9" lean-forward="false" selection-start-line="33" selection-start-column="9" selection-end-line="33" selection-end-column="16" />
-          <folding />
+          <folding>
+            <element signature="e#177#213#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -707,9 +719,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="133">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#177#213#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
