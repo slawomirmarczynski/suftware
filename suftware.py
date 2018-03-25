@@ -157,22 +157,6 @@ class Deft1D:
                 'Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
 
         # Fit to data
-        # self.results = deft_1d.run(data=self.data,
-        #                            G=self.num_grid_points,
-        #                            alpha=self.alpha,
-        #                            bbox=self.bounding_box,
-        #                            periodic=self.periodic,
-        #                            Z_eval=self.Z_evaluation_method,
-        #                            num_Z_samples=self.num_samples_for_Z,
-        #                            DT_MAX=self.max_t_step,
-        #                            print_t=self.print_t,
-        #                            tollerance=self.tolerance,
-        #                            resolution=self.resolution,
-        #                            deft_seed=self.seed,
-        #                            num_pt_samples=self.num_posterior_samples,
-        #                            fix_t_at_t_star=self.sample_only_at_l_star,
-        #                            max_log_evidence_ratio_drop=\
-        #                                self.max_log_evidence_ratio_drop)
         self.results = deft_1d.run(self)
 
         #print('Deft1D ran successfully')
