@@ -8,4 +8,8 @@ from deft_code.field_1d import Field1D
 
 from deft_code.simulate_data_1d import run as simulate_data_1d
 from deft_code.simulate_data_1d import VALID_DISTRIBUTIONS \
-    as simulate_1d_distribution_types
+    as simulate_data_1d__distribution_types
+
+from deft_code.example_data_1d import run as example_data_1d
+from deft_code.example_data_1d import VALID_DATASETS \
+    as example_data_1d__datasets
