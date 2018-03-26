@@ -2,105 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Aids2$age.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$crim_log10.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$medv_log10.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$rm.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Melanoma$age.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Melanoma$thickness_log10.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Nile.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$age.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$bmi.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$bp.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$glu.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$skin.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/get_datasets.R" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dependency_chart_deft_1d.pdf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/adolescent_birth_rate.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/alcohol_consumption.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/attended_births.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/buffalo_snowfall.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/family_planning_needs_met.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/healthy_life_expectancy.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/hepatitis_b_vaccination.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_all.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_female.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_male.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/malaria.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/maternal_mortaility.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/neonatal_mortality.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/new_hiv_infections.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/old_faithful_eruption_times.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/old_faithful_waiting_times.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/population.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/road_traffic_mortality.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/suicide_mortality.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/tb_incidence.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/treatment_length.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/under_five_mortatility.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/flask_app.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/laplacians/make_2d_laplacians.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/data.p" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/log_E_vs_ell.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/map_curve.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/maxent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/presentation_figures.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/the_problem.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/static/report_test_deft_1d.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/static/style.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/templates/index.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/.htaccess" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/about.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.css.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/jquery.fileupload.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap-filestyle.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/math.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/npm.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bottom.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_2d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_survival.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/cshl_logo_alternate_RGB.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/cshllogo_standard_RGB.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/jbk_at_home.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/logo_simons_small.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/simons_foundation_logo.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/deft_1d.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/load_example_data_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_deft_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_kde_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_maxent_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/simulate_data_1d.php" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/tmp.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/top.html" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/__init__.py" afterPath="$PROJECT_DIR$/src/__init__.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/src/deft_1d.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/deft_core.py" afterPath="$PROJECT_DIR$/src/deft_core.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/density_1d.py" afterPath="$PROJECT_DIR$/src/density_1d.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/example_data_1d.py" afterPath="$PROJECT_DIR$/src/example_data_1d.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/field_1d.py" afterPath="$PROJECT_DIR$/src/field_1d.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/laplacian.py" afterPath="$PROJECT_DIR$/src/laplacian.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/maxent.py" afterPath="$PROJECT_DIR$/src/maxent.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" afterPath="$PROJECT_DIR$/src/simulate_data_1d.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/supplements.py" afterPath="$PROJECT_DIR$/src/supplements.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/utils.py" afterPath="$PROJECT_DIR$/src/utils.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/laplacians/make_1d_laplacians.py" afterPath="$PROJECT_DIR$/src/make_1d_laplacians.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/raw/who_data_2017.xlsx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/adolescent_birth_rate.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/alcohol_consumption.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/attended_births.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/buffalo_snowfall.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/family_planning_needs_met.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/healthy_life_expectancy.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/hepatitis_b_vaccination.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_all.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_female.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_male.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/malaria.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/maternal_mortaility.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/neonatal_mortality.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/new_hiv_infections.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/old_faithful_eruption_times.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/old_faithful_waiting_times.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/population.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/road_traffic_mortality.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/suicide_mortality.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/tb_incidence.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/treatment_length.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/under_five_mortatility.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipynb/18.03.23_jbk_tests.ipynb" afterPath="$PROJECT_DIR$/ipynb/18.03.23_jbk_tests.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipynb/wrangle_who_data.ipynb" afterPath="$PROJECT_DIR$/ipynb/wrangle_who_data.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/suftware.py" afterPath="$PROJECT_DIR$/suftware.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -281,11 +206,6 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="examples" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -640,7 +560,21 @@
       <option name="project" value="LOCAL" />
       <updated>1522101252389</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Simplified directory structures">
+      <created>1522102202321</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1522102202321</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Simplified directory structures">
+      <created>1522102250583</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1522102250583</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -672,11 +606,11 @@
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12470215" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12470215" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328125" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16220239" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16220239" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.234375" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -722,7 +656,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Simplified interface to supplements.inputs_check()" />
     <MESSAGE value="Simplified interface to deft_1d.run(). Now just takes a Deft1D object." />
     <MESSAGE value="Removed option to pre-compute Laplacians" />
     <MESSAGE value="Removed __main__ and commandline interface to deft_1d.pypre-compute Laplacians" />
@@ -747,7 +680,8 @@
     <MESSAGE value="Modified automatic bounding function of deft_1d.run()" />
     <MESSAGE value="Removed a lot of unneeded functions and started adding more documentation to deft_1d.py" />
     <MESSAGE value="Added example data files and ipynb files that process them." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added example data files and ipynb files that process them." />
+    <MESSAGE value="Simplified directory structures" />
+    <option name="LAST_COMMIT_MESSAGE" value="Simplified directory structures" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
