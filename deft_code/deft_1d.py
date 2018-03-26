@@ -106,7 +106,7 @@ class Deft1D:
                  num_grid_points=100,
                  bounding_box=None,
                  grid=None,
-                 whisker_length=3,
+                 whisker_length=1.5,
                  alpha=3,
                  periodic=False,
                  Z_evaluation_method='Lap',

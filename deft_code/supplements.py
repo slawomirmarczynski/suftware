@@ -682,21 +682,13 @@ def clean_data(data):
     data = data[~np.isinf(data)]
     # remove complex numbers from data
     data = data[~np.iscomplex(data)]
+    # make data floats
+    data = data.astype(float)
 
     try:
         if not (len(data) > 0):
             raise DeftError(
                 'Input check failed, data must have length > 0: data = %s' % data)
-    except DeftError as e:
-        print(e)
-        sys.exit(1)
-
-    # ensure data are numbers
-    try:
-        for i in range(len(data)):
-            if not isinstance(data[i], utils.NUMBER):
-                raise DeftError(
-                    'Input check failed. data must contain numbers: data = %s' % data)
     except DeftError as e:
         print(e)
         sys.exit(1)
