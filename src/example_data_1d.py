@@ -6,22 +6,13 @@ import math
 import scipy as sp
 import scipy.stats as stats
 import sys
-from deft_code.utils import DeftError
+from src.utils import DeftError
 import os
 
 # Load directory of file
-data_dir = os.path.dirname(os.path.abspath(__file__))+'/../data'
+data_dir = os.path.dirname(os.path.abspath(__file__))+'/../examples/data'
 
 # List of supported distributions by name
-# VALID_DATASETS = '''
-# buffalo_snowfall
-# old_faithful_eruption_times
-# old_faithful_waiting_times
-# treatment_length
-# kiva_loans__funded_amount
-# kiva_loans__lender_count
-# kiva_loans__term_in_months
-# '''.split()
 VALID_DATASETS = [name.split('.')[0] for name in
                   os.listdir(data_dir) if '.txt' in name ]
 

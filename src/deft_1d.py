@@ -7,16 +7,16 @@ from scipy.interpolate import interp1d
 import pdb
 
 # Import deft-related code
-from deft_code import deft_core
-from deft_code import utils
-from deft_code import laplacian
+from src import deft_core
+from src import utils
+from src import laplacian
 
-from deft_code.supplements import inputs_check
-from deft_code.supplements import clean_data
-from deft_code.utils import DeftError
+from src.supplements import inputs_check
+from src.supplements import clean_data
+from src.utils import DeftError
 
-from deft_code.density_1d import Density1D
-from deft_code.field_1d import Field1D
+from src.density_1d import Density1D
+from src.field_1d import Field1D
 
 class Deft1D:
     """This class will serve as the interface for running

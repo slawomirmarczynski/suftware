@@ -2,14 +2,14 @@
 
 
 # Promote classes to direct membership in the suftware module
-from deft_code.deft_1d import Deft1D
-from deft_code.density_1d import Density1D
-from deft_code.field_1d import Field1D
+from src.deft_1d import Deft1D
+from src.density_1d import Density1D
+from src.field_1d import Field1D
 
-from deft_code.simulate_data_1d import run as simulate_data_1d
-from deft_code.simulate_data_1d import VALID_DISTRIBUTIONS \
+from src.simulate_data_1d import run as simulate_data_1d
+from src.simulate_data_1d import VALID_DISTRIBUTIONS \
     as simulate_data_1d__distribution_types
 
-from deft_code.example_data_1d import run as example_data_1d
-from deft_code.example_data_1d import VALID_DATASETS \
+from src.example_data_1d import run as example_data_1d
+from src.example_data_1d import VALID_DATASETS \
     as example_data_1d__datasets

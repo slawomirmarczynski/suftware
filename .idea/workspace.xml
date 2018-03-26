@@ -2,10 +2,105 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/suftware_runner.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Aids2$age.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$crim_log10.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$medv_log10.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Boston$rm.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Melanoma$age.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Melanoma$thickness_log10.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Nile.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$age.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$bmi.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$bp.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$glu.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/Pima$skin.dat" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/from_r/get_datasets.R" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/dependency_chart_deft_1d.pdf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/adolescent_birth_rate.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/alcohol_consumption.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/attended_births.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/buffalo_snowfall.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/family_planning_needs_met.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/healthy_life_expectancy.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/hepatitis_b_vaccination.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_all.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_female.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/life_expectancy_male.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/malaria.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/maternal_mortaility.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/neonatal_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/new_hiv_infections.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/old_faithful_eruption_times.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/old_faithful_waiting_times.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/population.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/road_traffic_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/suicide_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/tb_incidence.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/treatment_length.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/under_five_mortatility.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/flask_app.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/laplacians/make_2d_laplacians.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/data.p" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/log_E_vs_ell.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/map_curve.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/maxent.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/presentation_figures.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/presentation/the_problem.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/report_test_deft_1d.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/style.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/templates/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/.htaccess" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/about.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.css.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap-theme.min.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.css.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/bootstrap.min.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/css/jquery.fileupload.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.eot" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.svg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.ttf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.woff" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/fonts/glyphicons-halflings-regular.woff2" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap-filestyle.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/bootstrap.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/math.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bootstrap-3.3.4-dist/js/npm.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/bottom.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_2d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/deft_survival.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/cshl_logo_alternate_RGB.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/cshllogo_standard_RGB.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/jbk_at_home.jpg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/logo_simons_small.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/images/simons_foundation_logo.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/deft_1d.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/load_example_data_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_deft_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_kde_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/run_maxent_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/simulate_data_1d.php" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/tmp.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/top.html" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/__init__.py" afterPath="$PROJECT_DIR$/src/__init__.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/src/deft_1d.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/deft_core.py" afterPath="$PROJECT_DIR$/src/deft_core.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/density_1d.py" afterPath="$PROJECT_DIR$/src/density_1d.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/example_data_1d.py" afterPath="$PROJECT_DIR$/src/example_data_1d.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/field_1d.py" afterPath="$PROJECT_DIR$/src/field_1d.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/laplacian.py" afterPath="$PROJECT_DIR$/src/laplacian.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/maxent.py" afterPath="$PROJECT_DIR$/src/maxent.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/simulate_data_1d.py" afterPath="$PROJECT_DIR$/src/simulate_data_1d.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/supplements.py" afterPath="$PROJECT_DIR$/src/supplements.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/deft_code/utils.py" afterPath="$PROJECT_DIR$/src/utils.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/laplacians/make_1d_laplacians.py" afterPath="$PROJECT_DIR$/src/make_1d_laplacians.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/density_1d.py" afterPath="$PROJECT_DIR$/deft_code/density_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipynb/18.03.23_jbk_tests.ipynb" afterPath="$PROJECT_DIR$/ipynb/18.03.23_jbk_tests.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ipynb/wrangle_who_data.ipynb" afterPath="$PROJECT_DIR$/ipynb/wrangle_who_data.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/suftware.py" afterPath="$PROJECT_DIR$/suftware.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,23 +111,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+            <state relative-caret-position="336">
+              <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
               <folding>
-                <element signature="e#177#213#0" expanded="true" />
+                <element signature="e#177#207#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="957">
-              <caret line="175" column="30" lean-forward="true" selection-start-line="175" selection-start-column="30" selection-end-line="175" selection-end-column="30" />
+            <state relative-caret-position="3600">
+              <caret line="150" column="35" lean-forward="false" selection-start-line="150" selection-start-column="35" selection-end-line="150" selection-end-column="35" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
@@ -41,17 +136,19 @@
         </entry>
       </file>
       <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
+        <entry file="file://$PROJECT_DIR$/src/example_data_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="360">
+              <caret line="15" column="48" lean-forward="false" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
+              <folding>
+                <element signature="e#18#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+        <entry file="file://$PROJECT_DIR$/src/supplements.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-7">
               <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
@@ -61,9 +158,9 @@
         </entry>
       </file>
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+        <entry file="file://$PROJECT_DIR$/src/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-16">
+            <state relative-caret-position="4680">
               <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
               <folding />
             </state>
@@ -71,19 +168,21 @@
         </entry>
       </file>
       <file leaf-file-name="field_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/field_1d.py">
+        <entry file="file://$PROJECT_DIR$/src/field_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
+            <state relative-caret-position="1632">
               <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="e#34#52#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="density_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
+        <entry file="file://$PROJECT_DIR$/src/density_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
+            <state relative-caret-position="1584">
               <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
@@ -93,10 +192,10 @@
         </entry>
       </file>
       <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
+        <entry file="file://$PROJECT_DIR$/src/deft_core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
-              <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
+            <state relative-caret-position="264">
+              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -123,8 +222,8 @@
       <find>Field1D</find>
       <find>Results</find>
       <find>bounding_box</find>
-      <find>histogram_</find>
       <find>assert</find>
+      <find>histogram_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -148,10 +247,11 @@
         <option value="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" />
         <option value="$PROJECT_DIR$/data/buffalo_snowfall.dat" />
         <option value="$PROJECT_DIR$/deft_code/supplements.py" />
-        <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/utils.py" />
         <option value="$PROJECT_DIR$/deft_code/density_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
+        <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
+        <option value="$PROJECT_DIR$/src/example_data_1d.py" />
       </list>
     </option>
   </component>
@@ -185,17 +285,7 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="deft_code" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -210,6 +300,9 @@
     <property name="SearchEverywhereHistoryKey" value="DeftError&#9;null&#9;null" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/deft_code" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/deft_code" />
     </key>
@@ -533,7 +626,21 @@
       <option name="project" value="LOCAL" />
       <updated>1522081395070</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Removed a lot of unneeded functions and started adding more documentation to deft_1d.py">
+      <created>1522101180886</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1522101180886</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Added example data files and ipynb files that process them.">
+      <created>1522101252389</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1522101252389</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -615,8 +722,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Defined self.values, self.sample_values, self.grid, etc.. This makes it easier for the user to plot the results." />
-    <MESSAGE value="Removed Deft1D.fit() and the fit_now option in the constructor" />
     <MESSAGE value="Simplified interface to supplements.inputs_check()" />
     <MESSAGE value="Simplified interface to deft_1d.run(). Now just takes a Deft1D object." />
     <MESSAGE value="Removed option to pre-compute Laplacians" />
@@ -640,7 +745,9 @@
     <MESSAGE value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
     <MESSAGE value="Added WHO data for density estimation. This gives some good datasets." />
     <MESSAGE value="Modified automatic bounding function of deft_1d.run()" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modified automatic bounding function of deft_1d.run()" />
+    <MESSAGE value="Removed a lot of unneeded functions and started adding more documentation to deft_1d.py" />
+    <MESSAGE value="Added example data files and ipynb files that process them." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added example data files and ipynb files that process them." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -662,12 +769,12 @@
         <state relative-caret-position="95">
           <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
-            <element signature="e#177#213#0" expanded="true" />
+            <element signature="e#177#207#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
           <caret line="18" column="38" lean-forward="true" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
@@ -677,7 +784,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/density_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
           <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
@@ -685,17 +792,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/field_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/field_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1064">
           <caret line="70" column="0" lean-forward="true" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding>
-            <element signature="e#34#52#0" expanded="false" />
+            <element signature="e#34#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/laplacian.py">
+    <entry file="file://$PROJECT_DIR$/src/laplacian.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
           <caret line="11" column="28" lean-forward="false" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
@@ -703,7 +810,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
+    <entry file="file://$PROJECT_DIR$/src/deft_core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="16188">
           <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
@@ -713,7 +820,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+    <entry file="file://$PROJECT_DIR$/src/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="13794">
           <caret line="733" column="20" lean-forward="false" selection-start-line="733" selection-start-column="20" selection-end-line="733" selection-end-column="20" />
@@ -744,7 +851,7 @@
         <state relative-caret-position="627">
           <caret line="33" column="9" lean-forward="false" selection-start-line="33" selection-start-column="9" selection-end-line="33" selection-end-column="16" />
           <folding>
-            <element signature="e#177#213#0" expanded="true" />
+            <element signature="e#177#207#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -757,7 +864,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+    <entry file="file://$PROJECT_DIR$/src/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11001">
           <caret line="579" column="28" lean-forward="true" selection-start-line="579" selection-start-column="28" selection-end-line="579" selection-end-column="28" />
@@ -800,7 +907,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/report.test_deft_1d.png" />
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
-    <entry file="file://$PROJECT_DIR$/deft_code/maxent.py">
+    <entry file="file://$PROJECT_DIR$/src/maxent.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="665">
           <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
@@ -811,6 +918,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#29#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -829,7 +939,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/laplacian.py">
+    <entry file="file://$PROJECT_DIR$/src/laplacian.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="209">
           <caret line="11" column="28" lean-forward="false" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
@@ -893,7 +1003,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/simulate_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
@@ -903,51 +1013,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-16">
-          <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding>
-            <element signature="e#177#213#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/density_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/field_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+    <entry file="file://$PROJECT_DIR$/src/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-7">
           <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
@@ -955,20 +1021,68 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        <state relative-caret-position="4680">
+          <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+    <entry file="file://$PROJECT_DIR$/src/field_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="957">
-          <caret line="175" column="30" lean-forward="true" selection-start-line="175" selection-start-column="30" selection-end-line="175" selection-end-column="30" />
+        <state relative-caret-position="1632">
+          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/density_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1584">
+          <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
+          <folding>
+            <element signature="e#34#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/deft_core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/deft_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3600">
+          <caret line="150" column="35" lean-forward="false" selection-start-line="150" selection-start-column="35" selection-end-line="150" selection-end-column="35" />
+          <folding>
+            <element signature="e#34#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/example_data_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="15" column="48" lean-forward="false" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
+          <folding>
+            <element signature="e#18#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/suftware.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
+          <folding>
+            <element signature="e#177#207#0" expanded="true" />
           </folding>
         </state>
       </provider>

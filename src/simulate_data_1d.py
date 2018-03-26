@@ -6,7 +6,7 @@ import math
 import scipy as sp
 import scipy.stats as stats
 import sys
-from deft_code.utils import DeftError
+from src.utils import DeftError
 
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''

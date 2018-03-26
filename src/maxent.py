@@ -2,9 +2,9 @@ import scipy as sp
 import numpy as np
 from scipy.linalg import solve, det, norm
 
-from deft_code import utils
-from deft_code.utils import DeftError
-from deft_code import laplacian
+from src import utils
+from src.utils import DeftError
+from src import laplacian
 
 # Import error handling
 #from utils import DeftError
