@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import time
 from scipy.interpolate import interp1d
-from scipy import interpolate
+import pdb
 
 # Import deft-related code
 from deft_code import deft_core
@@ -104,8 +104,10 @@ class Deft1D:
     def __init__(self,
                  data,
                  num_grid_points=100,
-                 alpha=3,
                  bounding_box=None,
+                 grid=None,
+                 whisker_length=3,
+                 alpha=3,
                  periodic=False,
                  Z_evaluation_method='Lap',
                  num_samples_for_Z=1e5,
@@ -122,6 +124,7 @@ class Deft1D:
         self.num_grid_points = num_grid_points
         self.alpha = alpha
         self.bounding_box = bounding_box
+        self.grid = grid
         self.periodic = periodic
         self.Z_evaluation_method = Z_evaluation_method
         self.num_samples_for_Z = num_samples_for_Z
@@ -136,40 +139,63 @@ class Deft1D:
         self.data = data
         self.results = None
 
-        # Validate inputs
-        inputs_check(self)
-
         # clean input data
         self.data, self.min_h = clean_data(data)
 
-        # Automatically set bounding box if requested
-        if self.bounding_box is None:
-            data_spread = np.max(self.data) - np.min(self.data)
-            bbox_left = np.min(self.data) - 0.2 * data_spread
-            bbox_right = np.max(self.data) + 0.2 * data_spread
-            self.bounding_box = [bbox_left, bbox_right]
+        # Validate inputs
+        inputs_check(self)
 
-        # Coarsen grid if necessary so that self.grid_spacing > self.min_h
-        self.box_length = self.bounding_box[1]-self.bounding_box[0]
-        max_num_grid_points = np.floor(self.box_length/self.min_h).astype(int)
-        if max_num_grid_points < self.num_grid_points:
-            self.num_grid_points = max_num_grid_points
-            print('Warning, reducing number of gridpoints to ',
-                  self.num_grid_points)
+        # If grid is specified, use that
+        if grid is not None:
+            assert (len(grid) >= 2)
+            grid = np.array(grid).copy()
+            grid = np.linspace(grid.min(), grid.max(), len(grid))
+            grid_spacing = grid[1]-grid[0]
+            bounding_box = [grid[0] - grid_spacing/2,
+                            grid[-1] + grid_spacing/2]
+            num_grid_points = len(grid)
+
+        # Otherwise, if bounding box is specified, use that
+        elif bounding_box is not None:
+            assert(len(bounding_box) == 2)
+            assert(bounding_box[0] < bounding_box[1])
+            assert(num_grid_points > 1)
+            grid_spacing = (bounding_box[1] - bounding_box[0])/num_grid_points
+            grid = np.linspace(bounding_box[0] + grid_spacing/2,
+                               bounding_box[1] - grid_spacing/2,
+                               num_grid_points)
+
+        # Otherwise, choose bbox to follow wiskers in a box plot, i.e.
+        # lower quartile - whisker_length*IQR to
+        # upper quartile + whisker_length*IQR
+        else:
+            lower_quartile = np.percentile(data, 25)
+            upper_quartile = np.percentile(data, 75)
+            iqr = upper_quartile - lower_quartile
+            bounding_box = [lower_quartile - whisker_length * iqr,
+                            upper_quartile + whisker_length * iqr]
+            assert(num_grid_points > 1)
+            grid_spacing = (bounding_box[1] - bounding_box[0])/num_grid_points
+            grid = np.linspace(bounding_box[0] + grid_spacing / 2,
+                               bounding_box[1] - grid_spacing / 2,
+                               num_grid_points)
+
+        # Set final grid
+        self.grid = grid
+        self.bounding_box = bounding_box
+        self.grid_spacing = grid_spacing
+        self.num_grid_points = num_grid_points
 
         # Fit to data
         self.results = self.run()
 
-        #print('Deft1D ran successfully')
-        self.grid = self.get_grid()
+        # Save some results
         self.results_dict = self.get_results()
         self.histogram = self.results_dict['R']
-        self.grid_spacing = self.get_h()
         self.Q_star = self.get_Q_star()
         self.evaluate = self.Q_star.evaluate
         self.values = self.evaluate(self.grid)
         self.sample_values = self.eval_samples(self.grid)
-
 
     def get_results(self, key=None):
         if self.results is not None and key is None:

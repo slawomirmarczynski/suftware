@@ -784,18 +784,18 @@ def inputs_check(obj):
 
     # Make sure bbox is valid
     try:
-        if not (bbox == 'Auto' or isinstance(bbox, tuple) or isinstance(bbox,
+        if not ((bbox is None) or isinstance(bbox, tuple) or isinstance(bbox,
                                                                         list)):
             raise TypeError
 
     except TypeError as e:
         print(
-            'Input check failed:  bounding box must be "Auto" or a 2-tuple of floats \nCurrent bounding box type = %s' % type(
+            'Input check failed:  bounding box must be None or a 2-tuple of floats \nCurrent bounding box type = %s' % type(
                 bbox))
         sys.exit(1)
 
     try:
-        if bbox != 'Auto':
+        if bbox is not None:
             if not (len(bbox) == 2):
                 print('bbox: ', bbox)
                 raise DeftError(
@@ -806,7 +806,7 @@ def inputs_check(obj):
         sys.exit(1)
 
     try:
-        if bbox != 'Auto':
+        if bbox is not None:
             for i in range(2):
                 if not isinstance(bbox[i], utils.NUMBER):
                     raise DeftError(
@@ -816,7 +816,7 @@ def inputs_check(obj):
         sys.exit(1)
 
     try:
-        if bbox != 'Auto':
+        if bbox is not None:
             if not (bbox[0] < bbox[1]):
                 raise DeftError(
                     'Inputs check failed. bounding-box[1] should be greater than bounding-box[0].')

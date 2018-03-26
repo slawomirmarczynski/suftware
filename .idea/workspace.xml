@@ -4,6 +4,7 @@
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/supplements.py" afterPath="$PROJECT_DIR$/deft_code/supplements.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,21 +18,9 @@
       <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
+            <state relative-caret-position="150">
               <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="simulate_data_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="608">
-              <caret line="32" column="22" lean-forward="true" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
-              <folding>
-                <element signature="e#18#33#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -39,31 +28,11 @@
       <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="472">
-              <caret line="144" column="40" lean-forward="false" selection-start-line="144" selection-start-column="40" selection-end-line="144" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+            <state relative-caret-position="294">
+              <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
               <folding>
-                <element signature="e#18#33#0" expanded="true" />
+                <element signature="e#34#52#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-468">
-              <caret line="661" column="4" lean-forward="false" selection-start-line="661" selection-start-column="4" selection-end-line="661" selection-end-column="4" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -88,6 +57,7 @@
       <find>Field</find>
       <find>Field1D</find>
       <find>Results</find>
+      <find>bounding_box</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -102,7 +72,6 @@
         <option value="$PROJECT_DIR$/suftware_runner.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/deft_code/deft_core.py" />
-        <option value="$PROJECT_DIR$/deft_code/supplements.py" />
         <option value="$PROJECT_DIR$/deft_code/field_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/density_1d.py" />
         <option value="$PROJECT_DIR$/sim/simulate_data_1d.py" />
@@ -113,14 +82,14 @@
         <option value="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" />
         <option value="$PROJECT_DIR$/data/buffalo_snowfall.dat" />
         <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
+        <option value="$PROJECT_DIR$/deft_code/supplements.py" />
         <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="y" value="23" />
-    <option name="width" value="2560" />
-    <option name="height" value="1363" />
+    <option name="width" value="1280" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -456,7 +425,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522063240859</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Changed bbox='Auto' default to bbox=None in deft_1d.run()">
+      <created>1522063387690</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1522063387690</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -486,13 +462,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13939634" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2536349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328125" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16294643" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3096591" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.234375" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -561,7 +537,8 @@
     <MESSAGE value="Made example data available through suftware.example_data_1d(); code is in example_data_1d.run()" />
     <MESSAGE value="modified example datasets so that they list 'bbox'" />
     <MESSAGE value="Working as of this morning." />
-    <option name="LAST_COMMIT_MESSAGE" value="Working as of this morning." />
+    <MESSAGE value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -591,7 +568,7 @@
         <state relative-caret-position="342">
           <caret line="18" column="38" lean-forward="true" selection-start-line="18" selection-start-column="38" selection-end-line="18" selection-end-column="38" />
           <folding>
-            <element signature="e#34#52#0" expanded="false" />
+            <element signature="e#34#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -848,16 +825,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-468">
-          <caret line="661" column="4" lean-forward="false" selection-start-line="661" selection-start-column="4" selection-end-line="661" selection-end-column="4" />
+        <state relative-caret-position="10981">
+          <caret line="803" column="26" lean-forward="true" selection-start-line="803" selection-start-column="26" selection-end-line="803" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+        <state relative-caret-position="-7">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding>
             <element signature="e#18#33#0" expanded="true" />
           </folding>
@@ -866,8 +843,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="32" column="22" lean-forward="true" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+        <state relative-caret-position="143">
+          <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
           <folding>
             <element signature="e#18#33#0" expanded="true" />
           </folding>
@@ -876,7 +853,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
+        <state relative-caret-position="150">
           <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
           <folding />
         </state>
@@ -884,9 +861,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="144" column="40" lean-forward="false" selection-start-line="144" selection-start-column="40" selection-end-line="144" selection-end-column="40" />
-          <folding />
+        <state relative-caret-position="294">
+          <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
+          <folding>
+            <element signature="e#34#52#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
