@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/supplements.py" afterPath="$PROJECT_DIR$/deft_code/supplements.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/example_data_1d.py" afterPath="$PROJECT_DIR$/deft_code/example_data_1d.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="175" column="52" lean-forward="false" selection-start-line="175" selection-start-column="52" selection-end-line="175" selection-end-column="52" />
+            <state relative-caret-position="809">
+              <caret line="200" column="0" lean-forward="false" selection-start-line="200" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
@@ -37,11 +36,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="supplements.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="430">
+            <state relative-caret-position="3825">
               <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -91,9 +110,9 @@
         <option value="$PROJECT_DIR$/data/old_faithful_waiting_times.dat" />
         <option value="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" />
         <option value="$PROJECT_DIR$/data/buffalo_snowfall.dat" />
-        <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/supplements.py" />
+        <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
       </list>
     </option>
   </component>
@@ -133,6 +152,11 @@
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
               <item name="deft_code" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -449,7 +473,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522069263728</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Added automatic conversion to floats. Removed loop checking that all data is a number.">
+      <created>1522071753527</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1522071753527</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -532,7 +563,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Modified .gitignore to ignore .DS... stuff." />
     <MESSAGE value="No, now I modified .gitignore to ignore .DS_Store files" />
     <MESSAGE value="Wrote evaluate_Q_star, evaluate_Q_samples, and removed posterior_sampling_method option from package" />
     <MESSAGE value="Defined self.values, self.sample_values, self.grid, etc.. This makes it easier for the user to plot the results." />
@@ -557,7 +587,8 @@
     <MESSAGE value="Working as of this morning." />
     <MESSAGE value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
     <MESSAGE value="Modified grid choice algorithm. Also implemented box-plot-based choice of bounding_box." />
-    <option name="LAST_COMMIT_MESSAGE" value="Modified grid choice algorithm. Also implemented box-plot-based choice of bounding_box." />
+    <MESSAGE value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -794,14 +825,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="20" column="27" lean-forward="true" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/suftware_runner.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="418">
@@ -842,22 +865,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding>
-            <element signature="e#18#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="143">
           <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
           <folding>
-            <element signature="e#18#33#0" expanded="true" />
+            <element signature="e#18#33#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -870,20 +883,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3825">
+          <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="175" column="52" lean-forward="false" selection-start-line="175" selection-start-column="52" selection-end-line="175" selection-end-column="52" />
+        <state relative-caret-position="809">
+          <caret line="200" column="0" lean-forward="false" selection-start-line="200" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
+    <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="430">
-          <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
+        <state relative-caret-position="361">
+          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
