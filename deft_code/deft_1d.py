@@ -106,7 +106,7 @@ class Deft1D:
                  num_grid_points=100,
                  bounding_box=None,
                  grid=None,
-                 whisker_length=1.5,
+                 whisker_length=3,
                  alpha=3,
                  periodic=False,
                  Z_evaluation_method='Lap',
@@ -165,15 +165,32 @@ class Deft1D:
                                bounding_box[1] - grid_spacing/2,
                                num_grid_points)
 
+
+
         # Otherwise, choose bbox to follow wiskers in a box plot, i.e.
         # lower quartile - whisker_length*IQR to
         # upper quartile + whisker_length*IQR
+        # then adjust range as appropriate
         else:
             lower_quartile = np.percentile(data, 25)
             upper_quartile = np.percentile(data, 75)
             iqr = upper_quartile - lower_quartile
-            bounding_box = [lower_quartile - whisker_length * iqr,
-                            upper_quartile + whisker_length * iqr]
+            lower_bound = lower_quartile - whisker_length * iqr
+            upper_bound = upper_quartile + whisker_length * iqr
+
+            # Autoadjust lower bound
+            if all(data >= 0) and lower_bound < 0:
+                lower_bound = 0
+
+            # Autoadjust upper bound
+            if all(data <= 0) and upper_bound > 0:
+                upper_bound = 0
+            if all(data <= 1) and upper_bound > 1:
+                upper_bound = 1
+            if all(data <= 100) and upper_bound > 100:
+                upper_bound = 100
+
+            bounding_box = [lower_bound-(1E-6)*iqr, upper_bound+(1E-6)*iqr]
             assert(num_grid_points > 1)
             grid_spacing = (bounding_box[1] - bounding_box[0])/num_grid_points
             grid = np.linspace(bounding_box[0] + grid_spacing / 2,

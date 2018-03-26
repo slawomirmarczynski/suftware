@@ -188,18 +188,18 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
     if not isinstance(normalized, bool):
         raise DeftError('/histogram_counts_1d/ normalized must be a boolean: normalized = %s' % type(normalized))
 
-    data_spread = max(data) - min(data)
-    
-    # Set lower bound automatically if called for
-    if bbox[0] == -np.Inf:
-        bbox[0] = min(data) - data_spread*0.2
-
-    # Set upper bound automatically if called for
-    if bbox[1] == np.Inf:
-        bbox[1] = max(data) + data_spread*0.2
+    # data_spread = max(data) - min(data)
+    #
+    # # Set lower bound automatically if called for
+    # if bbox[0] == -np.Inf:
+    #     bbox[0] = min(data) - data_spread*0.2
+    #
+    # # Set upper bound automatically if called for
+    # if bbox[1] == np.Inf:
+    #     bbox[1] = max(data) + data_spread*0.2
 
     # Crop data to bounding box
-    indices = (data > bbox[0]) & (data < bbox[1])
+    indices = (data >= bbox[0]) & (data < bbox[1])
     cropped_data = data[0]
 
     # Get grid info from bbox and G

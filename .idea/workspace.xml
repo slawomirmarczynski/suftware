@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
+    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="Added WHO data for density estimation. This gives some good datasets.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/example_data_1d.py" afterPath="$PROJECT_DIR$/deft_code/example_data_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/utils.py" afterPath="$PROJECT_DIR$/deft_code/utils.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,18 +18,18 @@
       <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7">
+            <state relative-caret-position="190">
               <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="809">
-              <caret line="200" column="0" lean-forward="false" selection-start-line="200" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
+            <state relative-caret-position="560">
+              <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
@@ -36,10 +37,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
+            <state relative-caret-position="243">
               <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
               <folding />
             </state>
@@ -49,7 +50,7 @@
       <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3825">
+            <state relative-caret-position="4353">
               <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
               <folding />
             </state>
@@ -59,8 +60,18 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+            <state relative-caret-position="588">
+              <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2031">
+              <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -87,6 +98,7 @@
       <find>Field1D</find>
       <find>Results</find>
       <find>bounding_box</find>
+      <find>histogram_</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -110,9 +122,10 @@
         <option value="$PROJECT_DIR$/data/old_faithful_waiting_times.dat" />
         <option value="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" />
         <option value="$PROJECT_DIR$/data/buffalo_snowfall.dat" />
-        <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/supplements.py" />
         <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
+        <option value="$PROJECT_DIR$/deft_code/utils.py" />
+        <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
       </list>
     </option>
   </component>
@@ -480,7 +493,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522071753527</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Added WHO data for density estimation. This gives some good datasets.">
+      <created>1522076192792</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1522076192792</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -563,7 +583,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="No, now I modified .gitignore to ignore .DS_Store files" />
     <MESSAGE value="Wrote evaluate_Q_star, evaluate_Q_samples, and removed posterior_sampling_method option from package" />
     <MESSAGE value="Defined self.values, self.sample_values, self.grid, etc.. This makes it easier for the user to plot the results." />
     <MESSAGE value="Removed Deft1D.fit() and the fit_now option in the constructor" />
@@ -588,7 +607,8 @@
     <MESSAGE value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
     <MESSAGE value="Modified grid choice algorithm. Also implemented box-plot-based choice of bounding_box." />
     <MESSAGE value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
+    <MESSAGE value="Added WHO data for density estimation. This gives some good datasets." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added WHO data for density estimation. This gives some good datasets." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -781,16 +801,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16188">
-          <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/field_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1064">
@@ -875,9 +885,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/deft_core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2031">
+          <caret line="871" column="38" lean-forward="false" selection-start-line="871" selection-start-column="38" selection-end-line="871" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
+        <state relative-caret-position="190">
           <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
           <folding />
         </state>
@@ -885,35 +911,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3825">
+        <state relative-caret-position="4353">
           <caret line="693" column="19" lean-forward="false" selection-start-line="693" selection-start-column="19" selection-end-line="693" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/utils.py">
+    <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+        <state relative-caret-position="243">
+          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="809">
-          <caret line="200" column="0" lean-forward="false" selection-start-line="200" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
+        <state relative-caret-position="560">
+          <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
