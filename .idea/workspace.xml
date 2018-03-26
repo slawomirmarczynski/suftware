@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/buffalo_snowfall.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/old_faithful_waiting_times.dat" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/treatment_length.dat" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/deft_1d.py" afterPath="$PROJECT_DIR$/deft_code/deft_1d.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/deft_code/example_data_1d.py" afterPath="$PROJECT_DIR$/deft_code/example_data_1d.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,21 +24,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="simulate_data_1d.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="simulate_data_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="6" column="15" lean-forward="false" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="15" />
-              <folding />
+            <state relative-caret-position="608">
+              <caret line="32" column="22" lean-forward="true" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+              <folding>
+                <element signature="e#18#33#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-187">
-              <caret line="171" column="0" lean-forward="false" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+            <state relative-caret-position="472">
+              <caret line="144" column="40" lean-forward="false" selection-start-line="144" selection-start-column="40" selection-end-line="144" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -115,8 +112,8 @@
         <option value="$PROJECT_DIR$/data/old_faithful_waiting_times.dat" />
         <option value="$PROJECT_DIR$/data/old_faithful_eruption_times.dat" />
         <option value="$PROJECT_DIR$/data/buffalo_snowfall.dat" />
-        <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
         <option value="$PROJECT_DIR$/deft_code/example_data_1d.py" />
+        <option value="$PROJECT_DIR$/deft_code/deft_1d.py" />
       </list>
     </option>
   </component>
@@ -452,7 +449,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522018226131</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Working as of this morning.">
+      <created>1522063240859</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1522063240859</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -556,7 +560,8 @@
     <MESSAGE value="Made valid simulation distributions available to user through suftware.simulate_1d_distribution_types" />
     <MESSAGE value="Made example data available through suftware.example_data_1d(); code is in example_data_1d.run()" />
     <MESSAGE value="modified example datasets so that they list 'bbox'" />
-    <option name="LAST_COMMIT_MESSAGE" value="modified example datasets so that they list 'bbox'" />
+    <MESSAGE value="Working as of this morning." />
+    <option name="LAST_COMMIT_MESSAGE" value="Working as of this morning." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -849,22 +854,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="190">
-          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187">
-          <caret line="171" column="0" lean-forward="false" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/example_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
@@ -877,8 +866,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/deft_code/simulate_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="15" lean-forward="false" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="15" />
+        <state relative-caret-position="608">
+          <caret line="32" column="22" lean-forward="true" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
+          <folding>
+            <element signature="e#18#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/suftware.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deft_code/deft_1d.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="144" column="40" lean-forward="false" selection-start-line="144" selection-start-column="40" selection-end-line="144" selection-end-column="40" />
           <folding />
         </state>
       </provider>

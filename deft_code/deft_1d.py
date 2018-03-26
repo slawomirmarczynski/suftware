@@ -105,7 +105,7 @@ class Deft1D:
                  data,
                  num_grid_points=100,
                  alpha=3,
-                 bounding_box='Auto',
+                 bounding_box=None,
                  periodic=False,
                  Z_evaluation_method='Lap',
                  num_samples_for_Z=1e5,
@@ -143,7 +143,7 @@ class Deft1D:
         self.data, self.min_h = clean_data(data)
 
         # Automatically set bounding box if requested
-        if self.bounding_box == 'Auto':
+        if self.bounding_box is None:
             data_spread = np.max(self.data) - np.min(self.data)
             bbox_left = np.min(self.data) - 0.2 * data_spread
             bbox_right = np.max(self.data) + 0.2 * data_spread
