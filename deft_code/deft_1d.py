@@ -24,14 +24,21 @@ class Deft1D:
 
     parameters
     ----------
-    data: (array like)
+    data: (np.array)
         User input data for which Deft1D will estimate the density.
     num_grid_points: (int)
         Number of grid points.
+    grid: (np.array)
+        Locations of grid points. Grid points must be evenly spaced in
+        ascending order.
+    whisker_length: (float)
+        The number of interquartile ranges above the 3rd quartile and below the
+        1st quartile at which to position the upper and lower bounds of the
+        bounding box.
     alpha: (int)
         Smoothness parameter. Represents the order of the
         derivative in the action.
-    bounding_box: ((int,int) or [int,int])
+    bounding_box: ([float,float])
         Bounding box for density estimation.
     periodic: (boolean)
         Enforce periodic boundary conditions via True or False.
@@ -46,19 +53,19 @@ class Deft1D:
         More samples will help to evaluate a better density. More samples
         will also make calculation slower. num_samples_for_Z = 0 means the Laplace
         approximation for the evaluation of the partition function is used.
-    resolution: (positive float)
+    resolution: (float > 0)
         Specifies max distance between neighboring points on the MAP curve.
     seed: (int)
         Specify random seed for evaluation of the partition function
         and for the posterior sampling.
-    max_t_step: (non-negative float)
+    max_t_step: (float > 0)
         Maximum t step size on the MAP curve.
-    max_log_evidence_ratio_drop: (float)
+    max_log_evidence_ratio_drop: (float > 0)
         Stop criterion for traversing the MAP curve; deft stops when:
         max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
-    tolerance: (positive float)
+    tolerance: (float > 0)
         Value which species convergence of phi.
-    num_posterior_samples: (non-negative int)
+    num_posterior_samples: (int >= 0)
         Number of posterior samples.
     sample_only_at_l_star: (boolean)
         If True : posterior samples drawn at l_star.
@@ -72,33 +79,15 @@ class Deft1D:
 
     methods
     -------
-    fit(data, **kwargs):
-        Fit the data using deft for density estimation.
-    get_params():
-        Returns the parameters used in the constructor.
-    set_params():
-        Set parameters for the constructor.
-    get_h():
-        Returns grid bin width.
-    get_bounding_box():
-        Return bounding box.
-    get_grid():
-        Returns the grid as a numpy array.
-    get_num_grid_points
-        Returns the number of grid points.
+    run():
+        Runs the DEFT 1D algorithm.
     get_results():
-        Returns the results object.
-    get_phi_star():
-        Returns the Field1D object.
-    get_Q_star():
-        Returns Qstar as a Density1D object.
+        Transforms the results object passed by run() into a dictionary, or
+        returns a single specified attribute of the results object.
     get_Q_samples():
-        Returns posterior samples of the density.
-        keyword arguments:
-            get_sample_number: (non-negative int)
-                returns the posterior sample specified by argument
-            get_first_n_samples (non negative int)
-                return the first n samples specified by argument
+        Returns a list of sampled Qs in functionalized form.
+    eval_samples():
+        Evaluates sampled Qs on specified x values.
     """
 
     def __init__(self,
@@ -209,12 +198,24 @@ class Deft1D:
         # Save some results
         self.results_dict = self.get_results()
         self.histogram = self.results_dict['R']
-        self.Q_star = self.get_Q_star()
+
+        self.phi_star = Field1D(self.results_dict['phi_star'],
+                                self.grid,
+                                self.bounding_box)
+        self.Q_star = Density1D(self.phi_star)
         self.evaluate = self.Q_star.evaluate
+
         self.values = self.evaluate(self.grid)
         self.sample_values = self.eval_samples(self.grid)
 
+
     def get_results(self, key=None):
+        """
+        Returns a dictionary whose keys access the attributes of the
+        results object returned by deft_1d.run()
+
+        [DOCUMENT]
+        """
         if self.results is not None and key is None:
             # return the dictionary containing results if no key provided
             return self.results.__dict__
@@ -227,52 +228,14 @@ class Deft1D:
         else:
             print("Get Results: Deft results are none. Please run fit first.")
 
-    # get step size
-    def get_h(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
-        del counts
-        # h = bc[1]-bc[0]
-        return bin_centers[1]-bin_centers[0]
 
-    # return bounding box
-    def get_bounding_box(self):
-        return self.bounding_box
-
-    # return number of grid points
-    def get_num_grid_points(self):
-        return self.num_grid_points
-
-    # return xs of grid
-    def get_grid(self):
-        counts, bin_centers = utils.histogram_counts_1d(self.results.__dict__.get('phi_star'), self.num_grid_points, self.bounding_box)
-        del counts
-        # h = bc[1]-bc[0]
-        return bin_centers
-
-    # returns a Field1D object
-    def get_phi_star(self):
-
-        if self.results is not None:
-            return Field1D(self.results.__dict__.get('phi_star'), self.grid, self.bounding_box)
-        else:
-            print("phi is none. Please run fit first.")
-
-    # returns a Density1D object
-    def get_Q_star(self):
-
-        if self.results is not None:
-            return Density1D(self.get_phi_star())
-        else:
-            print("Q_star is none. Please run fit first.")
-
-    # Returns the histogram R
-    def get_R(self):
-        results_dict = self.get_results()
-        return results_dict['R']
-
-    # if importance_resampling == True:
-    #   then
     def get_Q_samples(self, importance_resampling=True):
+        """
+        Produces a set of sampled Q distributions. By default these are chosen
+        using importance resampling.
+
+        [DOCUMENT]
+        """
 
         # ensure parameters are legal
         if self.results is not None and self.num_posterior_samples is not 0:
@@ -288,9 +251,9 @@ class Deft1D:
             sample_weights = []
             for sampleIndex in range(self.num_posterior_samples):
                 Q_Samples.append(
-                    Density1D(Field1D(self.get_results()['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
+                    Density1D(Field1D(self.results_dict['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
 
-                sample_weights.append(self.get_results()['phi_weights'][sampleIndex])
+                sample_weights.append(self.results_dict['phi_weights'][sampleIndex])
 
             if importance_resampling:
 
@@ -314,8 +277,17 @@ class Deft1D:
         else:
             print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
 
-    # returns Q_star evaluated on the x-values provided
+    # returns Q_samples evaluated on the x-values provided
     def eval_samples(self, xs=None):
+        """
+        Evaluate sampled Qs at specified locations
+
+        parameters:
+            xs (np.array): Data points at which samples are evaluated
+        return:
+            values (np.array): Value of sampled Qs at provided x values. Returns
+                None if no samples were taken
+        """
 
         # If xs are not provided use grid
         if xs is None:
@@ -324,69 +296,24 @@ class Deft1D:
         # Evaluate Q_samples on grid and return
         if self.num_posterior_samples > 0:
             Q_samples = self.get_Q_samples()
-            return np.array([Q.evaluate(xs) for Q in Q_samples]).T
+            values = np.array([Q.evaluate(xs) for Q in Q_samples]).T
         else:
-            return None
-
-
-    def get_params(self,key=None):
-        if key is None:
-            # if no key provided, return all parameters
-            return self.__dict__
-        else:
-            try:
-
-                if '__getattribute__' in dir(self):
-                    # recommended way of retrieving attributes
-                    return self.__getattribute__(key)
-                else:
-                    # attribute retrieval for python 2 and older
-                    return self.__dict__[key]
-
-            except (AttributeError, KeyError) as e:
-                print("Get Params: parameter does not exist: ",e)
-
-    # should check if parameter exists in __dict__
-    def set_params(self,parameter=None,value=None, **kwargs):
-        # if no dictionary provided
-        if bool(kwargs) is False:
-
-            # check validity of parameter key
-            try:
-                if not parameter in self.__dict__:
-                    raise DeftError('Error in set params: setting invalid parameter, '+parameter)
-
-                elif '__setattr__' in dir(self):
-                    self.__setattr__(parameter, value)
-                else:
-                    self.__dict__[parameter] = value
-
-            except DeftError as e:
-                print(e)
-                #sys.exit(1)
-
-        else:
-
-            # check validity of parameter dictionary
-            try:
-                for key in kwargs:
-
-                    if not key in self.__dict__.keys():
-                        raise DeftError('Error in set params: setting invalid parameter, ' + key)
-
-                    elif '__setattr__' in dir(self):
-                        self.__setattr__(key, kwargs[key])
-                    else:
-                        self.__dict__[key] = kwargs[key]
-            except DeftError as e:
-                print(e)
-                #sys.exit(1)
+            values = None
+        return values
 
     #
     # The main DEFT algorithm in 1D.
     #
 
     def run(self):
+        """
+        Runs DEFT 1D on data. Requires that all relevant input already be set
+        as attributes of class instance.
+
+        return:
+            results (class instance): A container class whose attributes contain
+            the results of the DEFT 1D algorithm.
+        """
 
         # Extract information from Deft1D object
         data = self.data

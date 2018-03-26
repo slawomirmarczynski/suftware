@@ -57,21 +57,19 @@ class Density1D:
         self.bounding_box = self.field.bounding_box
         self.Z = sp.sum(self.field.grid_spacing * sp.exp(-self.field.phi))
 
-    def evaluate(self, x, outside_bbox=0):
+    def evaluate(self, x):
 
         # Convert to numpy array
         x = np.array(x)
 
         # If dimension is zero, put in numpy array and rerun
         if len(x.shape)==0:
-            array = self.evaluate(np.array([x]),
-                                  outside_bbox=outside_bbox)
+            array = self.evaluate([x])
             return array[0]
 
         # Otherwise, evaluate
         else:
             values = sp.exp(-self.field.evaluate(x)) / self.Z
-            if outside_bbox != 'interp':
-                indices = (x < self.bounding_box[0]) | (x > self.bounding_box[1])
-                values[indices] = outside_bbox
+            indices = (x < self.bounding_box[0]) | (x > self.bounding_box[1])
+            values[indices] = 0.0
             return values
