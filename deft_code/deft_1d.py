@@ -142,26 +142,20 @@ class Deft1D:
         # clean input data
         self.data, self.min_h = clean_data(data)
 
+        # Automatically set bounding box if requested
         if self.bounding_box == 'Auto':
-
-
             data_spread = np.max(self.data) - np.min(self.data)
-            #bbox_left = int(np.min(self.data) - 0.2 * data_spread)
-            #bbox_right = int(np.max(self.data) + 0.2 * data_spread)
-            bbox_left = round(np.min(self.data) - 0.2 * data_spread,2)
-            bbox_right = round(np.max(self.data) + 0.2 * data_spread,2)
+            bbox_left = np.min(self.data) - 0.2 * data_spread
+            bbox_right = np.max(self.data) + 0.2 * data_spread
             self.bounding_box = [bbox_left, bbox_right]
 
-            #print('bbox_right: ', bbox_right)
-            #print('bbox: ',self.bounding_box)
-
-        # make sure G (and therefore step-size is appropriate set based on data).
-        elif self.bounding_box != 'Auto':
-            if (self.num_grid_points != int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h) and int(
-                        (self.bounding_box[1] - self.bounding_box[0]) / self.min_h) <= 1000):
-                self.num_grid_points = int((self.bounding_box[1] - self.bounding_box[0]) / self.min_h)
-                print(
-                'Warning, updating value of num_grid_points based on bounding box entered: ', self.num_grid_points)
+        # Coarsen grid if necessary so that self.grid_spacing > self.min_h
+        self.box_length = self.bounding_box[1]-self.bounding_box[0]
+        max_num_grid_points = np.floor(self.box_length/self.min_h).astype(int)
+        if max_num_grid_points < self.num_grid_points:
+            self.num_grid_points = max_num_grid_points
+            print('Warning, reducing number of gridpoints to ',
+                  self.num_grid_points)
 
         # Fit to data
         self.results = self.run()

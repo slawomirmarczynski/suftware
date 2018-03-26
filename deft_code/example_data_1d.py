@@ -18,6 +18,9 @@ buffalo_snowfall
 old_faithful_eruption_times
 old_faithful_waiting_times
 treatment_length
+kiva_loans__funded_amount
+kiva_loans__lender_count
+kiva_loans__term_in_months
 '''.split()
 
 
@@ -37,7 +40,7 @@ def parse_dataset(file_name):
     return data, details
 
 
-def run(dataset='buffalo_snowfall', return_details=False):
+def run(dataset='old_faithful_eruption_times', return_details=False):
     """
     Returns data from a predefined dataset
 
@@ -56,7 +59,7 @@ def run(dataset='buffalo_snowfall', return_details=False):
     # Load data
     if dataset in VALID_DATASETS:
         # Set file name
-        file_name = '%s/%s.dat'%(data_dir, dataset)
+        file_name = '%s/%s.txt'%(data_dir, dataset)
 
         # Load data
         data, details = parse_dataset(file_name)
