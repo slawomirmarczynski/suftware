@@ -2,30 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/raw/who_data_2017.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/adolescent_birth_rate.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/alcohol_consumption.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/attended_births.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/buffalo_snowfall.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/family_planning_needs_met.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/healthy_life_expectancy.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/hepatitis_b_vaccination.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_all.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_female.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/life_expectancy_male.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/malaria.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/maternal_mortaility.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/neonatal_mortality.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/new_hiv_infections.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/old_faithful_eruption_times.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/old_faithful_waiting_times.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/population.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/road_traffic_mortality.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/suicide_mortality.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/tb_incidence.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/treatment_length.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/data/under_five_mortatility.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ipynb/analyze_who_data.ipynb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ipynb/gaussian_mixture_simlpe.ipynb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ipynb/who_simple.ipynb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ipynb/wrangle_who_data.ipynb" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/adolescent_birth_rate.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/alcohol_consumption.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/attended_births.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/family_planning_needs_met.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/healthy_life_expectancy.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/hepatitis_b_vaccination.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/life_expectancy_all.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/life_expectancy_female.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/life_expectancy_male.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/malaria.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/maternal_mortaility.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/neonatal_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/new_hiv_infections.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/population.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/road_traffic_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/suicide_mortality.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/tb_incidence.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/examples/data/under_five_mortatility.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ipynb/18.03.23_jbk_tests.ipynb" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ipynb/wrangle_who_data.ipynb" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/example_data_1d.py" afterPath="$PROJECT_DIR$/src/example_data_1d.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -36,10 +38,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
+            <state relative-caret-position="210">
               <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
               <folding>
                 <element signature="e#177#207#0" expanded="true" />
@@ -51,7 +53,7 @@
       <file leaf-file-name="deft_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/deft_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3600">
+            <state relative-caret-position="2250">
               <caret line="150" column="35" lean-forward="false" selection-start-line="150" selection-start-column="35" selection-end-line="150" selection-end-column="35" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
@@ -60,11 +62,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="example_data_1d.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/example_data_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="15" column="48" lean-forward="false" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
+            <state relative-caret-position="315">
+              <caret line="21" column="28" lean-forward="false" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
               <folding>
                 <element signature="e#18#33#0" expanded="true" />
               </folding>
@@ -85,7 +87,7 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4680">
+            <state relative-caret-position="-16">
               <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
               <folding />
             </state>
@@ -95,7 +97,7 @@
       <file leaf-file-name="field_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/field_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1632">
+            <state relative-caret-position="-7">
               <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
@@ -107,7 +109,7 @@
       <file leaf-file-name="density_1d.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/density_1d.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1584">
+            <state relative-caret-position="-7">
               <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
@@ -119,7 +121,7 @@
       <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/deft_core.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
+            <state relative-caret-position="-7">
               <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
               <folding />
             </state>
@@ -206,6 +208,22 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -574,7 +592,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522102250583</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="re-added data files">
+      <created>1522102284736</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1522102284736</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -604,13 +629,13 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12470215" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2536349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328125" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16220239" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.359375" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.234375" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -656,7 +681,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Simplified interface to deft_1d.run(). Now just takes a Deft1D object." />
     <MESSAGE value="Removed option to pre-compute Laplacians" />
     <MESSAGE value="Removed __main__ and commandline interface to deft_1d.pypre-compute Laplacians" />
     <MESSAGE value="Remove deft_1d.sample_from_deft_1d_prior,() deft_1d.get_data_file_handle(), deft_1d.load_data()interface to deft_1d.pypre-compute Laplacians" />
@@ -681,7 +705,8 @@
     <MESSAGE value="Removed a lot of unneeded functions and started adding more documentation to deft_1d.py" />
     <MESSAGE value="Added example data files and ipynb files that process them." />
     <MESSAGE value="Simplified directory structures" />
-    <option name="LAST_COMMIT_MESSAGE" value="Simplified directory structures" />
+    <MESSAGE value="re-added data files" />
+    <option name="LAST_COMMIT_MESSAGE" value="re-added data files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -957,7 +982,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4680">
+        <state relative-caret-position="-16">
           <caret line="197" column="27" lean-forward="false" selection-start-line="197" selection-start-column="27" selection-end-line="197" selection-end-column="27" />
           <folding />
         </state>
@@ -965,7 +990,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/field_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1632">
+        <state relative-caret-position="-7">
           <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
@@ -975,7 +1000,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/density_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1584">
+        <state relative-caret-position="-7">
           <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
@@ -985,15 +1010,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/deft_core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
+        <state relative-caret-position="-7">
           <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/suftware.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
+          <folding>
+            <element signature="e#177#207#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/deft_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3600">
+        <state relative-caret-position="2250">
           <caret line="150" column="35" lean-forward="false" selection-start-line="150" selection-start-column="35" selection-end-line="150" selection-end-column="35" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
@@ -1003,20 +1038,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/example_data_1d.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="15" column="48" lean-forward="false" selection-start-line="15" selection-start-column="48" selection-end-line="15" selection-end-column="48" />
+        <state relative-caret-position="315">
+          <caret line="21" column="28" lean-forward="false" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
           <folding>
             <element signature="e#18#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="14" column="32" lean-forward="false" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-          <folding>
-            <element signature="e#177#207#0" expanded="true" />
           </folding>
         </state>
       </provider>

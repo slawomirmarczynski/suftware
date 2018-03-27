@@ -13,7 +13,7 @@ import os
 data_dir = os.path.dirname(os.path.abspath(__file__))+'/../examples/data'
 
 # List of supported distributions by name
-VALID_DATASETS = [name.split('.')[0] for name in
+VALID_DATASETS = ['.'.join(name.split('.')[:-1]) for name in
                   os.listdir(data_dir) if '.txt' in name ]
 
 
