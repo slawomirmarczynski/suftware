@@ -16,7 +16,7 @@ from src.supplements import clean_data
 from src.utils import DeftError
 
 
-class Field1D:
+class InterpolatedField1D:
     """
     This class takes a 1d field object evaluated on a grid and returns
     and instance of the Field1d class containing an interpolated field.

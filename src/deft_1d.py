@@ -15,10 +15,10 @@ from src.supplements import inputs_check
 from src.supplements import clean_data
 from src.utils import DeftError
 
-from src.density_1d import Density1D
-from src.field_1d import Field1D
+from src.interpolated_density_1d import InterpolatedDensity1D
+from src.interpolated_field_1d import InterpolatedField1D
 
-class Deft1D:
+class Density1D:
     """This class will serve as the interface for running
     deft1d
 
@@ -199,10 +199,10 @@ class Deft1D:
         self.results_dict = self.get_results()
         self.histogram = self.results_dict['R']
 
-        self.phi_star = Field1D(self.results_dict['phi_star'],
-                                self.grid,
-                                self.bounding_box)
-        self.Q_star = Density1D(self.phi_star)
+        self.phi_star = InterpolatedField1D(self.results_dict['phi_star'],
+                                            self.grid,
+                                            self.bounding_box)
+        self.Q_star = InterpolatedDensity1D(self.phi_star)
         self.evaluate = self.Q_star.evaluate
 
         self.values = self.evaluate(self.grid)
@@ -251,7 +251,7 @@ class Deft1D:
             sample_weights = []
             for sampleIndex in range(self.num_posterior_samples):
                 Q_Samples.append(
-                    Density1D(Field1D(self.results_dict['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
+                    InterpolatedDensity1D(InterpolatedField1D(self.results_dict['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
 
                 sample_weights.append(self.results_dict['phi_weights'][sampleIndex])
 

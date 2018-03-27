@@ -14,9 +14,9 @@ from src import laplacian
 from src.supplements import inputs_check
 from src.supplements import clean_data
 from src.utils import DeftError
-from src.field_1d import Field1D
+from src.interpolated_field_1d import InterpolatedField1D
 
-class Density1D:
+class InterpolatedDensity1D:
     """
     This class forms a Density object (Q) based on the
     interpolated field object from the Field1D class
