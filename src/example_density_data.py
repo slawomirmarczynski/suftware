@@ -1,11 +1,5 @@
 #!/usr/bin/python
-import argparse
-import json
 import numpy as np
-import math
-import scipy as sp
-import scipy.stats as stats
-import sys
 from src.utils import DeftError
 import os
 
@@ -33,14 +27,12 @@ def parse_dataset(file_name):
     return data, details
 
 
-def run(dataset='old_faithful_eruption_times', return_details=False):
+def run(dataset='old_faithful_eruption_times'):
     """
     Returns data from a predefined dataset
 
     Args:
         - dataset (str): Name of the dataset to load
-        - return_details (bool): Whether or not to return meta information
-        about data
 
     Returns:
         - data (numpy.array): An array containing sampled data
@@ -60,8 +52,6 @@ def run(dataset='old_faithful_eruption_times', return_details=False):
     else:
         raise DeftError('Distribution type "%s" not recognized.'%distribution_type)
 
-    if return_details:
-        return data, details
-    else:
-        return data
+    return data, details
+
 

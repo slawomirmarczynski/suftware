@@ -4,10 +4,6 @@ from scipy.linalg import solve, det, norm
 
 from src import utils
 from src.utils import DeftError
-from src import laplacian
-
-# Import error handling
-#from utils import DeftError
 
 PHI_STD_REG = utils.PHI_STD_REG 
 

@@ -1,22 +1,8 @@
 #!/usr/local/bin/python -W ignore
 import scipy as sp
 import numpy as np
-import sys
-import time
-from scipy.interpolate import interp1d
-from scipy import interpolate
 
-# Import deft-related code
-from src import deft_core
-from src import utils
-from src import laplacian
-
-from src.supplements import inputs_check
-from src.supplements import clean_data
-from src.utils import DeftError
-from src.interpolated_field_1d import InterpolatedField1D
-
-class InterpolatedDensity1D:
+class InterpolatedDensity:
     """
     This class forms a Density object (Q) based on the
     interpolated field object from the Field1D class

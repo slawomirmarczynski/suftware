@@ -2,23 +2,20 @@
 Head module. Contains classes for user interfacing.
 """
 
-from src.simulate_data_1d import run as simulate_data_1d
-from src.simulate_data_1d import VALID_DISTRIBUTIONS \
-    as simulate_data_1d__distribution_types
+# Data simulation
+from src.simulate_density_data import run as simulate_density_data
+from src.simulate_density_data import VALID_DISTRIBUTIONS \
+    as simulate_density_data__distribution_types
 
-from src.example_data_1d import run as example_data_1d
-from src.example_data_1d import VALID_DATASETS \
-    as example_data_1d__datasets
+# Data examples
+from src.example_density_data import run as example_density_data
+from src.example_density_data import VALID_DATASETS \
+    as example_density_data__datasets
 
-# Established classes
-from src.deft_1d import Density1D
-Density1D
-
-from src.interpolated_density_1d import InterpolatedDensity1D
-InterpolatedDensity1D
-
-from src.interpolated_field_1d import InterpolatedField1D
-InterpolatedField1D
+# Density estimation
+from src.density import Density
+from src.interpolated_density import InterpolatedDensity
+from src.interpolated_field import InterpolatedField
 
 # Classes that have yet to be written
 class Density2D:
