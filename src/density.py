@@ -3,8 +3,12 @@ import scipy as sp
 import numpy as np
 import sys
 import time
-from scipy.interpolate import interp1d
+import matplotlib.pyplot as plt
 import pdb
+
+SMALL_NUM = 1E-6
+MAX_NUM_GRID_POINTS = 1000
+DEFAULT_NUM_GRID_POINTS = 100
 
 # Import deft-related code
 from src import deft_core
@@ -164,35 +168,48 @@ class Density:
         bounding_box = self.bounding_box
         alpha = self.alpha
 
-        # Compute minimum grid spacing
-        data.sort()
-        diffs = np.diff(data)
-        min_grid_spacing = min(diffs[diffs > 0])
-
         # If grid is specified
         if grid is not None:
-            assert (len(grid) >= 2)
-            grid = np.array(grid).copy()
-            grid = np.linspace(grid.min(), grid.max(), len(grid))
+            assert len(grid) >= 2
+            assert min(grid) < max(grid)
+
+            # Set grid based ONLY on len(grid), min(grid), and max(grid)
             num_grid_points = len(grid)
             grid_start = min(grid)
             grid_stop = max(grid)
-            grid_spacing = (grid_stop - grid_start)/(num_grid_points-1)
-            bounding_box = [grid_start - grid_spacing/2,
-                            grid_stop + grid_spacing/2]
-
+            grid_spacing = (grid_stop - grid_start) / (num_grid_points - 1)
+            grid = np.linspace(grid_start,
+                               grid_stop*(1+SMALL_NUM),  # For numerical safety
+                               num_grid_points)
+            grid_padding = grid_spacing / 2
+            lower_bound = grid_start - grid_padding
+            upper_bound = grid_stop + grid_padding
+            bounding_box = np.array([lower_bound, upper_bound])
 
         # If grid is not specified
         else:
-            # If bounding box is specified
-            if bounding_box is not None:
-                assert(len(bounding_box) == 2)
-                assert(bounding_box[0] < bounding_box[1])
-                assert(num_grid_points >= 2*alpha)
 
-            # If bounding box is not specified
+            ### First, set bounding box ###
+
+            # If bounding box is specified, use that.
+            if bounding_box is not None:
+                assert isinstance(bounding_box, np.ndarray)
+                assert all(np.isfinite(bounding_box))
+                assert len(bounding_box) == 2
+                assert bounding_box[0] < bounding_box[1]
+
+                lower_bound = bounding_box[0]
+                upper_bound = bounding_box[1]
+                box_size = upper_bound - lower_bound
+
+
+            # Otherwise set bounding box based on data
             else:
-                # Choose bounding box automatically
+                assert isinstance(data, np.ndarray)
+                assert all(np.isfinite(data))
+                assert min(data) < max(data)
+
+                # Choose bounding box to encapsulate all data, with extra room
                 data_max = max(data)
                 data_min = min(data)
                 data_span = data_max - data_min
@@ -211,37 +228,106 @@ class Density:
                 if data_max <= 100 and upper_bound > 100:
                     upper_bound = 100
 
+                # Extend bounding box outward a little for numerical safety
+                lower_bound -= SMALL_NUM*data_span
+                upper_bound += SMALL_NUM*data_span
+                box_size = upper_bound - lower_bound
+
                 # Set bounding box
-                bounding_box = [lower_bound - (1E-6) * data_span,
-                                upper_bound + (1E-6) * data_span]
+                bounding_box = np.array([lower_bound, upper_bound])
 
-            # Set bounding box size
-            box_size = bounding_box[1] - bounding_box[0]
+            ### Next, define grid based on bounding box ###
 
-            # If num_grid_points is spedified
-            if (num_grid_points is not None):
-                grid_spacing = box_size / num_grid_points
+            # If grid_spacing is specified
+            if (grid_spacing is not None):
+                assert isinstance(grid_spacing, float)
+                assert np.isfinite(grid_spacing)
+                assert grid_spacing > 0
 
-            # If num_grid_points is not specified but grid_spacing is
-            elif (grid_spacing is not None):
+                # Set number of grid points
                 num_grid_points = np.floor(box_size/grid_spacing).astype(int)
 
-            # If neither num_grid_points or grid_spacing is specified
+                # Define grid padding
+                # Note: grid_spacing/2 <= grid_padding < grid_spacing
+                grid_padding = (box_size - (num_grid_points-1)*grid_spacing)/2
+                assert (grid_spacing/2 <= grid_padding < grid_spacing)
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   num_grid_points)
+
+            # Otherwise, if num_grid_points is specified
+            elif (num_grid_points is not None):
+                assert isinstance(num_grid_points, int)
+                assert 2*alpha <= num_grid_points <= MAX_NUM_GRID_POINTS
+
+                # Set grid spacing
+                grid_spacing = box_size / num_grid_points
+
+                # Define grid padding
+                grid_padding = grid_spacing/2
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   num_grid_points)
+
+            # Otherwise, set grid_spacing and num_grid_points based on data
             else:
-                grid_spacing = max(min_grid_spacing, box_size/100)
-                grid_spacing = min(grid_spacing, box_size/(2*alpha))
-                num_grid_points = box_size/grid_spacing
+                assert isinstance(data, np.ndarray)
+                assert all(np.isfinite(data))
+                assert min(data) < max(data)
 
-            # Set grid
-            grid_start = bounding_box[0] + grid_spacing/2
-            grid_stop = grid_start + (num_grid_points+1E-6)*grid_spacing
-            grid = np.linspace(grid_start, grid_stop, num_grid_points)
+                # Compute default grid spacing
+                default_grid_spacing = box_size/DEFAULT_NUM_GRID_POINTS
 
-            # Set final grid
-            self.grid = grid
-            self.grid_spacing = grid_spacing
-            self.num_grid_points = int(num_grid_points)
-            self.bounding_box = bounding_box
+                # Set minimum number of grid points
+                min_num_grid_points = 2 * alpha
+
+                # Set minimum grid spacing
+                data.sort()
+                diffs = np.diff(data)
+                min_grid_spacing = min(diffs[diffs > 0])
+                min_grid_spacing = min(min_grid_spacing,
+                                       box_size/min_num_grid_points)
+
+                # Set grid_spacing
+                grid_spacing = max(min_grid_spacing, default_grid_spacing)
+
+                # Set number of grid points
+                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+
+                # Set grid padding
+                grid_padding = grid_spacing/2
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM),  # For safety
+                                   num_grid_points)
+
+        # Set final grid
+        self.grid = grid
+        self.grid_spacing = grid_spacing
+        self.grid_start = grid_start
+        self.grid_stop = grid_stop
+        self.grid_padding = grid_padding
+        self.num_grid_points = num_grid_points
+        self.bounding_box = bounding_box
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
+        self.box_size = box_size
+
+        # Set bin edges
+        self.bin_edges = np.concatenate(([lower_bound],
+                                         grid[:-1]+grid_spacing/2,
+                                         [upper_bound]))
 
 
     def get_results_dict(self, key=None):
@@ -353,8 +439,8 @@ class Density:
         # Extract information from Deft1D object
         data = self.data
         G = self.num_grid_points
+        h = self.grid_spacing
         alpha = self.alpha
-        bbox = self.bounding_box
         periodic = self.periodic
         Z_eval = self.Z_evaluation_method
         num_Z_samples = self.num_samples_for_Z
@@ -388,11 +474,11 @@ class Density:
             print('Laplacian computed de novo in %f sec.'%laplacian_compute_time)
 
         # Get histogram counts and grid centers
-        counts, bin_centers = utils.histogram_counts_1d(data, G, bbox)
+
+        # Histogram based on bin centers
+        counts, _ = np.histogram(data, self.bin_edges)
         N = sum(counts)
 
-        # Get other information about grid
-        bbox, h, bin_edges = utils.grid_info_from_bin_centers_1d(bin_centers)
 
         # Compute initial t
         t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
@@ -407,7 +493,7 @@ class Density:
                                      tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop)
 
         # Fill in results
-        copy_start_time = time.clock()
+        #copy_start_time = time.clock()
         results = core_results # Get all results from deft_core
 
         # Normalize densities properly
@@ -420,36 +506,7 @@ class Density:
             p.Q /= h
         if not (num_pt_samples == 0):
             results.Q_samples /= h
-
-        # Get 1D-specific information
-        results.bin_centers = bin_centers
-        results.bin_edges = bin_edges
-        results.periodic = periodic
-        results.alpha = alpha
-        results.bbox = bbox
         results.Delta = Delta
-        copy_compute_time = time.clock() - copy_start_time
-
-        # Create interpolated phi_star and Q_star. Need to extend grid to boundaries first
-        extended_xgrid = sp.zeros(G+2)
-        extended_xgrid[1:-1] = bin_centers
-        extended_xgrid[0] = bbox[0] - h/2
-        extended_xgrid[-1] = bbox[1] + h/2
-
-        extended_phi_star = sp.zeros(G+2)
-        extended_phi_star[1:-1] = results.phi_star
-        extended_phi_star[0] = results.phi_star[0]
-        extended_phi_star[-1] = results.phi_star[-1]
-
-        phi_star_func = interp1d(extended_xgrid, extended_phi_star, kind='cubic')
-        Z = sp.sum(h*sp.exp(-results.phi_star))
-        Q_star_func = lambda x: sp.exp(-phi_star_func(x)) / Z
-        results.Q_star_func = Q_star_func
-
-        # Record execution time
-        results.copy_compute_time = copy_compute_time
-        results.laplacian_compute_time = laplacian_compute_time
-        results.deft_1d_compute_time = time.clock()-start_time
 
         # Store results
         self.results = results
@@ -736,3 +793,69 @@ class Density:
 
         # Set cleaned data
         self.data = data
+
+    def plot(self,
+             ax=None,
+             figsize=[4,4],
+             fontsize=12,
+             title='',
+             xlabel='',
+             tight_layout=False,
+             show_now=False,
+             num_posterior_samples=None,
+             histogram_color='orange',
+             histogram_alpha=1,
+             posterior_color='dodgerblue',
+             posterior_line_width=1,
+             posterior_alpha=.2,
+             color='blue',
+             linewidth=2,
+             alpha=1):
+        """
+        Visualize the estimated density
+        :return: None
+        """
+
+        ### Plot results ###
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+            tight_layout = True
+            show_now = True
+
+        # Plot histogram
+        ax.bar(self.grid,
+               self.histogram,
+               width=self.grid_spacing,
+               color=histogram_color,
+               alpha=histogram_alpha)
+
+        # Set number of posterior samples to plot
+        if num_posterior_samples is None:
+            num_posterior_samples = self.num_posterior_samples
+
+        # Plot posterior samples
+        ax.plot(self.grid,
+                self.sample_values[:, :num_posterior_samples],
+                color=posterior_color,
+                linewidth=posterior_line_width,
+                alpha=posterior_alpha)
+
+        # Plot best fit density
+        ax.plot(self.grid,
+                self.values,
+                color=color,
+                linewidth=linewidth,
+                alpha=alpha)
+
+        # style plot
+        ax.set_xlim(self.bounding_box)
+        ax.set_title(title, fontsize=fontsize)
+        ax.set_xlabel(xlabel, fontsize=fontsize)
+        ax.set_yticks([])
+        ax.tick_params('x', rotation=45, labelsize=fontsize)
+
+        if tight_layout:
+            plt.tight_layout()
+        if show_now:
+            plt.show()
+        #return ax
