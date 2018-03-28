@@ -185,6 +185,7 @@ class Density:
             lower_bound = grid_start - grid_padding
             upper_bound = grid_stop + grid_padding
             bounding_box = np.array([lower_bound, upper_bound])
+            box_size = upper_bound - lower_bound
 
         # If grid is not specified
         else:
