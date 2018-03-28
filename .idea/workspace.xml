@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/ipynb/analyze_who_data.ipynb" afterPath="$PROJECT_DIR$/examples/ipynb/analyze_who_data.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/ipynb/who_simple.ipynb" afterPath="$PROJECT_DIR$/examples/ipynb/who_simple.ipynb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/density.py" afterPath="$PROJECT_DIR$/src/density.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,7 +28,7 @@
       <file leaf-file-name="density.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/density.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="979">
+            <state relative-caret-position="12782">
               <caret line="860" column="9" lean-forward="false" selection-start-line="860" selection-start-column="9" selection-end-line="860" selection-end-column="9" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
@@ -599,7 +596,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522187025284</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Added plot functionality and finalized grid()">
+      <created>1522252583294</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1522252583294</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -682,7 +686,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed entropy computation in deft_1d.run()" />
     <MESSAGE value="Fix so that num_posterior_samples=0 works" />
     <MESSAGE value="Moved the full Deft1D class to deft_1d.py, and make deft_1d.run() a class method. Refactor Density_1D -&gt; density_1d.py and Field_1D to field_1d.py" />
     <MESSAGE value="Removed class Results definition from deft_1d.py" />
@@ -707,7 +710,8 @@
     <MESSAGE value="Added ipynb files in examples/ipynb/" />
     <MESSAGE value="Wrote dummy classes to be written in the future." />
     <MESSAGE value="Functionalized the grid choosing algorithm, added some features to it, and cleaned up the Density1D consturctor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Functionalized the grid choosing algorithm, added some features to it, and cleaned up the Density1D consturctor" />
+    <MESSAGE value="Added plot functionality and finalized grid()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added plot functionality and finalized grid()" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1048,7 +1052,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="979">
+        <state relative-caret-position="12782">
           <caret line="860" column="9" lean-forward="false" selection-start-line="860" selection-start-column="9" selection-end-line="860" selection-end-column="9" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
