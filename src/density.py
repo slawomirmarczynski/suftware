@@ -796,12 +796,13 @@ class Density:
 
     def plot(self,
              ax=None,
+             save_as=None,
              figsize=[4,4],
              fontsize=12,
              title='',
              xlabel='',
              tight_layout=False,
-             show_now=False,
+             show_now=True,
              num_posterior_samples=None,
              histogram_color='orange',
              histogram_alpha=1,
@@ -820,7 +821,6 @@ class Density:
         if ax is None:
             fig, ax = plt.subplots(figsize=figsize)
             tight_layout = True
-            show_now = True
 
         # Plot histogram
         ax.bar(self.grid,
@@ -847,15 +847,22 @@ class Density:
                 linewidth=linewidth,
                 alpha=alpha)
 
-        # style plot
+        # Style plot
         ax.set_xlim(self.bounding_box)
         ax.set_title(title, fontsize=fontsize)
         ax.set_xlabel(xlabel, fontsize=fontsize)
         ax.set_yticks([])
         ax.tick_params('x', rotation=45, labelsize=fontsize)
 
+        # Do tight_layout if requested
         if tight_layout:
             plt.tight_layout()
+
+        # Save figure if save_as is specified
+        if save_as is not None:
+            plt.draw()
+            plt.savefig(save_as)
+
+        # Show figure if show_now is True
         if show_now:
             plt.show()
-        #return ax
