@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/examples/scripts/parse_who_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/data/raw/who_data_2017.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/analyze_who_data.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/gaussian_mixture_simlpe.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/who_simple.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/wrangle_who_data.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/density.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/density.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/data/buffalo_snowfall.txt" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/buffalo_snowfall.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/data/old_faithful_eruption_times.txt" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/old_faithful_eruption_times.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/data/old_faithful_waiting_times.txt" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/old_faithful_waiting_times.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/data/treatment_length.txt" beforeDir="false" afterPath="$PROJECT_DIR$/examples/data/treatment_length.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -44,7 +40,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="parse_who_data.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="parse_who_data.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/examples/scripts/parse_who_data.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="551">
@@ -52,6 +48,15 @@
               <folding>
                 <element signature="e#20#39#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.rst" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/docs/index.rst">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="247">
+              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
             </state>
           </provider>
         </entry>
@@ -201,18 +206,7 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="examples" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="examples" type="462c0819:PsiDirectoryNode" />
-              <item name="scripts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -621,7 +615,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522256660933</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Simplified contents of examples/ folder.">
+      <created>1522260690783</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1522260690783</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -704,7 +705,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix so that num_posterior_samples=0 works" />
     <MESSAGE value="Moved the full Deft1D class to deft_1d.py, and make deft_1d.run() a class method. Refactor Density_1D -&gt; density_1d.py and Field_1D to field_1d.py" />
     <MESSAGE value="Removed class Results definition from deft_1d.py" />
     <MESSAGE value="Added interpolation capabilities to Density1D and Field1D" />
@@ -729,7 +729,8 @@
     <MESSAGE value="Wrote dummy classes to be written in the future." />
     <MESSAGE value="Functionalized the grid choosing algorithm, added some features to it, and cleaned up the Density1D consturctor" />
     <MESSAGE value="Added plot functionality and finalized grid()" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added plot functionality and finalized grid()" />
+    <MESSAGE value="Simplified contents of examples/ folder." />
+    <option name="LAST_COMMIT_MESSAGE" value="Simplified contents of examples/ folder." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -737,16 +738,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/interpolated_density.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/example_density_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1023,6 +1014,13 @@
           <folding>
             <element signature="e#20#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/index.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
         </state>
       </provider>
     </entry>
