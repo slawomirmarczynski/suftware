@@ -110,7 +110,7 @@ class Density:
                  num_posterior_samples=100,
                  sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,
-                 should_fail=False):
+                 should_fail=None):
 
         # Record other inputs as class attributes
         self.alpha = alpha
@@ -156,12 +156,22 @@ class Density:
             self.values = self.evaluate(self.grid)
             self.sample_values = self.eval_samples(self.grid)
 
-            if should_fail:
-                print('This should have failed. Exiting.')
+            if should_fail is True:
+                print('MISTAKE: Succeeded but should have failed.')
                 sys.exit(1)
+            elif should_fail is False:
+                print('Success, as expected.')
+
 
         except DeftError as e:
-            if not should_fail:
+            if should_fail is True:
+                print('Error, as expected:', e)
+
+            elif should_fail is False:
+                print('MISTAKE: Failed but should have succeeded: ', e)
+                sys.exit(1)
+
+            else:
                 print('Error: ', e)
                 sys.exit(1)
 
@@ -182,20 +192,21 @@ class Density:
 
         # If grid is specified
         if grid is not None:
-            assert len(grid) >= 2
-            assert min(grid) < max(grid)
 
-            # Set grid based ONLY on len(grid), min(grid), and max(grid)
+            # Check and set number of grid points
             num_grid_points = len(grid)
-            grid_start = min(grid)
-            grid_stop = max(grid)
-            grid_spacing = (grid_stop - grid_start) / (num_grid_points - 1)
-            grid = np.linspace(grid_start,
-                               grid_stop*(1+SMALL_NUM),  # For numerical safety
-                               num_grid_points)
+            assert(num_grid_points >= 2*alpha)
+
+            # Check and set grid spacing
+            diffs = np.diff(grid)
+            grid_spacing = diffs.mean()
+            assert (grid_spacing > 0)
+            assert (all(np.isclose(diffs, grid_spacing)))
+
+            # Check and set grid bounds
             grid_padding = grid_spacing / 2
-            lower_bound = grid_start - grid_padding
-            upper_bound = grid_stop + grid_padding
+            lower_bound = grid[0] - grid_padding
+            upper_bound = grid[-1] + grid_padding
             bounding_box = np.array([lower_bound, upper_bound])
             box_size = upper_bound - lower_bound
 
@@ -336,8 +347,6 @@ class Density:
         # Set final grid
         self.grid = grid
         self.grid_spacing = grid_spacing
-        self.grid_start = grid_start
-        self.grid_stop = grid_stop
         self.grid_padding = grid_padding
         self.num_grid_points = num_grid_points
         self.bounding_box = bounding_box
@@ -565,21 +574,31 @@ class Density:
         if self.grid is not None:
 
             # grid is a list or np.array
-            types = (list, np.ndarray)
+            types = (list, np.ndarray, np.matrix)
             check(isinstance(self.grid, types),
                   'type(grid) = %s; must be a list or np.ndarray' %
                   type(self.grid))
 
             # cast grid as np.array as ints
             try:
-                self.grid = np.array(self.grid).astype(float)
+                self.grid = np.array(self.grid).ravel().astype(float)
             except: # SHOULD BE MORE SPECIFIC
-                raise DeftError('Cannot cast grid as np.array of floats.')
+                raise DeftError('Cannot cast grid as 1D np.array of floats.')
 
-            # grid does not have too many points
+            # grid has appropriate number of points
             check(2*self.alpha <= len(self.grid) <= MAX_NUM_GRID_POINTS,
                   'len(grid) = %d; must have %d <= len(grid) <= %d.' %
                   (len(self.grid), 2*self.alpha, MAX_NUM_GRID_POINTS))
+
+            # grid is ordered
+            diffs = np.diff(self.grid)
+            check(all(diffs > 0),
+                  'grid is not monotonically increasing.')
+
+            # grid is evenly spaced
+            check(all(np.isclose(diffs, diffs.mean())),
+                  'grid is not evenly spaced; grid spacing = %f +- %f' %
+                  (diffs.mean(), diffs.std()))
 
         # alpha is int
         check(isinstance(self.alpha, int),

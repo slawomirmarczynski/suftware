@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="Implemented check() function in density.py, and greatly simplified inputs_check() using this.">
+    <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/ipynb/18.03.28_tests_gaussian.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/18.03.28_tests_gaussian.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/density.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/density.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/suftware.py" beforeDir="false" afterPath="$PROJECT_DIR$/suftware.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,23 +15,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="50" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="50" />
-              <folding>
-                <element signature="e#79#145#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="-7">
+              <caret line="12" column="12" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="density.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="density.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/density.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="464">
-              <caret line="832" column="21" lean-forward="true" selection-start-line="832" selection-start-column="21" selection-end-line="832" selection-end-column="21" />
+            <state relative-caret-position="981">
+              <caret line="162" column="46" selection-start-line="162" selection-start-column="46" selection-end-line="162" selection-end-column="46" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
@@ -41,8 +39,8 @@
       <file leaf-file-name="supplements.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/supplements.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1878">
-              <caret line="659" lean-forward="true" selection-start-line="659" selection-end-line="659" />
+            <state relative-caret-position="-16">
+              <caret line="659" selection-start-line="659" selection-end-line="659" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -53,8 +51,8 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+            <state relative-caret-position="-7">
+              <caret line="24" selection-start-line="24" selection-end-line="24" />
             </state>
           </provider>
         </entry>
@@ -85,13 +83,16 @@
       <find>Density</find>
       <find>alpha</find>
       <find>G</find>
-      <find>run(</find>
       <find>np.array</find>
       <find>bbox</find>
       <find>grid</find>
       <find>set_grid()</find>
       <find>DeftError</find>
       <find>utils.Number</find>
+      <find>% self.num</find>
+      <find>set_grid(</find>
+      <find>run(</find>
+      <find>upper_bound</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -131,8 +132,8 @@
         <option value="$PROJECT_DIR$/examples/scripts/parse_who_data.py" />
         <option value="$PROJECT_DIR$/src/utils.py" />
         <option value="$PROJECT_DIR$/src/supplements.py" />
-        <option value="$PROJECT_DIR$/src/density.py" />
         <option value="$PROJECT_DIR$/suftware.py" />
+        <option value="$PROJECT_DIR$/src/density.py" />
       </list>
     </option>
   </component>
@@ -151,11 +152,6 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -592,7 +588,21 @@
       <option name="project" value="LOCAL" />
       <updated>1522287279314</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Added test files in examples/ipynb/">
+      <created>1522290298172</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1522290298172</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Fixed grid issue&#10;Fixed grid_spacing issue&#10;Fixed num_grid_points issue&#10;Fixed bounding_box issue. Let's not worry about [False, True] working.">
+      <created>1522330309338</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1522330309338</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -622,14 +632,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25258142" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12524617" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.328125" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
-      <window_info anchor="bottom" id="Version Control" order="10" visible="true" weight="0.31196582" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.3114754" />
       <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.23397914" />
@@ -674,8 +685,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Cleaned out code from suftware.py; all the meat is now in deft_1d.py, density_1d.py, and field_1d.py" />
-    <MESSAGE value="More of the same." />
     <MESSAGE value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
     <MESSAGE value="Removed 2d data stuff" />
     <MESSAGE value="Made valid simulation distributions available to user through suftware.simulate_1d_distribution_types" />
@@ -699,7 +708,9 @@
     <MESSAGE value="Added initial documentation created by sphinx" />
     <MESSAGE value="Fixed grid issue with box_length being undefined." />
     <MESSAGE value="Implemented check() function in density.py, and greatly simplified inputs_check() using this." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented check() function in density.py, and greatly simplified inputs_check() using this." />
+    <MESSAGE value="Added test files in examples/ipynb/" />
+    <MESSAGE value="Fixed grid issue&#10;Fixed grid_spacing issue&#10;Fixed num_grid_points issue&#10;Fixed bounding_box issue. Let's not worry about [False, True] working." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed grid issue&#10;Fixed grid_spacing issue&#10;Fixed num_grid_points issue&#10;Fixed bounding_box issue. Let's not worry about [False, True] working." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -746,9 +757,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-          <folding>
-            <element signature="e#79#145#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -809,9 +817,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="627">
           <caret line="33" column="9" selection-start-line="33" selection-start-column="9" selection-end-line="33" selection-end-column="16" />
-          <folding>
-            <element signature="e#79#145#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -951,37 +956,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+        <state relative-caret-position="-7">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/supplements.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1878">
-          <caret line="659" lean-forward="true" selection-start-line="659" selection-end-line="659" />
+        <state relative-caret-position="-16">
+          <caret line="659" selection-start-line="659" selection-end-line="659" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/density.py">
+    <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="832" column="21" lean-forward="true" selection-start-line="832" selection-start-column="21" selection-end-line="832" selection-end-column="21" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-7">
+          <caret line="12" column="12" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
+    <entry file="file://$PROJECT_DIR$/src/density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="50" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="50" />
+        <state relative-caret-position="981">
+          <caret line="162" column="46" selection-start-line="162" selection-start-column="46" selection-end-line="162" selection-end-column="46" />
           <folding>
-            <element signature="e#79#145#0" expanded="true" />
+            <element signature="e#34#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
