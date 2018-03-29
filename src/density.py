@@ -10,6 +10,7 @@ import numbers
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
+MAX_NUM_POSTERIOR_SAMPLES = 1000
 
 # Import deft-related code
 from src import deft_core
@@ -704,14 +705,16 @@ class Density:
               type(self.sample_only_at_l_star))
 
         # num_posterior_samples is int
-        check(isinstance(self.num_posterior_samples, int),
-              'type(num_posterior_samples) = %s; must be int' %
+        check(isinstance(self.num_posterior_samples, numbers.Integral),
+              'type(num_posterior_samples) = %s; must be integer' %
               type(self.num_posterior_samples))
+        self.num_posterior_samples = int(self.num_posterior_samples)
+
 
         # num_posterior_samples is nonnegative
-        check(self.num_posterior_samples >= 0,
-              'num_posterior_samples = %f; must be >= 0' %
-              self.num_posterior_samples)
+        check(0 <= self.num_posterior_samples <= MAX_NUM_POSTERIOR_SAMPLES,
+              'num_posterior_samples = %f; need '%self.num_posterior_samples +
+              '0 <= num_posterior_samples <= %d.' %MAX_NUM_POSTERIOR_SAMPLES)
 
         # max_log_evidence_ratio_drop is number
         check(isinstance(self.max_log_evidence_ratio_drop, numbers.Real),

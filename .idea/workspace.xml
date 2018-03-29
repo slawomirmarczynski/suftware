@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/ipynb/18.03.28_tests_gaussian.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/18.03.28_tests_gaussian.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/density.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/density.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/simulate_density_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulate_density_data.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +28,8 @@
       <file leaf-file-name="density.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/density.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="981">
-              <caret line="162" column="46" selection-start-line="162" selection-start-column="46" selection-end-line="162" selection-end-column="46" />
+            <state relative-caret-position="385">
+              <caret line="127" column="24" lean-forward="true" selection-start-line="127" selection-start-column="24" selection-end-line="127" selection-end-column="24" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
@@ -93,6 +94,9 @@
       <find>set_grid(</find>
       <find>run(</find>
       <find>upper_bound</find>
+      <find>num_samples</find>
+      <find>num_posterior</find>
+      <find>num_posterior_samples</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -152,6 +156,17 @@
             <path>
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
+              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -602,7 +617,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522330309338</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Improved feedback to explicitly print success or failure when should_fail is not None (the default value).">
+      <created>1522333466926</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1522333466926</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -638,9 +660,9 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12524617" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.328125" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32786885" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.3114754" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.31073025" />
       <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.23397914" />
@@ -685,7 +707,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Simplified interface to simulate_data_1d and moved simulate_data_*d.py to deft_code" />
     <MESSAGE value="Removed 2d data stuff" />
     <MESSAGE value="Made valid simulation distributions available to user through suftware.simulate_1d_distribution_types" />
     <MESSAGE value="Made example data available through suftware.example_data_1d(); code is in example_data_1d.run()" />
@@ -710,7 +731,8 @@
     <MESSAGE value="Implemented check() function in density.py, and greatly simplified inputs_check() using this." />
     <MESSAGE value="Added test files in examples/ipynb/" />
     <MESSAGE value="Fixed grid issue&#10;Fixed grid_spacing issue&#10;Fixed num_grid_points issue&#10;Fixed bounding_box issue. Let's not worry about [False, True] working." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed grid issue&#10;Fixed grid_spacing issue&#10;Fixed num_grid_points issue&#10;Fixed bounding_box issue. Let's not worry about [False, True] working." />
+    <MESSAGE value="Improved feedback to explicitly print success or failure when should_fail is not None (the default value)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Improved feedback to explicitly print success or failure when should_fail is not None (the default value)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -980,8 +1002,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="981">
-          <caret line="162" column="46" selection-start-line="162" selection-start-column="46" selection-end-line="162" selection-end-column="46" />
+        <state relative-caret-position="385">
+          <caret line="127" column="24" lean-forward="true" selection-start-line="127" selection-start-column="24" selection-end-line="127" selection-end-column="24" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
           </folding>

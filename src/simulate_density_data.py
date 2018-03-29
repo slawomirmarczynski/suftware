@@ -66,7 +66,7 @@ def run(distribution_type='gaussian', N=100, seed=None, return_details=False):
         - distribution_type (str): The distribution from which to draw data.
             Must be one of these distributions:
         - N (int): The number of data points to simulate. Must be less than
-            MAX_NUM_SAMPLES.
+            MAX_NUM_POSTERIOR_SAMPLES.
         - seed
         - details
 
