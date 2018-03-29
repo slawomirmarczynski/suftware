@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/ipynb/18.03.29_tests_gaussian.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -38,7 +37,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/deft_core.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="79">
@@ -46,6 +45,15 @@
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="143">
+              <caret line="27" column="14" lean-forward="true" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -162,7 +170,28 @@
               <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
               <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
               <item name="examples" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="examples" type="462c0819:PsiDirectoryNode" />
               <item name="ipynb" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="test_code" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
+              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="test_suite" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -642,7 +671,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522346546519</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="Did I foget to commit something?">
+      <created>1522359743314</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1522359743314</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -676,13 +712,13 @@
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12485231" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50019693" side_tool="true" visible="true" weight="0.3099851" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50019693" side_tool="true" visible="true" weight="0.6371088" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32786885" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="10" sideWeight="0.49980307" visible="true" weight="0.3099851" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49980307" weight="0.3099851" />
       <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.23397914" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49980307" visible="true" weight="0.6371088" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39955357" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -744,7 +780,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="modified example datasets so that they list 'bbox'" />
     <MESSAGE value="Working as of this morning." />
     <MESSAGE value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
     <MESSAGE value="Modified grid choice algorithm. Also implemented box-plot-based choice of bounding_box." />
@@ -769,7 +804,8 @@
     <MESSAGE value="Added upper limit MAX_NUM_POSTERIOR_SAMPLES. Also added functional tests for this." />
     <MESSAGE value="Added self.mistake flag to Density constructor; set in response to should_fail argument." />
     <MESSAGE value="Started filling in documentation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Started filling in documentation" />
+    <MESSAGE value="Did I foget to commit something?" />
+    <option name="LAST_COMMIT_MESSAGE" value="Did I foget to commit something?" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -922,13 +958,6 @@
     <entry file="file://$PROJECT_DIR$/test_code/test_deft_1d.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="27" column="14" lean-forward="true" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jbk_tests.py" />
     <entry file="file://$PROJECT_DIR$/sim/simulate_data_1d.py" />
     <entry file="file://$PROJECT_DIR$/data/digits.py" />
@@ -1059,6 +1088,13 @@
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="27" column="14" lean-forward="true" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
         </state>
       </provider>
     </entry>
