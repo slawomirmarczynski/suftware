@@ -159,21 +159,28 @@ class Density:
 
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
+                self.mistake = True
                 sys.exit(1)
             elif should_fail is False:
                 print('Success, as expected.')
+                self.mistake = False
+            else:
+                self.mistake = None
 
 
         except DeftError as e:
             if should_fail is True:
                 print('Error, as expected:', e)
+                self.mistake = False
 
             elif should_fail is False:
                 print('MISTAKE: Failed but should have succeeded: ', e)
+                self.mistake = True
                 sys.exit(1)
 
             else:
                 print('Error: ', e)
+                self.mistake = None
                 sys.exit(1)
 
 
