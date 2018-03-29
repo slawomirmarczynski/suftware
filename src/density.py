@@ -5,6 +5,7 @@ import sys
 import time
 import matplotlib.pyplot as plt
 import pdb
+import numbers
 
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
@@ -199,7 +200,7 @@ class Density:
             box_size = upper_bound - lower_bound
 
         # If grid is not specified
-        else:
+        if grid is None:
 
             ### First, set bounding box ###
 
@@ -258,6 +259,18 @@ class Density:
 
                 # Set number of grid points
                 num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+
+                # Check num_grid_points isn't too small
+                check(2*self.alpha <= num_grid_points,
+                      'Using grid_spacing = %f ' % grid_spacing +
+                      'produces num_grid_points = %d, ' % num_grid_points +
+                      'which is too small. Reduce grid_spacing or do not set.')
+
+                # Check num_grid_points isn't too large
+                check(num_grid_points <= MAX_NUM_GRID_POINTS,
+                      'Using grid_spacing = %f ' % grid_spacing +
+                      'produces num_grid_points = %d, ' % num_grid_points +
+                      'which is too big. Increase grid_spacing or do not set.')
 
                 # Define grid padding
                 # Note: grid_spacing/2 <= grid_padding < grid_spacing
@@ -335,6 +348,12 @@ class Density:
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.box_size = box_size
+
+        # Make sure that the final number of gridpoints is ok.
+        check(2 * self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
+              'After setting grid, we find that num_grid_points = %d; must have %d <= len(grid) <= %d. ' %
+              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS) +
+              'Something is wrong with input values of grid, grid_spacing, num_grid_points, or bounding_box.')
 
         # Set bin edges
         self.bin_edges = np.concatenate(([lower_bound],
@@ -533,9 +552,33 @@ class Density:
 
         if self.grid_spacing is not None:
 
+            # max_t_step is a number
+            check(isinstance(self.grid_spacing, numbers.Real),
+                  'type(grid_spacing) = %s; must be a number' %
+                  type(self.grid_spacing))
+
             # grid_spacing is positive
             check(self.grid_spacing > 0,
                   'grid_spacing = %f; must be > 0.' % self.grid_spacing)
+
+        if self.grid is not None:
+
+            # grid is a list or np.array
+            types = (list, np.ndarray)
+            check(isinstance(self.grid, types),
+                  'type(grid) = %s; must be a list or np.ndarray' %
+                  type(self.grid))
+
+            # cast grid as np.array as ints
+            try:
+                self.grid = np.array(self.grid).astype(float)
+            except: # SHOULD BE MORE SPECIFIC
+                raise DeftError('Cannot cast grid as np.array of floats.')
+
+            # grid does not have too many points
+            check(2*self.alpha <= len(self.grid) <= MAX_NUM_GRID_POINTS,
+                  'len(grid) = %d; must have %d <= len(grid) <= %d.' %
+                  (len(self.grid), 2*self.alpha, MAX_NUM_GRID_POINTS))
 
         # alpha is int
         check(isinstance(self.alpha, int),
@@ -554,9 +597,8 @@ class Density:
 
             # num_grid_points is in the right range
             check(2*self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
-                  'num_grid_points = %d; must in [2*alpha, %d]' %
-                  (self.num_grid_points, MAX_NUM_GRID_POINTS))
-
+                  'num_grid_points = %d; must have %d <= len(grid) <= %d.' %
+                  (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS))
 
         # bounding_box
         if self.bounding_box is not None:
@@ -587,7 +629,7 @@ class Density:
               (self.Z_evaluation_method, Z_evals))
 
         # max_t_step is a number
-        check(isinstance(self.max_t_step, utils.NUMBER),
+        check(isinstance(self.max_t_step, numbers.Real),
               'type(max_t_step) = %s; must be a number' %
               type(self.max_t_step))
 
@@ -600,7 +642,7 @@ class Density:
               'type(print_t) = %s; must be bool.' % type(self.print_t))
 
         # tolerance is float
-        check(isinstance(self.tolerance, utils.NUMBER),
+        check(isinstance(self.tolerance, numbers.Real),
               'type(tolerance) = %s; must be number' % type(self.tolerance))
 
         # tolerance is positive
@@ -608,7 +650,7 @@ class Density:
               'tolerance = %f; must be > 0' % self.tolerance)
 
         # resolution is number
-        check(isinstance(self.resolution, utils.NUMBER),
+        check(isinstance(self.resolution, numbers.Real),
               'type(resolution) = %s; must be number' % type(self.resolution))
 
         # resolution is positive
@@ -641,7 +683,7 @@ class Density:
               self.num_posterior_samples)
 
         # max_log_evidence_ratio_drop is number
-        check(isinstance(self.max_log_evidence_ratio_drop, utils.NUMBER),
+        check(isinstance(self.max_log_evidence_ratio_drop, numbers.Real),
               'type(max_log_evidence_ratio_drop) = %s; must be number' %
               type(self.max_log_evidence_ratio_drop))
 
