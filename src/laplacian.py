@@ -94,8 +94,8 @@ class Laplacian:
             elif operator_type == '2d_periodic':
                 periodic = True
             else:
-                print('ERROR: cannot identify operator_type.')
-                raise
+                raise DeftError('ERROR: cannot identify operator_type.')
+
             
             self._type = operator_type
             
@@ -156,16 +156,16 @@ class Laplacian:
         """ Return a dense matrix version of Lambda. """
         return self._sparse_matrix.todense()
 
-    def save(self, filename):
-        """ Saves the current Laplacian in a way that can be recovered """
-        pickle.dump(self, file(filename, 'w'))
+    # def save(self, filename):
+    #     """ Saves the current Laplacian in a way that can be recovered """
+    #     pickle.dump(self, file(filename, 'w'))
 
 
-# Function for loading Laplacian from file
-def load(filename):
-    """ Loads a picked Laplacian from a file, and returns instance. """
-    operator = pickle.load(file(filename))
-    return operator
+# # Function for loading Laplacian from file
+# def load(filename):
+#     """ Loads a picked Laplacian from a file, and returns instance. """
+#     operator = pickle.load(file(filename))
+#     return operator
 
 
 def derivative_matrix_1d(G, grid_spacing):

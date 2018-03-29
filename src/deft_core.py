@@ -3,12 +3,7 @@ import numpy as np
 from scipy.sparse import csr_matrix, diags, spdiags
 from scipy.sparse.linalg import spsolve, eigsh
 from scipy.linalg import det, eigh, solve, eigvalsh, inv
-import scipy.optimize as opt
 import time
-
-#import utils
-#import supplements
-#import maxent
 
 # python 3 imports
 from src import utils
@@ -16,7 +11,6 @@ from src import supplements
 from src import maxent
 
 # Import error handling
-#from utils import DeftError
 from src.utils import DeftError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
