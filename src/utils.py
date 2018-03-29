@@ -20,11 +20,11 @@ ARRAY = (np.ndarray, list)
 # Define error handling
 class DeftError(Exception):
 
-    def __init__(self,value):
+    def __init__(self, value):
         self.value = value
 
     def __str__(self):
-        return repr(self.value)
+        return self.value
 
 
 # Evaluate geodesic distance 

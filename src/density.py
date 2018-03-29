@@ -108,7 +108,8 @@ class Density:
                  seed=None,
                  num_posterior_samples=100,
                  sample_only_at_l_star=False,
-                 max_log_evidence_ratio_drop=20):
+                 max_log_evidence_ratio_drop=20,
+                 should_fail=False):
 
         # Record other inputs as class attributes
         self.alpha = alpha
@@ -131,27 +132,37 @@ class Density:
         self.results = None
 
         # Validate inputs
-        self.inputs_check()
+        try:
+            self.inputs_check()
 
-        # clean input data
-        self.clean_data()
+            # clean input data
+            self.clean_data()
 
-        # Choose grid
-        self.set_grid()
+            # Choose grid
+            self.set_grid()
 
-        # Fit to data
-        self.run()
+            # Fit to data
+            self.run()
 
-        # Save some results
-        self.results_dict = self.get_results_dict()
-        self.histogram = self.results_dict['R']
-        self.phi_star = InterpolatedField(self.results_dict['phi_star'],
-                                          self.grid,
-                                          self.bounding_box)
-        self.Q_star = InterpolatedDensity(self.phi_star)
-        self.evaluate = self.Q_star.evaluate
-        self.values = self.evaluate(self.grid)
-        self.sample_values = self.eval_samples(self.grid)
+            # Save some results
+            self.results_dict = self.get_results_dict()
+            self.histogram = self.results_dict['R']
+            self.phi_star = InterpolatedField(self.results_dict['phi_star'],
+                                              self.grid,
+                                              self.bounding_box)
+            self.Q_star = InterpolatedDensity(self.phi_star)
+            self.evaluate = self.Q_star.evaluate
+            self.values = self.evaluate(self.grid)
+            self.sample_values = self.eval_samples(self.grid)
+
+            if should_fail:
+                print('This should have failed. Exiting.')
+                sys.exit(1)
+
+        except DeftError as e:
+            if not should_fail:
+                print('Error: ', e)
+                sys.exit(1)
 
 
     def set_grid(self):
@@ -520,61 +531,37 @@ class Density:
         :return: None
         """
 
-        # Set variables
-        G = self.num_grid_points
-        alpha = self.alpha
-        bbox = self.bounding_box
-        periodic = self.periodic
-        Z_eval = self.Z_evaluation_method
-        DT_MAX = self.max_t_step
-        print_t = self.print_t
-        tollerance = self.tolerance
-        resolution = self.resolution
-        deft_seed = self.seed
-        fix_t_at_t_star = self.sample_only_at_l_star
-        num_pt_samples = self.num_posterior_samples
-        max_log_evidence_ratio_drop = self.max_log_evidence_ratio_drop
+        if self.grid_spacing is not None:
 
-        # alpha
-        try:
-            if not isinstance(alpha, int):
-                raise DeftError(
-                    'Input check failed. Parameter "alpha" must be an integer: alpha = %s' % type(
-                        alpha))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+            # grid_spacing is positive
+            check(self.grid_spacing > 0,
+                  'grid_spacing = %f; must be > 0.' % self.grid_spacing)
 
-        # G (self.num_grid_points)
-        if G is not None:
-            try:
-                if not isinstance(G, int):
-                    raise DeftError(
-                        'Input check failed. Parameter "num_grid_points" must be an integer: num_grid_points = %s' % type(
-                            G))
-            except DeftError as e:
-                print(e)
-                sys.exit(1)
+        # alpha is int
+        check(isinstance(self.alpha, int),
+              'type(alpha) = %s; must be int.' % type(self.alpha))
 
-            try:
-                if not (G >= 2 * alpha and G <= 1000):
-                    raise DeftError(
-                        'Input check failed. Parameter "num_grid_points" must between [2*alpha, 1000]: num_grid_points = %s' % G)
-            except DeftError as e:
-                print(e)
-                sys.exit(1)
+        # alpha in range
+        check(1 <= self.alpha <= 4,
+              'alpha = %d; must have 1 <= alpha <= 4' % self.alpha)
 
-        try:
-            # the following values of alpha are used in the paper
-            if not (1 <= alpha <= 4):
-                raise DeftError(
-                    'Input check failed. Parameter "alpha" must be 1 <= alpha <= 4: alpha = %s' % alpha)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        if self.num_grid_points is not None:
 
-        # bbox
-        if bbox is not None:
+            # num_grid_points is an integer
+            check(isinstance(self.num_grid_points, int),
+                  'type(num_grid_points) = %s; must be int.' %
+                  type(self.num_grid_points))
+
+            # num_grid_points is in the right range
+            check(2*self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
+                  'num_grid_points = %d; must in [2*alpha, %d]' %
+                  (self.num_grid_points, MAX_NUM_GRID_POINTS))
+
+
+        # bounding_box
+        if self.bounding_box is not None:
+
+            bbox = self.bounding_box
             try:
                 bbox = list(bbox)
                 assert len(bbox)==2
@@ -589,149 +576,79 @@ class Density:
                 )
                 sys.exit(1)
 
-        # Make sure periodic is valid
-        try:
-            if not isinstance(periodic, bool):
-                raise DeftError(
-                    'Input check failed. Parameter "periodic" must be of type boolean: periodic = %s' % type(
-                        periodic))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # periodic is bool
+        check(isinstance(self.periodic, bool),
+              'type(periodic) = %s; must be bool' % type(self.periodic))
 
-        # Make sure Z_eval is valid
+        # Z_evaluation_method is valid
         Z_evals = ['Lap', 'Lap+Imp', 'Lap+Fey']
-        try:
-            if not (Z_eval in Z_evals):
-                raise DeftError(
-                    'Input check failed. Z_evaluation_method must be in %s: Z_evaluation_method = %s' % (
-                    Z_evals, Z_eval))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        check(self.Z_evaluation_method in Z_evals,
+              'Z_eval = %s; must be in %s' %
+              (self.Z_evaluation_method, Z_evals))
 
-        # Make sure DT_MAX is valid
-        try:
-            if not isinstance(DT_MAX, utils.NUMBER):
-                raise DeftError(
-                    'Input check failed. Parameter "max_t_step" must be a number: max_t_step = %s' % type(
-                        DT_MAX))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # max_t_step is a number
+        check(isinstance(self.max_t_step, utils.NUMBER),
+              'type(max_t_step) = %s; must be a number' %
+              type(self.max_t_step))
 
-        try:
-            if not (DT_MAX > 0):
-                raise DeftError(
-                    'Input check failed. Parameter "max_t_step" must be > 0: max_t_step = %s' % DT_MAX)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # max_t_step is positive
+        check(self.max_t_step > 0,
+              'maxt_t_step = %f; must be > 0.' % self.max_t_step)
 
-        # Make sure print_t is valid
-        try:
-            if not isinstance(print_t, bool):
-                raise DeftError(
-                    'Input check failed. Parameter "print_t" must be a boolean: print_t = %s' % type(
-                        print_t))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # print_t is bool
+        check(isinstance(self.print_t,bool),
+              'type(print_t) = %s; must be bool.' % type(self.print_t))
 
-        # Make sure tolerance is valid
-        try:
-            if not isinstance(tollerance, float):
-                raise DeftError(
-                    'Input check failed. Parameter "tolerance" must be a float: tolerance = %s' % type(
-                        tollerance))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # tolerance is float
+        check(isinstance(self.tolerance, utils.NUMBER),
+              'type(tolerance) = %s; must be number' % type(self.tolerance))
 
-        try:
-            if not (tollerance > 0):
-                raise DeftError(
-                    'Input check failed. Parameter "tolerance" must be > 0: tolerance = %s' % tollerance)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # tolerance is positive
+        check(self.tolerance > 0,
+              'tolerance = %f; must be > 0' % self.tolerance)
 
-        # Make sure resolution is valid
-        try:
-            if not isinstance(resolution, utils.NUMBER):
-                raise DeftError(
-                    'Input check failed. Parameter "resolution" must be a number: resolution = %s' % type(
-                        resolution))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # resolution is number
+        check(isinstance(self.resolution, utils.NUMBER),
+              'type(resolution) = %s; must be number' % type(self.resolution))
 
-        try:
-            if not (resolution > 0):
-                raise DeftError(
-                    'Input check failed. Parameter "resolution" must be > 0: resolution = %s' % resolution)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # resolution is positive
+        check(self.resolution > 0,
+              'resolution = %f; must be > 0' % self.resolution)
 
-        # Make sure deft_seed is valid
-        try:
-            if deft_seed is not None and not isinstance(deft_seed, int):
-                raise DeftError(
-                    'Input check failed. Parameter "seed" must be either None or an integer: seed = %s' % type(
-                        deft_seed))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        if self.seed is not None:
 
-        try:
-            if (deft_seed is not None) and (
-                (deft_seed < 0) or (deft_seed > 2 ** 32 - 1)):
-                raise DeftError(
-                    'Input checks failed. Parameter "Seed" must be 0 <= deft_seed <= 2**32-1: deft_seed = %s' % deft_seed)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+            # seed is int
+            check(isinstance(self.seed, int),
+                  'type(seed) = %s; must be int' % type(self.seed))
 
-        # Make sure fix_t_at_t_star is valid
+            # seed is in range
+            check(0 <= self.seed <= 2**32 - 1,
+                  'seed = %d; must have 0 <= seed <= 2**32 - 1' % self.seed)
 
-        try:
-            if not isinstance(fix_t_at_t_star, bool):
-                raise DeftError(
-                    'Input check failed. Parameter "sample_only_at_l_star" must be a boolean: sample_only_at_l_star = %s' % type(
-                        fix_t_at_t_star))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # sample_only_at_l_star is bool
+        check(isinstance(self.sample_only_at_l_star, bool),
+              'type(sample_only_at_l_star) = %s; must be bool.' %
+              type(self.sample_only_at_l_star))
 
-        # Make sure num_pt_samples is valid
-        try:
-            if not isinstance(num_pt_samples, int):
-                raise DeftError(
-                    'Input check failed. Parameter "num_posterior_samples" must be an integer: num_posterior_samples = %s' % type(
-                        num_pt_samples))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # num_posterior_samples is int
+        check(isinstance(self.num_posterior_samples, int),
+              'type(num_posterior_samples) = %s; must be int' %
+              type(self.num_posterior_samples))
 
-        try:
-            if not (num_pt_samples >= 0):
-                raise DeftError(
-                    'Input check failed. Parameter "num_posterior_samples" must be >= 0: num_posterior_samples = %s' % num_pt_samples)
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # num_posterior_samples is nonnegative
+        check(self.num_posterior_samples >= 0,
+              'num_posterior_samples = %f; must be >= 0' %
+              self.num_posterior_samples)
 
-        # ensure that max_log_evidence_ratio is a float
-        try:
-            if not isinstance(max_log_evidence_ratio_drop, utils.NUMBER):
-                raise DeftError(
-                    'Input check failed. Parameter "max_log_evidence_ratio" must be a number: tolerance = %s' % type(
-                        max_log_evidence_ratio_drop))
-        except DeftError as e:
-            print(e)
-            sys.exit(1)
+        # max_log_evidence_ratio_drop is number
+        check(isinstance(self.max_log_evidence_ratio_drop, utils.NUMBER),
+              'type(max_log_evidence_ratio_drop) = %s; must be number' %
+              type(self.max_log_evidence_ratio_drop))
 
+        # max_log_evidence_ratio_drop is positive
+        check(self.max_log_evidence_ratio_drop > 0,
+              'max_log_evidence_ratio_drop = %f; must be > 0' %
+              self.max_log_evidence_ratio_drop)
 
     # This method will be used to clean user input data; it's for use with the API.
     def clean_data(self):
@@ -867,3 +784,13 @@ class Density:
         # Show figure if show_now is True
         if show_now:
             plt.show()
+
+def check(condition, message):
+    '''
+    Checks a condition; raises a DeftError with message if condition fails.
+    :param condition:
+    :param message:
+    :return: None
+    '''
+    if not condition:
+        raise DeftError(message)
