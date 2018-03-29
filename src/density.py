@@ -206,11 +206,7 @@ class Density:
 
             # If bounding box is specified, use that.
             if bounding_box is not None:
-                assert isinstance(bounding_box, np.ndarray)
-                assert all(np.isfinite(bounding_box))
-                assert len(bounding_box) == 2
                 assert bounding_box[0] < bounding_box[1]
-
                 lower_bound = bounding_box[0]
                 upper_bound = bounding_box[1]
                 box_size = upper_bound - lower_bound
@@ -510,6 +506,11 @@ class Density:
         counts, _ = np.histogram(data, self.bin_edges)
         N = sum(counts)
 
+        # Make sure a sufficient number of bins are nonzero
+        num_nonempty_bins = sum(counts > 0)
+        check(num_nonempty_bins > self.alpha,
+              'Histogram has %d nonempty bins; must be > %d.' %
+              (num_nonempty_bins, self.alpha))
 
         # Compute initial t
         t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
@@ -597,26 +598,37 @@ class Density:
 
             # num_grid_points is in the right range
             check(2*self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
-                  'num_grid_points = %d; must have %d <= len(grid) <= %d.' %
-                  (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS))
+              'num_grid_points = %d; must have %d <= num_grid_poitns <= %d.' %
+              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS))
 
         # bounding_box
         if self.bounding_box is not None:
 
-            bbox = self.bounding_box
-            try:
-                bbox = list(bbox)
-                assert len(bbox)==2
-                bbox[0] = float(bbox[0])
-                bbox[1] = float(bbox[1])
-                assert bbox[0] < bbox[1]
-                bbox = tuple(bbox)
+            # bounding_box is right type
+            box_types = (list, tuple, np.ndarray)
+            check(isinstance(self.bounding_box, box_types),
+                  'type(bounding_box) = %s; must be one of %s' %
+                  (type(self.bounding_box), box_types))
 
-            except TypeError as e:
-                print(
-                    'Input check failed: bounding_box must be ordered and castable as a 2-tuple of floats. Current bbox: %s' % repr(bbox)
-                )
-                sys.exit(1)
+            # bounding_box has right length
+            check(len(self.bounding_box)==2,
+                  'len(bounding_box) = %d; must be %d' %
+                  (len(self.bounding_box), 2))
+
+            # bounding_box entries must be numbers
+            check(isinstance(self.bounding_box[0], numbers.Real) and
+                  isinstance(self.bounding_box[1], numbers.Real),
+                  'bounding_box = %s; entries must be numbers' %
+                  repr(self.bounding_box))
+
+            # bounding_box entries must be sorted
+            check(self.bounding_box[0] < self.bounding_box[1],
+                  'bounding_box = %s; entries must be sorted' %
+                  repr(self.bounding_box))
+
+            # reset bounding_box as tuple
+            self.bounding_box = (float(self.bounding_box[0]),
+                                 float(self.bounding_box[1]))
 
         # periodic is bool
         check(isinstance(self.periodic, bool),
