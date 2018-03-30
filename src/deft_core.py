@@ -3,7 +3,12 @@ import numpy as np
 from scipy.sparse import csr_matrix, diags, spdiags
 from scipy.sparse.linalg import spsolve, eigsh
 from scipy.linalg import det, eigh, solve, eigvalsh, inv
+import scipy.optimize as opt
 import time
+
+#import utils
+#import supplements
+#import maxent
 
 # python 3 imports
 from src import utils
@@ -11,6 +16,7 @@ from src import supplements
 from src import maxent
 
 # Import error handling
+#from utils import DeftError
 from src.utils import DeftError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
@@ -251,10 +257,10 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
     if Z_eval == 'Lap':
         correction, w_sample_mean, w_sample_mean_std = \
             0.0, 1.0, 0.0
-    if Z_eval == 'Lap+Sam':
+    if Z_eval == 'Lap+Imp':
         correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False)
-    if Z_eval == 'Lap+Sam+P':
+    if Z_eval == 'Lap+Imp+P':
         correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True)
     if Z_eval == 'GLap':
@@ -333,10 +339,10 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
     if Z_eval == 'Lap':
         correction, w_sample_mean, w_sample_mean_std = \
             0.0, 1.0, 0.0
-    if Z_eval == 'Lap+Sam':
+    if Z_eval == 'Lap+Imp':
         correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False)
-    if Z_eval == 'Lap+Sam+P':
+    if Z_eval == 'Lap+Imp+P':
         correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True)
     if Z_eval == 'GLap':
