@@ -29,7 +29,7 @@ class Density2D:
 class DensityJoint:
     """
     Future class for estimating the joint distribution between two
-    univariate quantities
+    univariate quantities.
     """
     pass
 
