@@ -339,6 +339,4 @@ def run_all_functional_tests():
 
     display_global_status()
 
-
 run_all_functional_tests()
-#run_num_samples_for_Z_test()

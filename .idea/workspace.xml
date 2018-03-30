@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/density.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/density.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/suftware.py" beforeDir="false" afterPath="$PROJECT_DIR$/suftware.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/functional_tests_density.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/functional_tests_density.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,13 +27,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="density.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="density.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/density.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="832" column="44" selection-start-line="832" selection-start-column="44" selection-end-line="832" selection-end-column="44" />
+            <state relative-caret-position="398">
+              <caret line="105" column="12" selection-start-line="105" selection-start-column="12" selection-end-line="105" selection-end-column="12" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="functional_tests_density.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tests/functional_tests_density.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="667">
+              <caret line="340" lean-forward="true" selection-start-line="340" selection-end-line="340" />
+              <folding>
+                <element signature="e#58#76#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,9 +134,9 @@
         <option value="$PROJECT_DIR$/docs/index.rst" />
         <option value="$PROJECT_DIR$/src/laplacian.py" />
         <option value="$PROJECT_DIR$/src/deft_core.py" />
-        <option value="$PROJECT_DIR$/tests/functional_tests_density.py" />
         <option value="$PROJECT_DIR$/suftware.py" />
         <option value="$PROJECT_DIR$/src/density.py" />
+        <option value="$PROJECT_DIR$/tests/functional_tests_density.py" />
       </list>
     </option>
   </component>
@@ -146,16 +156,6 @@
             <path>
               <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
               <item name="suftware" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
-              <item name="suftware" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
-              <item name="suftware" type="462c0819:PsiDirectoryNode" />
-              <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -302,13 +302,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1505404920940</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Modified .gitignore to ignore .DS... stuff.">
-      <created>1521940459958</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1521940459959</updated>
     </task>
     <task id="LOCAL-00002" summary="No, now I modified .gitignore to ignore .DS_Store files">
       <created>1521940582658</created>
@@ -646,7 +639,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522359743314</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Added enable_graphics(). Also added checks for num_samples_for_Z.">
+      <created>1522437180471</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1522437180471</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -686,7 +686,7 @@
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49901536" weight="0.3099851" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49940923" weight="0.32935917" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49704608" weight="0.3546945" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49704608" visible="true" weight="0.3546945" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49980307" weight="0.39940387" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -749,7 +749,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Working as of this morning." />
     <MESSAGE value="Changed bbox='Auto' default to bbox=None in deft_1d.run()" />
     <MESSAGE value="Modified grid choice algorithm. Also implemented box-plot-based choice of bounding_box." />
     <MESSAGE value="Added automatic conversion to floats. Removed loop checking that all data is a number." />
@@ -774,7 +773,8 @@
     <MESSAGE value="Added self.mistake flag to Density constructor; set in response to should_fail argument." />
     <MESSAGE value="Started filling in documentation" />
     <MESSAGE value="Did I foget to commit something?" />
-    <option name="LAST_COMMIT_MESSAGE" value="Did I foget to commit something?" />
+    <MESSAGE value="Added enable_graphics(). Also added checks for num_samples_for_Z." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added enable_graphics(). Also added checks for num_samples_for_Z." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -955,16 +955,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/functional_tests_density.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6289">
-          <caret line="331" column="23" lean-forward="true" selection-start-line="331" selection-start-column="23" selection-end-line="331" selection-end-column="23" />
-          <folding>
-            <element signature="e#58#76#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/example_density_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3">
@@ -1064,10 +1054,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="832" column="44" selection-start-line="832" selection-start-column="44" selection-end-line="832" selection-end-column="44" />
+        <state relative-caret-position="398">
+          <caret line="105" column="12" selection-start-line="105" selection-start-column="12" selection-end-line="105" selection-end-column="12" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/functional_tests_density.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="667">
+          <caret line="340" lean-forward="true" selection-start-line="340" selection-end-line="340" />
+          <folding>
+            <element signature="e#58#76#0" expanded="true" />
           </folding>
         </state>
       </provider>

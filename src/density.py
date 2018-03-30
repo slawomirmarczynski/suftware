@@ -91,22 +91,22 @@ class Density:
 
     def __init__(self,
                  data,
-                 alpha=3,
                  grid=None,
                  grid_spacing=None,
                  num_grid_points=None,
                  bounding_box=None,
+                 alpha=3,
                  periodic=False,
-                 Z_evaluation_method='Lap',
-                 num_samples_for_Z=1000,
                  max_t_step=1.0,
-                 print_t=False,
                  tolerance=1E-6,
                  resolution=0.1,
-                 seed=None,
                  num_posterior_samples=100,
                  sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,
+                 Z_evaluation_method='Lap',
+                 num_samples_for_Z=1000,
+                 seed=None,
+                 print_t=False,
                  should_fail=None):
 
         # Record other inputs as class attributes
