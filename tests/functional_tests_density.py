@@ -236,19 +236,108 @@ def run_seed_tests():
     display_local_status()
 
 
+def run_print_t_tests():
+    # print_t
+    print("Running Functional Test for parameter 'print_t' \n")
+    # values to be tested
+    print_t_fail_list = ['x',1.0,-1,0,None]
+    print_t_success_list = [False, True]
+
+    # should fail
+    [run_one_functional_test(print_t=print_t_fail_list[i], should_fail=True) for i in
+     range(len(print_t_fail_list))]
+    # should pass
+    [run_one_functional_test(print_t=print_t_success_list[i], should_fail=False) for i in
+     range(len(print_t_success_list))]
+
+    display_local_status()
+
+
+def run_num_posterior_samples_tests():
+    # num_posterior_samples
+    print("Running Functional Test for parameter 'num_posterior_samples' \n")
+    # values to be tested
+    num_posterior_samples_fail_list = ['x',-1,0.0,1001]
+    num_posterior_samples_success_list = [0,1,2,3,10,100,1000]
+
+    # should fail
+    [run_one_functional_test(num_posterior_samples=num_posterior_samples_fail_list[i], should_fail=True) for i in
+     range(len(num_posterior_samples_fail_list))]
+    # should pass
+    [run_one_functional_test(num_posterior_samples=num_posterior_samples_success_list[i], should_fail=False) for i in
+     range(len(num_posterior_samples_success_list))]
+
+    display_local_status()
+
+
+def run_sample_only_at_l_star_tests():
+    # sample_only_at_l_star
+    print("Running Functional Test for parameter 'sample_only_at_l_star' \n")
+    # values to be tested
+    sample_only_at_l_star_fail_list = ['x',1.0,-1,0,None]
+    sample_only_at_l_star_success_list = [False, True]
+
+    # should fail
+    [run_one_functional_test(sample_only_at_l_star=sample_only_at_l_star_fail_list[i], should_fail=True) for i in
+     range(len(sample_only_at_l_star_fail_list))]
+    # should pass
+    [run_one_functional_test(sample_only_at_l_star=sample_only_at_l_star_success_list[i], should_fail=False) for i in
+     range(len(sample_only_at_l_star_success_list))]
+
+    display_local_status()
+
+
+def run_max_log_evidence_ratio_drop_tests():
+
+    # max_log_evidence_ratio_drop
+    print("Running Functional Test for parameter 'max_log_evidence_ratio_drop' \n")
+    # values to be tested
+    max_log_evidence_ratio_drop_fail_list = ['x',-1,0,None,0]
+    max_log_evidence_ratio_drop_success_list = [0.1, 1,2,3,10,100,100.0,1000]
+
+    # should fail
+    [run_one_functional_test(max_log_evidence_ratio_drop=max_log_evidence_ratio_drop_fail_list[i], should_fail=True)
+     for i in range(len(max_log_evidence_ratio_drop_fail_list))]
+    # should pass
+    [run_one_functional_test(max_log_evidence_ratio_drop=max_log_evidence_ratio_drop_success_list[i], should_fail=False)
+     for i in range(len(max_log_evidence_ratio_drop_success_list))]
+
+    display_local_status()
+
+
 def run_all_functional_tests():
+    # 1
     run_grid_tests()
+    # 2
     run_grid_spacing_tests()
+    # 3
     run_bound_box_tests()
+    # 4
     run_num_grid_points_tests()
+    # 5
     run_alpha_tests()
+    # 6
     run_periodic_tests()
+    # 7
     run_Z_evaluation_method_tests()
+    # 8
     run_num_samples_for_Z_test()
+    # 9
     run_tolerance_tests()
+    # 10
     run_resolution_tests()
+    # 11
     run_seed_tests()
+    # 12
+    run_print_t_tests()
+    # 13
+    run_num_posterior_samples_tests()
+    # 14
+    run_sample_only_at_l_star_tests()
+    # 15
+    run_max_log_evidence_ratio_drop_tests()
 
     display_global_status()
+
 
 run_all_functional_tests()
