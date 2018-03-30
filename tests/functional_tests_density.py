@@ -172,8 +172,8 @@ def run_num_samples_for_Z_test():
     # Question: should a value of None pass or fail?
 
     # values to be tested
-    num_samples_for_Z_fail_list = [None, -1, 'x', 0.1, 1e5]
-    num_samples_for_Z_success_list = [1, 10, 1000]
+    num_samples_for_Z_fail_list = [None, -1, 'x', 0.1, 1001]
+    num_samples_for_Z_success_list = [0, 1, 10, 1000]
 
     # should fail
     [run_one_functional_test(num_samples_for_Z=num_samples_for_Z_fail_list[i], should_fail=True) for i in
@@ -341,3 +341,4 @@ def run_all_functional_tests():
 
 
 run_all_functional_tests()
+#run_num_samples_for_Z_test()

@@ -3,7 +3,6 @@ import scipy as sp
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
 import pdb
 import numbers
 
@@ -11,6 +10,7 @@ SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
+MAX_NUM_SAMPLES_FOR_Z = 1000
 
 # Import deft-related code
 from src import deft_core
@@ -34,10 +34,6 @@ class Density:
     grid: (np.array)
         Locations of grid points. Grid points must be evenly spaced in
         ascending order.
-    whisker_length: (float)
-        The number of interquartile ranges above the 3rd quartile and below the
-        1st quartile at which to position the upper and lower bounds of the
-        bounding box.
     alpha: (int)
         Smoothness parameter. Represents the order of the
         derivative in the action.
@@ -102,7 +98,7 @@ class Density:
                  bounding_box=None,
                  periodic=False,
                  Z_evaluation_method='Lap',
-                 num_samples_for_Z=1e5,
+                 num_samples_for_Z=1000,
                  max_t_step=1.0,
                  print_t=False,
                  tolerance=1E-6,
@@ -160,7 +156,7 @@ class Density:
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
                 self.mistake = True
-                sys.exit(1)
+                #sys.exit(1)
             elif should_fail is False:
                 print('Success, as expected.')
                 self.mistake = False
@@ -176,12 +172,12 @@ class Density:
             elif should_fail is False:
                 print('MISTAKE: Failed but should have succeeded: ', e)
                 self.mistake = True
-                sys.exit(1)
+                #sys.exit(1)
 
             else:
                 print('Error: ', e)
                 self.mistake = None
-                sys.exit(1)
+                #sys.exit(1)
 
 
     def set_grid(self):
@@ -667,6 +663,19 @@ class Density:
               'Z_eval = %s; must be in %s' %
               (self.Z_evaluation_method, Z_evals))
 
+        # num_samples_for_Z is an integer
+        check(isinstance(self.num_samples_for_Z, numbers.Integral),
+              'type(self.num_samples_for_Z) = %s; ' %
+              type(self.num_samples_for_Z) +
+              'must be integer.')
+        self.num_samples_for_Z = int(self.num_samples_for_Z)
+
+        # num_samples_for_Z is in range
+        check(0 <= self.num_samples_for_Z <= MAX_NUM_SAMPLES_FOR_Z,
+              'self.num_samples_for_Z = %d; ' % self.num_samples_for_Z +
+              ' must satisfy 0 <= num_samples_for_Z <= %d.' %
+               MAX_NUM_SAMPLES_FOR_Z)
+
         # max_t_step is a number
         check(isinstance(self.max_t_step, numbers.Real),
               'type(max_t_step) = %s; must be a number' %
@@ -812,11 +821,16 @@ class Density:
              posterior_alpha=.2,
              color='blue',
              linewidth=2,
-             alpha=1):
+             alpha=1,
+             backend='TkAgg'):
         """
         Visualize the estimated density
         :return: None
         """
+
+        # check if matplotlib.pyplot is loaded. If not, load it carefully
+        if 'matplotlib.pyplot' not in sys.modules:
+            enable_graphics(backend=backend)
 
         ### Plot results ###
         if ax is None:
@@ -877,3 +891,19 @@ def check(condition, message):
     '''
     if not condition:
         raise DeftError(message)
+
+def enable_graphics(backend='TkAgg'):
+    """
+    Must be called before any plotting routines will function
+
+    :param backend: Graphical backend to use
+    :return: None
+    """
+    try:
+        global mpl
+        import matplotlib as mpl
+        mpl.use(backend)
+        global plt
+        import matplotlib.pyplot as plt
+    except:
+        raise DeftError('Could not import matplotlib.')

@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/ipynb/18.03.29_tests_gaussian.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/18.03.29_tests_gaussian.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/ipynb/simple_examples.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/density.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/density.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suftware.py" beforeDir="false" afterPath="$PROJECT_DIR$/suftware.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/functional_tests_density.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/functional_tests_density.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="589">
-              <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
+            <state relative-caret-position="135">
+              <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
               <folding>
                 <element signature="e#79#145#0" expanded="true" />
               </folding>
@@ -27,47 +29,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="density.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="density.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/density.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3154">
-              <caret line="172" column="47" selection-start-line="172" selection-start-column="47" selection-end-line="172" selection-end-column="47" />
+            <state relative-caret-position="624">
+              <caret line="832" column="44" selection-start-line="832" selection-start-column="44" selection-end-line="832" selection-end-column="44" />
               <folding>
                 <element signature="e#34#52#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="interpolated_density.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/interpolated_density.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
-              <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
-              <folding>
-                <element signature="e#34#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="deft_core.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/deft_core.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -83,11 +52,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Lap+Imp</find>
-      <find>posterior_sampling</find>
-      <find>posterior_sampling_method</find>
-      <find>fit_now</find>
-      <find>pt_method</find>
       <find>get_command</find>
       <find>Field</find>
       <find>Field1D</find>
@@ -112,6 +76,12 @@
       <find>num_posterior</find>
       <find>num_posterior_samples</find>
       <find>itertools</find>
+      <find>sys.exit</find>
+      <find>num_samples_per</find>
+      <find>num_Z_sa</find>
+      <find>run_num_samples_for_Z_test(</find>
+      <find>whisker</find>
+      <find>plot(</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -151,11 +121,12 @@
         <option value="$PROJECT_DIR$/examples/scripts/parse_who_data.py" />
         <option value="$PROJECT_DIR$/src/utils.py" />
         <option value="$PROJECT_DIR$/src/supplements.py" />
-        <option value="$PROJECT_DIR$/src/density.py" />
         <option value="$PROJECT_DIR$/docs/index.rst" />
         <option value="$PROJECT_DIR$/src/laplacian.py" />
         <option value="$PROJECT_DIR$/src/deft_core.py" />
+        <option value="$PROJECT_DIR$/tests/functional_tests_density.py" />
         <option value="$PROJECT_DIR$/suftware.py" />
+        <option value="$PROJECT_DIR$/src/density.py" />
       </list>
     </option>
   </component>
@@ -168,40 +139,35 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
+              <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
+              <item name="suftware" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="ipynb" type="462c0819:PsiDirectoryNode" />
+              <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
+              <item name="suftware" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="test_code" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deft_1d" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deft_1d" type="462c0819:PsiDirectoryNode" />
-              <item name="test_suite" type="462c0819:PsiDirectoryNode" />
+              <item name="suftware" type="b2602c69:ProjectViewProjectNode" />
+              <item name="suftware" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="DeftError&#9;null&#9;null" />
     <property name="full.screen.before.presentation.mode" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.editor" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -223,7 +189,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.jbk_tests">
+  <component name="RunManager" selected="Python.functional_tests_density">
     <configuration name="deft_demo" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="suftware" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -237,6 +203,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="functional_tests_density" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="suftware" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tests/functional_tests_density.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -278,19 +262,6 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="Unittests for test_laplacian.TestLaplacian" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="suftware" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test_code" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_laplacian.TestLaplacian&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-    </configuration>
     <configuration name="Unittests in test_laplacian.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="suftware" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -306,18 +277,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.deft_demo" />
-      <item itemvalue="Python tests.Unittests for test_laplacian.TestLaplacian" />
       <item itemvalue="Python tests.Unittests in test_laplacian.py" />
       <item itemvalue="Python.jbk_tests" />
       <item itemvalue="Python.suftware_runner" />
+      <item itemvalue="Python.functional_tests_density" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.functional_tests_density" />
         <item itemvalue="Python.jbk_tests" />
         <item itemvalue="Python.suftware_runner" />
         <item itemvalue="Python.deft_demo" />
         <item itemvalue="Python tests.Unittests in test_laplacian.py" />
-        <item itemvalue="Python tests.Unittests for test_laplacian.TestLaplacian" />
       </list>
     </recent_temporary>
   </component>
@@ -706,45 +677,46 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12485231" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50098467" side_tool="true" visible="true" weight="0.3546945" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49980307" weight="0.3099851" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5005908" side_tool="true" weight="0.4195231" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49940923" weight="0.4195231" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49901536" weight="0.3099851" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49940923" weight="0.32935917" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49901536" visible="true" weight="0.3546945" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39955357" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49704608" weight="0.3546945" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49980307" weight="0.39940387" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" id="Data View" order="3" weight="0.32962668" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32786885" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32786885" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.125" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
       <window_info anchor="right" id="Data View" order="3" weight="0.32962668" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28869048" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="10" visible="true" weight="0.31041667" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32786885" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39955357" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.23397914" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="10" visible="true" weight="0.31041667" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -806,20 +778,24 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/simulate_density_data.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint suspend="NONE" type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/interpolated_density.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
-          <folding>
-            <element signature="e#34#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/deft_core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
@@ -942,29 +918,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
-    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py" />
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
-    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py" />
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
-    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="24" column="21" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/test_code/test_laplacian.py" />
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/report.test_deft_1d.png" />
     <entry file="file://$PROJECT_DIR$/run_deft_1d_demo/deft_demo.py" />
     <entry file="file://$PROJECT_DIR$/jbk_tests.py" />
@@ -990,65 +948,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/density.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3154">
-          <caret line="172" column="47" selection-start-line="172" selection-start-column="47" selection-end-line="172" selection-end-column="47" />
+        <state>
+          <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/functional_tests_density.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6289">
+          <caret line="331" column="23" lean-forward="true" selection-start-line="331" selection-start-column="23" selection-end-line="331" selection-end-column="23" />
           <folding>
-            <element signature="e#34#52#0" expanded="true" />
+            <element signature="e#58#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/example_density_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3">
+          <caret column="17" selection-start-column="17" selection-end-column="17" />
+          <folding>
+            <element signature="e#18#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/interpolated_density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
+        <state relative-caret-position="38">
           <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
           <folding>
             <element signature="e#34#52#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/maxent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6821">
-          <caret line="359" lean-forward="true" selection-start-line="359" selection-end-line="359" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/simulate_density_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="798">
-          <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/supplements.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/laplacian.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
-          <caret line="92" column="32" lean-forward="true" selection-start-line="92" selection-start-column="32" selection-end-line="92" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/example_density_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="17" selection-start-column="17" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -1059,9 +992,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/laplacian.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1748">
+          <caret line="92" column="32" lean-forward="true" selection-start-line="92" selection-start-column="32" selection-end-line="92" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/maxent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6821">
+          <caret line="359" lean-forward="true" selection-start-line="359" selection-end-line="359" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/simulate_density_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="798">
+          <caret line="42" column="16" lean-forward="true" selection-start-line="42" selection-start-column="16" selection-end-line="42" selection-end-column="16" />
+          <folding>
+            <element signature="e#18#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/supplements.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1235">
+          <caret line="65" column="10" lean-forward="true" selection-start-line="65" selection-start-column="10" selection-end-line="65" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="15" lean-forward="true" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/deft_core.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
+        <state relative-caret-position="-11743">
           <caret line="19" column="31" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -1069,19 +1052,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
+        <state relative-caret-position="135">
+          <caret line="31" column="19" lean-forward="true" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+          <folding>
+            <element signature="e#79#145#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/suftware.py">
+    <entry file="file://$PROJECT_DIR$/src/density.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="31" column="26" selection-start-line="31" selection-start-column="26" selection-end-line="31" selection-end-column="26" />
+        <state relative-caret-position="624">
+          <caret line="832" column="44" selection-start-line="832" selection-start-column="44" selection-end-line="832" selection-end-column="44" />
           <folding>
-            <element signature="e#79#145#0" expanded="true" />
+            <element signature="e#34#52#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -19,6 +19,9 @@ from src.interpolated_field import InterpolatedField
 
 from src.utils import DeftError as ControlledError
 
+# Enable plotting
+from src.density import enable_graphics
+
 # Classes that have yet to be written
 class Density2D:
     """
@@ -55,3 +58,4 @@ class IntervalCensoredSurvival:
     """
     Future class for computing interval-censored survival curves
     """
+
