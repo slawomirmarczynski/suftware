@@ -148,19 +148,19 @@ def run_periodic_tests():
     display_local_status()
 
 
-def run_Z_evaluation_method_tests():
-    # Z_evaluation_method
-    print("Running Functional Test for parameter 'Z_evaluation_method' \n")
+def run_evaluation_method_for_Z_tests():
+    # evaluation_method_for_Z
+    print("Running Functional Test for parameter 'evaluation_method_for_Z' \n")
 
     # values to be tested
     Z_eval_fail_list = [0, 'x', 'Einstein', False]
     Z_eval_success_list = ['Lap', 'Lap+Fey', 'Lap+Imp']
 
     # should fail
-    [run_one_functional_test(Z_evaluation_method=Z_eval_fail_list[i], should_fail=True) for i in
+    [run_one_functional_test(evaluation_method_for_Z=Z_eval_fail_list[i], should_fail=True) for i in
      range(len(Z_eval_fail_list))]
     # should pass
-    [run_one_functional_test(Z_evaluation_method=Z_eval_success_list[i], should_fail=False) for i in
+    [run_one_functional_test(evaluation_method_for_Z=Z_eval_success_list[i], should_fail=False) for i in
      range(len(Z_eval_success_list))]
 
     display_local_status()
@@ -319,7 +319,7 @@ def run_all_functional_tests():
     # 6
     run_periodic_tests()
     # 7
-    run_Z_evaluation_method_tests()
+    run_evaluation_method_for_Z_tests()
     # 8
     run_num_samples_for_Z_test()
     # 9

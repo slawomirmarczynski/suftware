@@ -41,13 +41,13 @@ class Density:
         Bounding box for density estimation.
     periodic: (boolean)
         Enforce periodic boundary conditions via True or False.
-    Z_evaluation_method: (string)
+    evaluation_method_for_Z: (string)
         Method of evaluation of partition function. Possible values:
         'Lap'      : Laplace approximation (default).
         'Lap+Imp'  : Laplace approximation + importance sampling.
         'Lap+Fey'  : Laplace approximation + Feynman diagrams.
     num_samples_for_Z: (int)
-        *** Note *** This parameter works only when Z_evaluation_method is 'Lap+Imp'.
+        *** Note *** This parameter works only when evaluation_method_for_Z is 'Lap+Imp'.
         Number of samples for the evaluation of the partition function.
         More samples will help to evaluate a better density. More samples
         will also make calculation slower. num_samples_for_Z = 0 means the Laplace
@@ -103,7 +103,7 @@ class Density:
                  num_posterior_samples=100,
                  sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,
-                 Z_evaluation_method='Lap',
+                 evaluation_method_for_Z='Lap',
                  num_samples_for_Z=1000,
                  seed=None,
                  print_t=False,
@@ -116,7 +116,7 @@ class Density:
         self.num_grid_points = num_grid_points
         self.bounding_box = bounding_box
         self.periodic = periodic
-        self.Z_evaluation_method = Z_evaluation_method
+        self.Z_evaluation_method = evaluation_method_for_Z
         self.num_samples_for_Z = num_samples_for_Z
         self.max_t_step = max_t_step
         self.print_t = print_t
@@ -657,7 +657,7 @@ class Density:
         check(isinstance(self.periodic, bool),
               'type(periodic) = %s; must be bool' % type(self.periodic))
 
-        # Z_evaluation_method is valid
+        # evaluation_method_for_Z is valid
         Z_evals = ['Lap', 'Lap+Imp', 'Lap+Fey']
         check(self.Z_evaluation_method in Z_evals,
               'Z_eval = %s; must be in %s' %
