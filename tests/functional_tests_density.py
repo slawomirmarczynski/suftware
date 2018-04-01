@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Functional Tests for Suftware
 """
