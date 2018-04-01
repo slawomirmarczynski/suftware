@@ -2,59 +2,58 @@
 Head module. Contains classes for user interfacing.
 """
 
+# DensityEstimator estimation
+from src.DensityEstimator import DensityEstimator
+
 # Data simulation
-from src.simulate_density_data import run as simulate_density_data
-from src.simulate_density_data import VALID_DISTRIBUTIONS \
-    as simulate_density_data__distribution_types
+from src.SimulatedData import SimulatedData
 
 # Data examples
-from src.example_density_data import run as example_density_data
-from src.example_density_data import VALID_DATASETS \
-    as example_density_data__datasets
+from src.ExampleData import ExampleData
 
-# Density estimation
-from src.density import Density
+# Interpolators
 from src.interpolated_density import InterpolatedDensity
 from src.interpolated_field import InterpolatedField
 
-from src.utils import DeftError as ControlledError
+# Error handling
+from src.utils import ControlledError as ControlledError
 
 # Enable plotting
-from src.density import enable_graphics
+from src.utils import enable_graphics
 
 # Classes that have yet to be written
-class Density2D:
+class Density2DEstimator:
     """
     Future class for density estimation in a two dimensional area.
     """
     pass
 
-class DensityJoint:
+class JointDensityEstimator:
     """
     Future class for estimating the joint distribution between two
     univariate quantities.
     """
     pass
 
-class Survival:
+class SurvivalCurveEstimator:
     """
     Future class for computing simple survival curves
     """
     pass
 
-class ProportionalHazards:
+class ProportionalHazardsEstimator:
     """
     Future class for computing proportional hazards models
     """
     pass
 
-class GeneralizedHazards:
+class GeneralizedHazardsEstimator:
     """
     Future class for computing generalized hazards models
     """
     pass
 
-class IntervalCensoredSurvival:
+class IntervalCensoredSurvivalEstimator:
     """
     Future class for computing interval-censored survival curves
     """

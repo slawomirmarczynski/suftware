@@ -1,5 +1,6 @@
-==============================
-sw.example_density_data
-==============================
+==============
+sw.ExampleData
+==============
 
-.. autofunction:: suftware.example_density_data
+.. autoclass:: suftware.ExampleData
+    :members:

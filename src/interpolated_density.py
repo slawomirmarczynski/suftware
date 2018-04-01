@@ -4,7 +4,7 @@ import numpy as np
 
 class InterpolatedDensity:
     """
-    This class forms a Density object (Q) based on the
+    This class forms a DensityEstimator object (Q) based on the
     interpolated field object from the Field1D class
 
     parameters:

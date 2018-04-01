@@ -37,7 +37,7 @@ Quick Start
     data = np.random.randn(100)
 
     # Perform one-dimensional density estimation using SUFTware
-    density = sw.Density(data)
+    density = sw.DensityEstimator(data)
 
     # Visualize results
     density.plot()
@@ -47,9 +47,9 @@ Documentation
 
 .. toctree::
 
-     denisty
-     example_density_data
-     simulate_density_data
+     DensityEstimator
+     ExampleData
+     SimulatedData
      enable_graphics
 
 

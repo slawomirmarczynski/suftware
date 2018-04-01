@@ -14,10 +14,9 @@ MAX_NUM_SAMPLES_FOR_Z = 1000
 
 # Import deft-related code
 from src import deft_core
-from src import utils
 from src import laplacian
 
-from src.utils import DeftError
+from src.utils import ControlledError, enable_graphics, check
 from src.interpolated_density import InterpolatedDensity
 from src.interpolated_field import InterpolatedField
 
@@ -203,7 +202,7 @@ class DensityEstimator:
                 self.mistake = None
 
 
-        except DeftError as e:
+        except ControlledError as e:
             if should_fail is True:
                 print('Error, as expected:', e)
                 self.mistake = False
@@ -441,8 +440,8 @@ class DensityEstimator:
         if self.results is not None and self.num_posterior_samples is not 0:
             try:
                 if not isinstance(importance_resampling,bool):
-                    raise DeftError('Q_samples syntax error. Please ensure importance_resampling is of type bool')
-            except DeftError as e:
+                    raise ControlledError('Q_samples syntax error. Please ensure importance_resampling is of type bool')
+            except ControlledError as e:
                 print(e)
                 sys.exit(1)
 
@@ -651,7 +650,7 @@ class DensityEstimator:
             try:
                 self.grid = np.array(self.grid).ravel().astype(float)
             except: # SHOULD BE MORE SPECIFIC
-                raise DeftError('Cannot cast grid as 1D np.array of floats.')
+                raise ControlledError('Cannot cast grid as 1D np.array of floats.')
 
             # grid has appropriate number of points
             check(2*self.alpha <= len(self.grid) <= MAX_NUM_GRID_POINTS,
@@ -826,8 +825,8 @@ class DensityEstimator:
             elif type(data) != np.ndarray:
                 data = np.array(data)
             else:
-                raise DeftError("Error: could not cast data into an np.array")
-        except DeftError as e:
+                raise ControlledError("Error: could not cast data into an np.array")
+        except ControlledError as e:
             print(e)
             sys.exit(1)
 
@@ -842,26 +841,26 @@ class DensityEstimator:
 
         try:
             if not (len(data) > 0):
-                raise DeftError(
+                raise ControlledError(
                     'Input check failed, data must have length > 0: data = %s' % data)
-        except DeftError as e:
+        except ControlledError as e:
             print(e)
             sys.exit(1)
 
         try:
             data_spread = max(data) - min(data)
             if not np.isfinite(data_spread):
-                raise DeftError(
+                raise ControlledError(
                     'Input check failed. Data[max]-Data[min] is not finite: Data spread = %s' % data_spread)
-        except DeftError as e:
+        except ControlledError as e:
             print(e)
             sys.exit(1)
 
         try:
             if not (data_spread > 0):
-                raise DeftError(
+                raise ControlledError(
                     'Input check failed. Data[max]-Data[min] must be > 0: data_spread = %s' % data_spread)
-        except DeftError as e:
+        except ControlledError as e:
             print(e)
             sys.exit(1)
 
@@ -946,55 +945,3 @@ class DensityEstimator:
         if show_now:
             plt.show()
 
-def check(condition, message):
-    '''
-    Checks a condition; raises a DeftError with message if condition fails.
-    :param condition:
-    :param message:
-    :return: None
-    '''
-    if not condition:
-        raise DeftError(message)
-
-def enable_graphics(backend='TkAgg'):
-    """
-    Enable graphical output by suftware.
-
-    This function should be _run before any calls are made to DensityEstimator.plot().
-    This is not always necessary, since DensityEstimator.plot() itself will call this
-    function if necessary. However, when plotting inline using the iPython
-    notebook, this function must be called before the magic function
-    ``%matplotlib inline``, e.g.::
-
-        import suftware as sw
-        sw.enable_graphics()
-        %matplotlib inline
-
-    If this function is never called, suftware can be _run without importing
-    matplotlib. This can be useful, for instance, when distributing jobs
-    across the nodes of a high performance computing cluster.
-
-
-    parameters
-    ----------
-
-        backend (str):
-            Graphical backend to be passed to matplotlib.use().
-            See the `matplotlib documentation <https://matplotlib.org/faq/usage_faq.html#what-is-a-backend>`_
-            for more information on graphical backends.
-
-
-    returns
-    -------
-
-        None.
-
-    """
-    try:
-        global mpl
-        import matplotlib as mpl
-        mpl.use(backend)
-        global plt
-        import matplotlib.pyplot as plt
-    except:
-        raise DeftError('Could not import matplotlib.')

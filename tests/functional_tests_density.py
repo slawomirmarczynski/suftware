@@ -16,7 +16,7 @@ np.random.seed(0)
 data = np.random.randn(100)
 
 # simple test
-sw.Density(data)
+sw.DensityEstimator(data)
 global_mistake = False
 global_test_success_counter = 0
 global_test_fail_counter = 0
@@ -24,7 +24,7 @@ global_test_fail_counter = 0
 
 # helper method for functional test
 def run_one_functional_test(**kw):
-    functional_test = sw.Density(data, **kw)
+    functional_test = sw.DensityEstimator(data, **kw)
     global global_mistake
     global_mistake = functional_test.mistake
     if global_mistake is True:

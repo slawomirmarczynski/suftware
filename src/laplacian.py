@@ -9,8 +9,8 @@ import pickle
 from src import utils
 
 # Import error handling
-#from utils import DeftError
-from src.utils import DeftError
+#from utils import ControlledError
+from src.utils import ControlledError
 
 
 # Class container for Laplacian operators. Constructor computes spectrum.
@@ -56,9 +56,9 @@ class Laplacian:
         
         # Make sure grid_spacing is valid
         if not isinstance(grid_spacing, float):
-            raise DeftError('/Laplacian/ grid_spacing must be a float: grid_spacing = %s' % type(grid_spacing))
+            raise ControlledError('/Laplacian/ grid_spacing must be a float: grid_spacing = %s' % type(grid_spacing))
         if not (grid_spacing > 0):
-            raise DeftError('/Laplacian/ grid_spacing must be > 0: grid_spacing = %s' % grid_spacing)
+            raise ControlledError('/Laplacian/ grid_spacing must be > 0: grid_spacing = %s' % grid_spacing)
         
         if '1d' in operator_type:
             self._coordinate_dim = 1
@@ -69,7 +69,7 @@ class Laplacian:
             elif operator_type == '1d_periodic':
                 periodic = True
             else:
-                raise DeftError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
+                raise ControlledError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
                 
             self._type = operator_type
             
@@ -94,7 +94,7 @@ class Laplacian:
             elif operator_type == '2d_periodic':
                 periodic = True
             else:
-                raise DeftError('ERROR: cannot identify operator_type.')
+                raise ControlledError('ERROR: cannot identify operator_type.')
 
             
             self._type = operator_type
@@ -115,7 +115,7 @@ class Laplacian:
             self._kernel_dim = self._kernel_basis.shape[1]
 
         else:
-            raise DeftError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
+            raise ControlledError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
 
         # Compute spectrum, and set lowest rank eigenvectors as kernel
         self._dense_matrix = self._sparse_matrix.todense()
@@ -183,10 +183,10 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
 
     # Make sure sparse is valid
     if not isinstance(sparse, bool):
-        raise DeftError('/laplacian_1d/ sparse must be a boolean: sparse = %s' % type(sparse))
+        raise ControlledError('/laplacian_1d/ sparse must be a boolean: sparse = %s' % type(sparse))
     # Make sure report_kernel is valid
     if not isinstance(report_kernel, bool):
-        raise DeftError('/laplacian_1d/ report_kernel must be a boolean: report_kernel = %s' % type(report_kernel))
+        raise ControlledError('/laplacian_1d/ report_kernel must be a boolean: report_kernel = %s' % type(report_kernel))
     
     x_grid = (sp.arange(G) - (G-1)/2.)/(G/2.)
 
@@ -216,15 +216,15 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
 
         # Make sure Delta is valid
         if not (Delta.shape[0] == Delta.shape[1] == G):
-            raise DeftError('/laplacian_1d/ Delta must have shape (%d, %d): Delta.shape = %s' % (G,G,Delta.shape))
+            raise ControlledError('/laplacian_1d/ Delta must have shape (%d, %d): Delta.shape = %s' % (G, G, Delta.shape))
 
         # Construct a basis for the kernel from legendre polynomials
         kernel_basis = utils.legendre_basis_1d(G, alpha, grid_spacing)
 
         # Make sure kernel_basis is valid
         if not ((kernel_basis.shape[0] == G) and (kernel_basis.shape[1] == alpha)):
-            raise DeftError('/laplacian_1d/ kernel_basis must have shape (%d, %d): kernel_basis.shape = %s' %
-                            (G,alpha,kernel_basis.shape))
+            raise ControlledError('/laplacian_1d/ kernel_basis must have shape (%d, %d): kernel_basis.shape = %s' %
+                                  (G,alpha,kernel_basis.shape))
         
     # Sparsify matrix if requested
     if sparse:  

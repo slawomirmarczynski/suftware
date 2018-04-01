@@ -3,7 +3,7 @@ import numpy as np
 from scipy.linalg import solve, det, norm
 
 from src import utils
-from src.utils import DeftError
+from src.utils import ControlledError
 
 PHI_STD_REG = utils.PHI_STD_REG 
 
@@ -17,11 +17,11 @@ def coeffs_to_field(coeffs, kernel):
     
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise DeftError('/coeffs_to_field/ coeffs must have length %d: len(coeffs) = %d'%(kernel_dim,len(coeffs)))
+        raise ControlledError('/coeffs_to_field/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise DeftError('/coeffs_to_field/ coeffs is not real: coeffs = %s'%coeffs)
+        raise ControlledError('/coeffs_to_field/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise DeftError('/coeffs_to_field/ coeffs is not finite: coeffs = %s'%coeffs)
+        raise ControlledError('/coeffs_to_field/ coeffs is not finite: coeffs = %s' % coeffs)
     
     # Convert to matrices
     kernel_mat = sp.mat(kernel) # G x kernel_dim matrix
@@ -41,22 +41,22 @@ def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise DeftError('/action_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d'%(kernel_dim,len(coeffs)))
+        raise ControlledError('/action_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise DeftError('/action_per_datum_from_coeffs/ coeffs is not real: coeffs = %s'%coeffs)
+        raise ControlledError('/action_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise DeftError('/action_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s'%coeffs)
+        raise ControlledError('/action_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise DeftError('/action_per_datum_from_coeffs/ phi0 is not real: phi0 = %s'%phi0)
+            raise ControlledError('/action_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise DeftError('/action_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s'%phi0)
+            raise ControlledError('/action_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/action_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s'%type(regularized))
+        raise ControlledError('/action_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = utils.field_to_quasiprob(phi+phi0)
@@ -70,9 +70,9 @@ def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure s is valid
     if not np.isreal(s):
-        raise DeftError('/action_per_datum_from_coeffs/ s is not real: s = %s'%s)
+        raise ControlledError('/action_per_datum_from_coeffs/ s is not real: s = %s' % s)
     if not np.isfinite(s):
-        raise DeftError('/action_per_datum_from_coeffs/ s is not finite: s = %s'%s)
+        raise ControlledError('/action_per_datum_from_coeffs/ s is not finite: s = %s' % s)
         
     return s
 
@@ -87,22 +87,22 @@ def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise DeftError('/gradient_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d'%(kernel_dim,len(coeffs)))
+        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise DeftError('/gradient_per_datum_from_coeffs/ coeffs is not real: coeffs = %s'%coeffs)
+        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise DeftError('/gradient_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s'%coeffs)
+        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise DeftError('/gradient_per_datum_from_coeffs/ phi0 is not real: phi0 = %s'%phi0)
+            raise ControlledError('/gradient_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise DeftError('/gradient_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s'%phi0)
+            raise ControlledError('/gradient_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/gradient_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s'%type(regularized))
+        raise ControlledError('/gradient_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = utils.field_to_quasiprob(phi+phi0)
@@ -123,9 +123,9 @@ def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
     # Make sure grad_array is valid
     grad_array = sp.array(grad_row).ravel()
     if not all(np.isreal(grad_array)):
-        raise DeftError('/gradient_per_datum_from_coeffs/ grad_array is not real: grad_array = %s'%grad_array)
+        raise ControlledError('/gradient_per_datum_from_coeffs/ grad_array is not real: grad_array = %s' % grad_array)
     if not all(np.isfinite(grad_array)):
-        raise DeftError('/gradient_per_datum_from_coeffs/ grad_array is not finite: grad_array = %s'%grad_array)
+        raise ControlledError('/gradient_per_datum_from_coeffs/ grad_array is not finite: grad_array = %s' % grad_array)
         
     return sp.array(grad_row).ravel() # Returns an array
 
@@ -140,22 +140,22 @@ def hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise DeftError('/hessian_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d'%(kernel_dim,len(coeffs)))
+        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise DeftError('/hessian_per_datum_from_coeffs/ coeffs is not real: coeffs = %s'%coeffs)
+        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise DeftError('/hessian_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s'%coeffs)
+        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise DeftError('/hessian_per_datum_from_coeffs/ phi0 is not real: phi0 = %s'%phi0)
+            raise ControlledError('/hessian_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise DeftError('/hessian_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s'%phi0)
+            raise ControlledError('/hessian_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/hessian_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s'%type(regularized))
+        raise ControlledError('/hessian_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = utils.field_to_quasiprob(phi+phi0)
@@ -227,21 +227,21 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
     
     # Make sure report_num_steps is valid
     if not isinstance(report_num_steps, bool):
-        raise DeftError('/compute_maxent_field/ report_num_steps must be a boolean: report_num_steps = %s'%type(report_num_steps))
+        raise ControlledError('/compute_maxent_field/ report_num_steps must be a boolean: report_num_steps = %s' % type(report_num_steps))
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(len(R))
     else:
         if not all(np.isreal(phi0)):
-            raise DeftError('/compute_maxent_field/ phi0 is not real: phi0 = %s'%phi0)
+            raise ControlledError('/compute_maxent_field/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise DeftError('/compute_maxent_field/ phi0 is not finite: phi0 = %s'%phi0)
+            raise ControlledError('/compute_maxent_field/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure geo_dist_tollerance is valid
     if not isinstance(geo_dist_tollerance, float):
-        raise DeftError('/compute_maxent_field/ geo_dist_tollerance must be a float: geo_dist_tollerance = %s'%type(geo_dist_tollerance))
+        raise ControlledError('/compute_maxent_field/ geo_dist_tollerance must be a float: geo_dist_tollerance = %s' % type(geo_dist_tollerance))
     # Make sure grad_tollerance is valid
     if not isinstance(grad_tollerance, float):
-        raise DeftError('/compute_maxent_field/ grad_tollerance must be a float: grad_tollerance = %s'%type(grad_tollerance))
+        raise ControlledError('/compute_maxent_field/ grad_tollerance must be a float: grad_tollerance = %s' % type(grad_tollerance))
         
     # Get number of gridpoints and dimension of kernel
     G = kernel.shape[0]
@@ -310,7 +310,7 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
             # Check to see if beta is too small and algorithm is failing
             elif beta < 1E-20:
-                raise DeftError('/compute_maxent_field/ phi is not converging: beta = %s'%beta)
+                raise ControlledError('/compute_maxent_field/ phi is not converging: beta = %s' % beta)
 
             # If not in linear regime backtrack value of beta
             else:

@@ -18,7 +18,7 @@ ARRAY = (np.ndarray, list)
 
 
 # Define error handling
-class DeftError(Exception):
+class ControlledError(Exception):
 
     def __init__(self, value):
         self.value = value
@@ -32,22 +32,22 @@ def geo_dist(P,Q):
 
     # Make sure P is valid
     if not all(np.isreal(P)):
-        raise DeftError('/geo_dist/ P is not real: P = %s' % P)
+        raise ControlledError('/geo_dist/ P is not real: P = %s' % P)
     if not all(np.isfinite(P)):
-        raise DeftError('/geo_dist/ P is not finite: P = %s' % P)
+        raise ControlledError('/geo_dist/ P is not finite: P = %s' % P)
     if not all(P >= 0):
-        raise DeftError('/geo_dist/ P is not non-negative: P = %s' % P)
+        raise ControlledError('/geo_dist/ P is not non-negative: P = %s' % P)
     if not any(P > 0):
-        raise DeftError('/geo_dist/ P is vanishing: P = %s' % P)
+        raise ControlledError('/geo_dist/ P is vanishing: P = %s' % P)
     # Make sure Q is valid
     if not all(np.isreal(Q)):
-        raise DeftError('/geo_dist/ Q is not real: Q = %s' % Q)
+        raise ControlledError('/geo_dist/ Q is not real: Q = %s' % Q)
     if not all(np.isfinite(Q)):
-        raise DeftError('/geo_dist/ Q is not finite: Q = %s' % Q)
+        raise ControlledError('/geo_dist/ Q is not finite: Q = %s' % Q)
     if not all(Q >= 0):
-        raise DeftError('/geo_dist/ Q is not non-negative: Q = %s' % Q)
+        raise ControlledError('/geo_dist/ Q is not non-negative: Q = %s' % Q)
     if not any(Q > 0):
-        raise DeftError('/geo_dist/ Q is vanishing: Q = %s' % Q)
+        raise ControlledError('/geo_dist/ Q is vanishing: Q = %s' % Q)
 
     # Enforce proper normalization
     P_prob = P/sp.sum(P) 
@@ -57,14 +57,14 @@ def geo_dist(P,Q):
     try:
         dist = 2*sp.arccos(sp.sum(sp.sqrt(P_prob*Q_prob)))
         if not np.isreal(dist):
-            raise DeftError('/geo_dist/ dist is not real: dist = %s' % dist)
+            raise ControlledError('/geo_dist/ dist is not real: dist = %s' % dist)
         if not (dist >= 0):
-            raise DeftError('/geo_dist/ dist is not >= 0: dist = %s' % dist)
+            raise ControlledError('/geo_dist/ dist is not >= 0: dist = %s' % dist)
     except:
         if sp.sum(sp.sqrt(P_prob*Q_prob)) > 1 - TINY_FLOAT32:
             dist = 0
         else:
-            raise DeftError('/geo_dist/ dist cannot be computed correctly!')
+            raise ControlledError('/geo_dist/ dist cannot be computed correctly!')
 
     # Return geo-distance
     return dist
@@ -77,9 +77,9 @@ def field_to_quasiprob(raw_phi):
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/field_to_quasiprob/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/field_to_quasiprob/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/field_to_quasiprob/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/field_to_quasiprob/ phi is not finite: phi = %s' % phi)
     
     if any(phi < PHI_MIN):
         phi[phi < PHI_MIN] = PHI_MIN      
@@ -89,11 +89,11 @@ def field_to_quasiprob(raw_phi):
 
     # Make sure quasiQ is valid
     if not all(np.isreal(quasiQ)):
-        raise DeftError('/field_to_quasiprob/ quasiQ is not real: quasiQ = %s' % quasiQ)
+        raise ControlledError('/field_to_quasiprob/ quasiQ is not real: quasiQ = %s' % quasiQ)
     if not all(np.isfinite(quasiQ)):
-        raise DeftError('/field_to_quasiprob/ quasiQ is not finite: quasiQ = %s' % quasiQ)
+        raise ControlledError('/field_to_quasiprob/ quasiQ is not finite: quasiQ = %s' % quasiQ)
     if not all(quasiQ >= 0):
-        raise DeftError('/field_to_quasiprob/ quasiQ is not non-negative: quasiQ = %s' % quasiQ)
+        raise ControlledError('/field_to_quasiprob/ quasiQ is not non-negative: quasiQ = %s' % quasiQ)
 
     # Return quasi probability distribution
     return quasiQ
@@ -106,9 +106,9 @@ def field_to_prob(raw_phi):
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/field_to_prob/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/field_to_prob/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/field_to_prob/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/field_to_prob/ phi is not finite: phi = %s' % phi)
 
     # Re-level phi. NOTE: CHANGES PHI!
     phi -= min(phi)
@@ -119,11 +119,11 @@ def field_to_prob(raw_phi):
 
     # Make sure Q is valid
     if not all(np.isreal(Q)):
-        raise DeftError('/field_to_prob/ Q is not real: Q = %s' % Q)
+        raise ControlledError('/field_to_prob/ Q is not real: Q = %s' % Q)
     if not all(np.isfinite(Q)):
-        raise DeftError('/field_to_prob/ Q is not finite: Q = %s' % Q)
+        raise ControlledError('/field_to_prob/ Q is not finite: Q = %s' % Q)
     if not all(Q >= 0):
-        raise DeftError('/field_to_prob/ Q is not non-negative: Q = %s' % Q)
+        raise ControlledError('/field_to_prob/ Q is not non-negative: Q = %s' % Q)
 
     # Return probability
     return Q
@@ -135,19 +135,19 @@ def prob_to_field(Q):
 
     # Make sure Q is valid
     if not all(np.isreal(Q)):
-        raise DeftError('/prob_to_field/ Q is not real: Q = %s' % Q)
+        raise ControlledError('/prob_to_field/ Q is not real: Q = %s' % Q)
     if not all(np.isfinite(Q)):
-        raise DeftError('/prob_to_field/ Q is not finite: Q = %s' % Q)
+        raise ControlledError('/prob_to_field/ Q is not finite: Q = %s' % Q)
     if not all(Q >= 0):
-        raise DeftError('/prob_to_field/ Q is not non-negative: Q = %s' % Q)
+        raise ControlledError('/prob_to_field/ Q is not non-negative: Q = %s' % Q)
     
     phi = -sp.log(G*Q + TINY_FLOAT64)
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/prob_to_field/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/prob_to_field/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/prob_to_field/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/prob_to_field/ phi is not finite: phi = %s' % phi)
 
     # Return field
     return phi
@@ -186,7 +186,7 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
 
     # Make sure normalized is valid
     if not isinstance(normalized, bool):
-        raise DeftError('/histogram_counts_1d/ normalized must be a boolean: normalized = %s' % type(normalized))
+        raise ControlledError('/histogram_counts_1d/ normalized must be a boolean: normalized = %s' % type(normalized))
 
     # data_spread = max(data) - min(data)
     #
@@ -207,24 +207,24 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
 
     # Make sure h is valid
     if not (h > 0):
-        raise DeftError('/histogram_counts_1d/ h must be > 0: h = %s' % h)
+        raise ControlledError('/histogram_counts_1d/ h must be > 0: h = %s' % h)
     # Make sure bin_centers is valid
     if not (len(bin_centers) == G):
-        raise DeftError('/histogram_counts_1d/ bin_centers must have length %d: len(bin_centers) = %d' %
-                        (G,len(bin_centers)))
+        raise ControlledError('/histogram_counts_1d/ bin_centers must have length %d: len(bin_centers) = %d' %
+                              (G,len(bin_centers)))
     # Make sure bin_edges is valid
     if not (len(bin_edges) == G+1):
-        raise DeftError('/histogram_counts_1d/ bin_edges must have length %d: len(bin_edges) = %d' %
-                        (G+1,len(bin_edges)))
+        raise ControlledError('/histogram_counts_1d/ bin_edges must have length %d: len(bin_edges) = %d' %
+                              (G+1,len(bin_edges)))
 
     # Get counts in each bin
     counts, _ = np.histogram(data, bins=bin_edges, density=False)
 
     # Make sure counts is valid
     if not (len(counts) == G):
-        raise DeftError('/histogram_counts_1d/ counts must have length %d: len(counts) = %d' % (G,len(counts)))
+        raise ControlledError('/histogram_counts_1d/ counts must have length %d: len(counts) = %d' % (G, len(counts)))
     if not all(counts >= 0):
-        raise DeftError('/histogram_counts_1d/ counts is not non-negative: counts = %s' % counts)
+        raise ControlledError('/histogram_counts_1d/ counts is not non-negative: counts = %s' % counts)
     
     if normalized:
         hist = 1.*counts/np.sum(h*counts)
@@ -271,7 +271,7 @@ def dot(v1,v2,h=1.0):
     v2r = v2.ravel()
     G = len(v1)
     if not (len(v2) == G):
-        raise DeftError('/dot/ vectors are not of the same length: len(v1) = %d, len(v2) = %d' % (len(v1r),len(v2r)))
+        raise ControlledError('/dot/ vectors are not of the same length: len(v1) = %d, len(v2) = %d' % (len(v1r), len(v2r)))
     return sp.sum(v1r*v2r*h/(1.*G))
 
 
@@ -294,10 +294,10 @@ def normalize(vectors, grid_spacing=1.0):
         grid_spacing = sp.array(grid_spacing)
         h = sp.prod(grid_spacing)
     else:
-        raise DeftError('/normalize/ Cannot recognize h: h = %s' % h)
+        raise ControlledError('/normalize/ Cannot recognize h: h = %s' % h)
     
     if not (h > 0):
-        raise DeftError('/normalize/ h is not positive: h = %s' % h)
+        raise ControlledError('/normalize/ h is not positive: h = %s' % h)
 
     norm_vectors = sp.zeros([G,K])
     for i in range(K):
@@ -360,3 +360,56 @@ def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0,1.0]):
     
     # Return normalized basis
     return basis
+
+def check(condition, message):
+    '''
+    Checks a condition; raises a ControlledError with message if condition fails.
+    :param condition:
+    :param message:
+    :return: None
+    '''
+    if not condition:
+        raise ControlledError(message)
+
+def enable_graphics(backend='TkAgg'):
+    """
+    Enable graphical output by suftware.
+
+    This function should be _run before any calls are made to DensityEstimator.plot().
+    This is not always necessary, since DensityEstimator.plot() itself will call this
+    function if necessary. However, when plotting inline using the iPython
+    notebook, this function must be called before the magic function
+    ``%matplotlib inline``, e.g.::
+
+        import suftware as sw
+        sw.enable_graphics()
+        %matplotlib inline
+
+    If this function is never called, suftware can be _run without importing
+    matplotlib. This can be useful, for instance, when distributing jobs
+    across the nodes of a high performance computing cluster.
+
+
+    parameters
+    ----------
+
+        backend (str):
+            Graphical backend to be passed to matplotlib.use().
+            See the `matplotlib documentation <https://matplotlib.org/faq/usage_faq.html#what-is-a-backend>`_
+            for more information on graphical backends.
+
+
+    returns
+    -------
+
+        None.
+
+    """
+    try:
+        global mpl
+        import matplotlib as mpl
+        mpl.use(backend)
+        global plt
+        import matplotlib.pyplot as plt
+    except:
+        raise ControlledError('Could not import matplotlib.')

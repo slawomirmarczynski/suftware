@@ -23,7 +23,7 @@ class Density1d(TestCase):
 
     # method that checks the main calculation of deft_1d by calling _run and ensuring that we get the correct Q_star
     def test_density(self):
-        actual_Q_star = Q = sw.Density(self.data)
+        actual_Q_star = Q = sw.DensityEstimator(self.data)
         expected_Q_star = np.array([.56458204,  1.66943372,  1.56915093,  1.29922676,  0.94761056,  0.60883489, 0.34458301])
         self.assertEqual(actual_Q_star.Q_star.evaluate(actual_Q_star.grid).all(),expected_Q_star.all())
 

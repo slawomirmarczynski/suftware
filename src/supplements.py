@@ -12,14 +12,14 @@ if sys.version_info[0] == 2:
     import deft_core
     import utils
     import maxent
-    from src.utils import DeftError
+    from src.utils import ControlledError
 
 else:
     # python 3 imports
     from src import deft_core
     from src import maxent
     from src import utils
-    from src.utils import DeftError
+    from src.utils import ControlledError
 
 x_MIN = -500
 

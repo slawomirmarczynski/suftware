@@ -16,8 +16,8 @@ from src import supplements
 from src import maxent
 
 # Import error handling
-#from utils import DeftError
-from src.utils import DeftError
+#from utils import ControlledError
+from src.utils import ControlledError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
 T_MAX = 40
@@ -70,7 +70,7 @@ class MAP_curve:
             self.sort()
         p = self.points[0]
         if not (p.t == -sp.Inf):
-            raise DeftError('/MAP_curve/ Not getting MaxEnt point: t = %f' % p.t)
+            raise ControlledError('/MAP_curve/ Not getting MaxEnt point: t = %f' % p.t)
         return p
 
     def get_histogram_point(self):
@@ -78,7 +78,7 @@ class MAP_curve:
             self.sort()
         p = self.points[-1]
         if not (p.t == sp.Inf):
-            raise DeftError('/MAP_curve/ Not getting histogram point: t = %f' % p.t)
+            raise ControlledError('/MAP_curve/ Not getting histogram point: t = %f' % p.t)
         return p
 
     def get_log_evidence_ratios(self, finite=True):
@@ -98,20 +98,20 @@ class MAP_curve:
 def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/action/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/action/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/action/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/action/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/action/ t is not real: t = %s' % t)
+        raise ControlledError('/action/ t is not real: t = %s' % t)
     # if not np.isfinite(t):
-    #    raise DeftError('/action/ t is not finite: t = %s' % t)
+    #    raise ControlledError('/action/ t is not finite: t = %s' % t)
     # Make sure phi_in_kernel is valid
     if not isinstance(phi_in_kernel, bool):
-        raise DeftError('/action/ phi_in_kernel must be a boolean: phi_in_kernel = %s' % type(phi_in_kernel))
+        raise ControlledError('/action/ phi_in_kernel must be a boolean: phi_in_kernel = %s' % type(phi_in_kernel))
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/action/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError('/action/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
@@ -134,9 +134,9 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
 
     # Make sure S is valid
     if not np.isreal(S):
-        raise DeftError('/action/ S is not real at t = %s: S = %s' % (t, S))
+        raise ControlledError('/action/ S is not real at t = %s: S = %s' % (t, S))
     if not np.isfinite(S):
-        raise DeftError('/action/ S is not finite at t = %s: S = %s' % (t, S))
+        raise ControlledError('/action/ S is not finite at t = %s: S = %s' % (t, S))
 
     return S
 
@@ -145,17 +145,17 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
 def gradient(phi, R, Delta, t, N, regularized=False):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/gradient/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/gradient/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/gradient/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/gradient/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/gradient/ t is not real: t = %s' % t)
+        raise ControlledError('/gradient/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise DeftError('/gradient/ t is not finite: t = %s' % t)
+        raise ControlledError('/gradient/ t is not finite: t = %s' % t)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/gradient/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError('/gradient/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
@@ -172,9 +172,9 @@ def gradient(phi, R, Delta, t, N, regularized=False):
 
     # Make sure grad is valid
     if not all(np.isreal(grad)):
-        raise DeftError('/gradient/ grad is not real at t = %s: grad = %s' % (t, grad))
+        raise ControlledError('/gradient/ grad is not real at t = %s: grad = %s' % (t, grad))
     if not all(np.isfinite(grad)):
-        raise DeftError('/gradient/ grad is not finite at t = %s: grad = %s' % (t, grad))
+        raise ControlledError('/gradient/ grad is not finite at t = %s: grad = %s' % (t, grad))
 
     return grad
 
@@ -183,17 +183,17 @@ def gradient(phi, R, Delta, t, N, regularized=False):
 def hessian(phi, R, Delta, t, N, regularized=False):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/hessian/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/hessian/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/hessian/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/hessian/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/hessian/ t is not real: t = %s' % t)
+        raise ControlledError('/hessian/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise DeftError('/hessian/ t is not finite: t = %s' % t)
+        raise ControlledError('/hessian/ t is not finite: t = %s' % t)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise DeftError('/hessian/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError('/hessian/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
     quasiQ = utils.field_to_quasiprob(phi)
@@ -211,9 +211,9 @@ def hessian(phi, R, Delta, t, N, regularized=False):
 def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
     # Make sure phi_M is valid
     if not all(np.isreal(phi_M)):
-        raise DeftError('/log_ptgd_at_maxent/ phi_M is not real: phi_M = %s' % phi_M)
+        raise ControlledError('/log_ptgd_at_maxent/ phi_M is not real: phi_M = %s' % phi_M)
     if not all(np.isfinite(phi_M)):
-        raise DeftError('/log_ptgd_at_maxent/ phi_M is not finite: phi_M = %s' % phi_M)
+        raise ControlledError('/log_ptgd_at_maxent/ phi_M is not finite: phi_M = %s' % phi_M)
 
     kernel_dim = Delta._kernel_dim
     M = utils.field_to_prob(phi_M)
@@ -231,22 +231,22 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
 
     # Make sure log_Occam_at_infty is valid
     if not np.isreal(log_Occam_at_infty):
-        raise DeftError('/log_ptgd_at_maxent/ log_Occam_at_infty is not real: log_Occam_at_infty = %s' %
-                        log_Occam_at_infty)
+        raise ControlledError('/log_ptgd_at_maxent/ log_Occam_at_infty is not real: log_Occam_at_infty = %s' %
+                              log_Occam_at_infty)
     if not np.isfinite(log_Occam_at_infty):
-        raise DeftError('/log_ptgd_at_maxent/ log_Occam_at_infty is not finite: log_Occam_at_infty = %s' %
-                        log_Occam_at_infty)
+        raise ControlledError('/log_ptgd_at_maxent/ log_Occam_at_infty is not finite: log_Occam_at_infty = %s' %
+                              log_Occam_at_infty)
 
     # Compute the log likelihood at infinity
     log_likelihood_at_infty = - N * sp.sum(phi_M * R) - N
 
     # Make sure log_likelihood_at_infty is valid
     if not np.isreal(log_likelihood_at_infty):
-        raise DeftError('/log_ptgd_at_maxent/ log_likelihood_at_infty is not real: log_likelihood_at_infty = %s' %
-                        log_likelihood_at_infty)
+        raise ControlledError('/log_ptgd_at_maxent/ log_likelihood_at_infty is not real: log_likelihood_at_infty = %s' %
+                              log_likelihood_at_infty)
     if not np.isfinite(log_likelihood_at_infty):
-        raise DeftError('/log_ptgd_at_maxent/ log_likelihood_at_infty is not finite: log_likelihood_at_infty = %s' %
-                        log_likelihood_at_infty)
+        raise ControlledError('/log_ptgd_at_maxent/ log_likelihood_at_infty is not finite: log_likelihood_at_infty = %s' %
+                              log_likelihood_at_infty)
 
     # Compute the log posterior (not sure this is right)
     log_ptgd_at_maxent = log_likelihood_at_infty + log_Occam_at_infty
@@ -281,9 +281,9 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
 
     # Make sure correction is valid
     if not np.isreal(correction):
-        raise DeftError('/log_ptgd_at_maxent/ correction is not real: correction = %s' % correction)
+        raise ControlledError('/log_ptgd_at_maxent/ correction is not real: correction = %s' % correction)
     if not np.isfinite(correction):
-        raise DeftError('/log_ptgd_at_maxent/ correction is not finite: correction = %s' % correction)
+        raise ControlledError('/log_ptgd_at_maxent/ correction is not finite: correction = %s' % correction)
 
     log_ptgd_at_maxent += correction
 
@@ -294,14 +294,14 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
 def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/log_ptgd/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/log_ptgd/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/log_ptgd/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/log_ptgd/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/log_ptgd/ t is not real: t = %s' % t)
+        raise ControlledError('/log_ptgd/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise DeftError('/log_ptgd/ t is not finite: t = %s' % t)
+        raise ControlledError('/log_ptgd/ t is not finite: t = %s' % t)
 
     G = 1. * len(phi)
     alpha = 1. * Delta._alpha
@@ -321,18 +321,18 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 
         # Make sure log_det is valid
     if not np.isreal(log_det):
-        raise DeftError('/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t, log_det))
+        raise ControlledError('/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t, log_det))
     if not np.isfinite(log_det):
-        raise DeftError('/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t, log_det))
+        raise ControlledError('/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t, log_det))
 
     # Compute contribution from finite t
     log_ptgd = -(N / G) * S + 0.5 * kernel_dim * t - 0.5 * log_det
 
     # Make sure log_ptgd is valid
     if not np.isreal(log_ptgd):
-        raise DeftError('/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t, log_ptgd))
+        raise ControlledError('/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t, log_ptgd))
     if not np.isfinite(log_ptgd):
-        raise DeftError('/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t, log_ptgd))
+        raise ControlledError('/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t, log_ptgd))
 
     # If requested, incorporate corrections to the partition function
     num_samples = num_Z_samples
@@ -363,9 +363,9 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 
     # Make sure correction is valid
     if not np.isreal(correction):
-        raise DeftError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
+        raise ControlledError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
     if not np.isfinite(correction):
-        raise DeftError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
+        raise ControlledError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
 
     log_ptgd += correction
 
@@ -385,17 +385,17 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/compute_predictor_step/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/compute_predictor_step/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/compute_predictor_step/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/compute_predictor_step/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/compute_predictor_step/ t is not real: t = %s' % t)
+        raise ControlledError('/compute_predictor_step/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise DeftError('/compute_predictor_step/ t is not finite: t = %s' % t)
+        raise ControlledError('/compute_predictor_step/ t is not finite: t = %s' % t)
     # Make sure direction is valid
     if not ((direction == 1) or (direction == -1)):
-        raise DeftError('/compute_predictor_step/ direction must be just a sign: direction = %s' % direction)
+        raise ControlledError('/compute_predictor_step/ direction must be just a sign: direction = %s' % direction)
 
     # Get current probability distribution
     Q = utils.field_to_prob(phi)
@@ -409,19 +409,19 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 
     # Make sure rho is valid
     if not all(np.isreal(rho)):
-        raise DeftError('/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t, rho))
+        raise ControlledError('/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t, rho))
     if not all(np.isfinite(rho)):
-        raise DeftError('/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
+        raise ControlledError('/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
 
     denom = sp.sqrt(sp.sum(rho * Q * rho))
 
     # Make sure denom is valid
     if not np.isreal(denom):
-        raise DeftError('/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t, denom))
+        raise ControlledError('/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t, denom))
     if not np.isfinite(denom):
-        raise DeftError('/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t, denom))
+        raise ControlledError('/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t, denom))
     if not (denom > 0):
-        raise DeftError('/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t, denom))
+        raise ControlledError('/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t, denom))
 
     # Compute dt based on value of epsilon (the resolution)
     dt = direction * resolution / denom
@@ -434,14 +434,14 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 
     # Make sure phi_new is valid
     if not all(np.isreal(phi_new)):
-        raise DeftError('/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new, phi_new))
+        raise ControlledError('/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new, phi_new))
     if not all(np.isfinite(phi_new)):
-        raise DeftError('/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new, phi_new))
+        raise ControlledError('/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new, phi_new))
     # Make sure t_new is valid
     if not np.isreal(t_new):
-        raise DeftError('/compute_predictor_step/ t_new is not real: t_new = %s' % t_new)
+        raise ControlledError('/compute_predictor_step/ t_new is not real: t_new = %s' % t_new)
     if not np.isfinite(t_new):
-        raise DeftError('/compute_predictor_step/ t_new is not finite: t_new = %s' % t_new)
+        raise ControlledError('/compute_predictor_step/ t_new is not finite: t_new = %s' % t_new)
 
     return phi_new, t_new
 
@@ -450,18 +450,18 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=False):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise DeftError('/compute_corrector_step/ phi is not real: phi = %s' % phi)
+        raise ControlledError('/compute_corrector_step/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise DeftError('/compute_corrector_step/ phi is not finite: phi = %s' % phi)
+        raise ControlledError('/compute_corrector_step/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise DeftError('/compute_corrector_step/ t is not real: t = %s' % t)
+        raise ControlledError('/compute_corrector_step/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise DeftError('/compute_corrector_step/ t is not finite: t = %s' % t)
+        raise ControlledError('/compute_corrector_step/ t is not finite: t = %s' % t)
     # Make sure report_num_steps is valid
     if not isinstance(report_num_steps, bool):
-        raise DeftError('/compute_corrector_step/ report_num_steps must be a boolean: report_num_steps = %s' %
-                        type(report_num_steps))
+        raise ControlledError('/compute_corrector_step/ report_num_steps must be a boolean: report_num_steps = %s' %
+                              type(report_num_steps))
 
     # Evaluate the probability distribution
     Q = utils.field_to_prob(phi)
@@ -485,9 +485,9 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Make sure dphi is valid
         if not all(np.isreal(dphi)):
-            raise DeftError('/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t, dphi))
+            raise ControlledError('/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t, dphi))
         if not all(np.isfinite(dphi)):
-            raise DeftError('/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
+            raise ControlledError('/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
 
         # Compute corresponding change in action
         dS = sp.sum(dphi * v)
@@ -502,7 +502,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
             # Make sure beta is valid
             if beta < 1E-50:
-                raise DeftError('/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t, beta))
+                raise ControlledError('/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t, beta))
 
             # Compute new phi
             phi_new = phi + beta * dphi
@@ -528,9 +528,9 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Make sure phi_new is valid
         if not all(np.isreal(phi_new)):
-            raise DeftError('/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t, phi_new))
+            raise ControlledError('/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t, phi_new))
         if not all(np.isfinite(phi_new)):
-            raise DeftError('/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t, phi_new))
+            raise ControlledError('/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t, phi_new))
 
         # Compute new Q
         Q_new = utils.field_to_prob(phi_new)
@@ -544,7 +544,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
         # Should not happen, but not fatal if it does. Just means less precision
         # ACTUALLY, THIS SHOULD NEVER HAPPEN!
         elif S_new - S > 0:
-            raise DeftError('/compute_corrector_step/ S_new > S at t = %s: terminating corrector steps' % t)
+            raise ControlledError('/compute_corrector_step/ S_new > S at t = %s: terminating corrector steps' % t)
 
         # Otherwise, continue with corrector step
         else:
@@ -793,7 +793,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Make sure details is valid
     if not isinstance(details, bool):
-        raise DeftError('/deft_core._run/ details must be a boolean: details = %s' % type(details))
+        raise ControlledError('/deft_core._run/ details must be a boolean: details = %s' % type(details))
 
     # Get number of gridpoints and kernel dimension from smoothness operator
     G = Delta.get_G()
@@ -801,13 +801,13 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Make sure counts_array is valid
     if not (len(counts_array) == G):
-        raise DeftError('/deft_core._run/ counts_array must have length %d: len(counts_array) = %d' %
-                        (G, len(counts_array)))
+        raise ControlledError('/deft_core._run/ counts_array must have length %d: len(counts_array) = %d' %
+                              (G, len(counts_array)))
     if not all(counts_array >= 0):
-        raise DeftError('/deft_core._run/ counts_array is not non-negative: counts_array = %s' % counts_array)
+        raise ControlledError('/deft_core._run/ counts_array is not non-negative: counts_array = %s' % counts_array)
     if not (sum(counts_array > 0) > kernel_dim):
-        raise DeftError('/deft_core._run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
-                        (sum(counts_array > 0), kernel_dim))
+        raise ControlledError('/deft_core._run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
+                              (sum(counts_array > 0), kernel_dim))
 
     # Get number of data points and normalize histogram
     N = sum(counts_array)

@@ -1,5 +1,7 @@
 ==============================
-sw.simulate_density_data
+sw.SimulatedData
 ==============================
 
-.. autofunction:: suftware.simulate_density_data
+.. autoclass:: suftware.SimulatedData
+    :members:
+
