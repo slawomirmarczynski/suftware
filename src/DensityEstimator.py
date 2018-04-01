@@ -21,7 +21,7 @@ from src.utils import DeftError
 from src.interpolated_density import InterpolatedDensity
 from src.interpolated_field import InterpolatedField
 
-class Density:
+class DensityEstimator:
     """This class will serve as the interface for running
     deft1d
 
@@ -465,11 +465,11 @@ class Density:
                 for weight_index in weighted_sample_indices:
                     Q_samples_weighted.append(Q_Samples[weight_index])
 
-                #print("Warning, returning list of Density objects; use index while using evaluate")
+                #print("Warning, returning list of DensityEstimator objects; use index while using evaluate")
                 # return weight samples as default
                 return Q_samples_weighted
 
-            #print("Warning, returning list of Density objects; use index while using evaluate")
+            #print("Warning, returning list of DensityEstimator objects; use index while using evaluate")
             # we have samples Q_samples in a list
 
             return Q_Samples
@@ -960,8 +960,8 @@ def enable_graphics(backend='TkAgg'):
     """
     Enable graphical output by suftware.
 
-    This function should be _run before any calls are made to Density.plot().
-    This is not always necessary, since Density.plot() itself will call this
+    This function should be _run before any calls are made to DensityEstimator.plot().
+    This is not always necessary, since DensityEstimator.plot() itself will call this
     function if necessary. However, when plotting inline using the iPython
     notebook, this function must be called before the magic function
     ``%matplotlib inline``, e.g.::
