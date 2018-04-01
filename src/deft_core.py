@@ -793,7 +793,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Make sure details is valid
     if not isinstance(details, bool):
-        raise DeftError('/deft_core.run/ details must be a boolean: details = %s' % type(details))
+        raise DeftError('/deft_core._run/ details must be a boolean: details = %s' % type(details))
 
     # Get number of gridpoints and kernel dimension from smoothness operator
     G = Delta.get_G()
@@ -801,12 +801,12 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Make sure counts_array is valid
     if not (len(counts_array) == G):
-        raise DeftError('/deft_core.run/ counts_array must have length %d: len(counts_array) = %d' %
+        raise DeftError('/deft_core._run/ counts_array must have length %d: len(counts_array) = %d' %
                         (G, len(counts_array)))
     if not all(counts_array >= 0):
-        raise DeftError('/deft_core.run/ counts_array is not non-negative: counts_array = %s' % counts_array)
+        raise DeftError('/deft_core._run/ counts_array is not non-negative: counts_array = %s' % counts_array)
     if not (sum(counts_array > 0) > kernel_dim):
-        raise DeftError('/deft_core.run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
+        raise DeftError('/deft_core._run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
                         (sum(counts_array > 0), kernel_dim))
 
     # Get number of data points and normalize histogram

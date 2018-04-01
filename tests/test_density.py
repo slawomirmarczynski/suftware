@@ -21,7 +21,7 @@ class Density1d(TestCase):
     def tearDown(self):
         pass
 
-    # method that checks the main calculation of deft_1d by calling run and ensuring that we get the correct Q_star
+    # method that checks the main calculation of deft_1d by calling _run and ensuring that we get the correct Q_star
     def test_density(self):
         actual_Q_star = Q = sw.Density(self.data)
         expected_Q_star = np.array([.56458204,  1.66943372,  1.56915093,  1.29922676,  0.94761056,  0.60883489, 0.34458301])

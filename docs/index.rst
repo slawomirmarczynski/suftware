@@ -1,15 +1,6 @@
-.. SUFTware documentation master file, created by
-   sphinx-quickstart on Wed Mar 28 14:28:45 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-========
-SUFTware
-========
-
----------------------------------------
-Statistics Using Field Theory
----------------------------------------
+=========================================
+SUFTware: Statistics Using Field Theory
+=========================================
 
 .. image:: who.alcohol_consumption.png
    :height: 300px
@@ -25,15 +16,14 @@ Currently, SUFTware supports a one-dimensional density estimation called DEFT. D
 Installation
 ------------
 
-.. parsed-literal::
-    pip install suftware
+SUFTware is most easily installed from
+`PyPI <https://pypi.python.org/pypi/suftware>`_ using the ``pip`` package
+manager::
 
-Requirements
+    $pip install suftware
 
-- Python >= 3.6.3
-- numpy >= 1.13.3
-- scipy >= 1.0.0
-- matplotlib >= 2.1.0
+The code for SUFTware is available on
+`GitHub <https://github.com/jbkinney/suftware>`_.
 
 Quick Start
 -----------
@@ -51,6 +41,17 @@ Quick Start
 
     # Visualize results
     density.plot()
+
+Documentation
+-------------
+
+.. toctree::
+
+     denisty
+     example_density_data
+     simulate_density_data
+     enable_graphics
+
 
 Indices and tables
 ------------------

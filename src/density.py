@@ -27,66 +27,106 @@ class Density:
 
     parameters
     ----------
-    data: (np.array)
-        User input data for which Deft1D will estimate the density.
-    num_grid_points: (int)
-        Number of grid points.
-    grid: (np.array)
-        Locations of grid points. Grid points must be evenly spaced in
-        ascending order.
-    alpha: (int)
-        Smoothness parameter. Represents the order of the
-        derivative in the action.
-    bounding_box: ([float,float])
-        Bounding box for density estimation.
-    periodic: (boolean)
-        Enforce periodic boundary conditions via True or False.
+    data (np.array):
+        An array of data from which the probability density will be estimated.
+
+    grid (np.array):
+        An array of evenly spaced grid points on which the probability density
+        will be estimated. Default value is ``None``, in which case the grid is
+        set automatically.
+
+    grid_spacing (float):
+        The distance at which to space neighboring grid points. Default value
+        is ``None``, in which case this spacing is set automatically
+
+    num_grid_points (int):
+        The number of grid points to draw within the data domain. Restricted
+        to 2*alpha <= num_grid_points <= 1000. Default value is ``None``, in
+        which case the number of grid points is chosen automatically.
+
+    bounding_box ([float, float]):
+        The boundaries of the data domain, within which the probability density
+        will be estimated. Default value is ``None``, in which case the
+        bounding box is set automatically to encompass all of the data.
+
+    alpha (int):
+        The order of the derivative used to define smoothness. Restricted to
+        1 <= alpha <= 4. Default value is 3.
+
+    periodic (bool):
+        Whether or not to impose periodic boundary conditions on the estimated
+        probability density. Default False, in which case no boundary
+        conditions are used.
+
+    num_posterior_samples (int):
+        Number of samples to draw from the Bayesian posterior. Restricted to
+        0 <= num_posterior_samples <= 1000. Default value is 100.
+
+    max_t_step (float):
+        Upper bound on the amount by which the parameter ``t`` is incremented
+        when tracing the MAP curve. Restricted to 0 < max_t_step. Default
+        value is 1.0.
+
+    tollerance (float):
+        I FORGET WHAT THIS IS. Restricted to tollerance >= 0. Default value of
+        1E-6.
+
+    resolution (float):
     evaluation_method_for_Z: (string)
         Method of evaluation of partition function. Possible values:
         'Lap'      : Laplace approximation (default).
         'Lap+Imp'  : Laplace approximation + importance sampling.
         'Lap+Fey'  : Laplace approximation + Feynman diagrams.
+
     num_samples_for_Z: (int)
         *** Note *** This parameter works only when evaluation_method_for_Z is 'Lap+Imp'.
         Number of samples for the evaluation of the partition function.
         More samples will help to evaluate a better density. More samples
         will also make calculation slower. num_samples_for_Z = 0 means the Laplace
         approximation for the evaluation of the partition function is used.
+
     resolution: (float > 0)
         Specifies max distance between neighboring points on the MAP curve.
+
     seed: (int)
         Specify random seed for evaluation of the partition function
         and for the posterior sampling.
-    max_t_step: (float > 0)
-        Maximum t step size on the MAP curve.
+
     max_log_evidence_ratio_drop: (float > 0)
         Stop criterion for traversing the MAP curve; deft stops when:
         max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
-    tolerance: (float > 0)
-        Value which species convergence of phi.
-    num_posterior_samples: (int >= 0)
-        Number of posterior samples.
+
     sample_only_at_l_star: (boolean)
         If True : posterior samples drawn at l_star.
         If False: posterior sampling done among l near l_star.
 
     attributes
     ----------
-    *** Note ***: all parameters are attributes except for results.
-    results: (dict)
-        Contains the results of deft.
+    grid: (1D np.array)
+        The gridpoints used for density estimation.
 
-    methods
-    -------
-    run():
-        Runs the DEFT 1D algorithm.
-    get_results_dict():
-        Transforms the results object passed by run() into a dictionary, or
-        returns a single specified attribute of the results object.
-    get_Q_samples():
-        Returns a list of sampled Qs in functionalized form.
-    eval_samples():
-        Evaluates sampled Qs on specified x values.
+    grid_spacing: (float)
+        The spacing between adjacent grid points.
+
+    num_grid_points: (int)
+        The number of grid points used.
+
+    bounding_box: ([float, float])
+        The spatial domain in which the density was estimated.
+
+    histogram: (1D np.array)
+        A histogram of the data using ``grid`` for the centers
+        of each bin.
+
+    values: (1D np.array)
+        The values of the optimal (i.e., MAP) density at
+        each grid point.
+
+    sample_values: (2D np.array)
+        The values of the posterior sampled densities at
+        each grid point. The first index specifies grid points; the second
+        specifies posterior samples.
+
     """
 
     def __init__(self,
@@ -97,10 +137,10 @@ class Density:
                  bounding_box=None,
                  alpha=3,
                  periodic=False,
+                 num_posterior_samples=100,
                  max_t_step=1.0,
                  tolerance=1E-6,
                  resolution=0.1,
-                 num_posterior_samples=100,
                  sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,
                  evaluation_method_for_Z='Lap',
@@ -131,16 +171,16 @@ class Density:
 
         # Validate inputs
         try:
-            self.inputs_check()
+            self._inputs_check()
 
             # clean input data
-            self.clean_data()
+            self._clean_data()
 
             # Choose grid
-            self.set_grid()
+            self._set_grid()
 
             # Fit to data
-            self.run()
+            self._run()
 
             # Save some results
             self.results_dict = self.get_results_dict()
@@ -149,9 +189,8 @@ class Density:
                                               self.grid,
                                               self.bounding_box)
             self.Q_star = InterpolatedDensity(self.phi_star)
-            self.evaluate = self.Q_star.evaluate
             self.values = self.evaluate(self.grid)
-            self.sample_values = self.eval_samples(self.grid)
+            self.sample_values = self.evaluate_samples(self.grid)
 
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
@@ -180,7 +219,7 @@ class Density:
                 #sys.exit(1)
 
 
-    def set_grid(self):
+    def _set_grid(self):
         """
         Sets the grid based on user input
         :param: self
@@ -373,7 +412,7 @@ class Density:
     def get_results_dict(self, key=None):
         """
         Returns a dictionary whose keys access the attributes of the
-        results object returned by deft_1d.run()
+        results object returned by deft_1d._run()
 
         [DOCUMENT]
         """
@@ -387,7 +426,7 @@ class Density:
             except AttributeError as e:
                 print("Get results:",e)
         else:
-            print("Get Results: Deft results are none. Please run fit first.")
+            print("Get Results: Deft results are none. Please _run fit first.")
 
 
     def get_Q_samples(self, importance_resampling=True):
@@ -436,18 +475,43 @@ class Density:
             return Q_Samples
 
         else:
-            print("Q_Samples: Please ensure fit is run and posterior sampling method is not None")
+            print("Q_Samples: Please ensure fit is _run and posterior sampling method is not None")
+
+    def evaluate(self, xs=None):
+        """
+        Evaluate the optimal (i.e. MAP) density at the supplied value(s) of xs.
+
+        parameters
+        ----------
+
+        xs: (1D np.array)
+            A numpy array containing the locations in the data domain.
+
+        returns
+        -------
+
+        A float or numpy array (the same size as xs) representing the
+        values of the MAP density at the specified locations.
+        """
+        return self.Q_star.evaluate(xs)
 
     # returns Q_samples evaluated on the x-values provided
-    def eval_samples(self, xs=None):
+    def evaluate_samples(self, xs=None):
         """
         Evaluate sampled Qs at specified locations
 
-        parameters:
-            xs (np.array): Data points at which samples are evaluated
-        return:
-            values (np.array): Value of sampled Qs at provided x values. Returns
-                None if no samples were taken
+        parameters
+        ----------
+
+        xs: (1D np.array)
+            A float or numpy array of any dimension.
+
+        returns
+        -------
+
+        A 2D numpy array representing the values of the posterior sampled
+        densities at the specified locations. The first index corresponds to
+        grid points, the second to sampled densities.
         """
 
         # If xs are not provided use grid
@@ -466,7 +530,7 @@ class Density:
     # The main DEFT algorithm in 1D.
     #
 
-    def run(self):
+    def _run(self):
         """
         Runs DEFT 1D on data. Requires that all relevant input already be set
         as attributes of class instance.
@@ -557,7 +621,7 @@ class Density:
         self.results = results
 
     # Check inputs
-    def inputs_check(self):
+    def _inputs_check(self):
         """
         Check all inputs NOT having to do with the choice of grid
         :param self:
@@ -743,7 +807,7 @@ class Density:
               self.max_log_evidence_ratio_drop)
 
     # This method will be used to clean user input data; it's for use with the API.
-    def clean_data(self):
+    def _clean_data(self):
         """
         Sanitize the assigned data
         :param: self
@@ -894,10 +958,37 @@ def check(condition, message):
 
 def enable_graphics(backend='TkAgg'):
     """
-    Must be called before any plotting routines will function
+    Enable graphical output by suftware.
 
-    :param backend: Graphical backend to use
-    :return: None
+    This function should be _run before any calls are made to Density.plot().
+    This is not always necessary, since Density.plot() itself will call this
+    function if necessary. However, when plotting inline using the iPython
+    notebook, this function must be called before the magic function
+    ``%matplotlib inline``, e.g.::
+
+        import suftware as sw
+        sw.enable_graphics()
+        %matplotlib inline
+
+    If this function is never called, suftware can be _run without importing
+    matplotlib. This can be useful, for instance, when distributing jobs
+    across the nodes of a high performance computing cluster.
+
+
+    parameters
+    ----------
+
+        backend (str):
+            Graphical backend to be passed to matplotlib.use().
+            See the `matplotlib documentation <https://matplotlib.org/faq/usage_faq.html#what-is-a-backend>`_
+            for more information on graphical backends.
+
+
+    returns
+    -------
+
+        None.
+
     """
     try:
         global mpl
