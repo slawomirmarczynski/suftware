@@ -42,7 +42,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat_on_kernel = np.linalg.eigh(M_mat_on_kernel)
         # Below are what will be used
         y_dim = alpha
-        eig_vals = sp.array(U_mat_on_kernel[0])
+        eig_vals = np.abs(sp.array(U_mat_on_kernel[0]))
         transf_matrix = sp.mat(kernel_basis) * U_mat_on_kernel[1]
         lambdas = sp.exp(-phi_t) * (N / G)
     else:
@@ -53,7 +53,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
         y_dim = G
-        eig_vals = sp.array(U_mat[0])
+        eig_vals = np.abs(sp.array(U_mat[0]))
         transf_matrix = U_mat[1]
         lambdas = sp.exp(-phi_t) * (N / G)
 
@@ -135,7 +135,7 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat_on_kernel = np.linalg.eigh(M_mat_on_kernel)
         # Below are what will be used
         y_dim = alpha
-        eig_vals = sp.array(U_mat_on_kernel[0])
+        eig_vals = np.abs(sp.array(U_mat_on_kernel[0]))
         eig_vecs = sp.array((sp.mat(kernel_basis) * U_mat_on_kernel[1]).T)
         transf_matrix = sp.mat(kernel_basis) * U_mat_on_kernel[1]
         lambdas = sp.exp(-phi_t) * (N / G)
@@ -146,7 +146,7 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
         y_dim = G
-        eig_vals = sp.array(U_mat[0])
+        eig_vals = np.abs(sp.array(U_mat[0]))
         eig_vecs = sp.array(U_mat[1].T)
         transf_matrix = U_mat[1]
         lambdas = sp.exp(-phi_t) * (N / G)
@@ -542,8 +542,8 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
         H = maxent.hessian_per_datum_from_coeffs(coeffs, R, kernel_basis)
         A_mat = sp.mat(H) * N
         U_mat = np.linalg.eigh(A_mat)
-        eig_vals = sp.array(U_mat[0])
-        eig_vecs = sp.array(U_mat[1])
+        eig_vals = np.abs(sp.array(U_mat[0]))
+        eig_vecs = np.abs(sp.array(U_mat[1]))
 
         # Initialize
         coeffs_current = coeffs
@@ -575,8 +575,8 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
         H = deft_core.hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         U_mat = np.linalg.eigh(A_mat)
-        eig_vals = sp.array(U_mat[0])
-        eig_vecs = sp.array(U_mat[1])
+        eig_vals = np.abs(sp.array(U_mat[0]))
+        eig_vecs = np.abs(sp.array(U_mat[1]))
 
         # Initialize
         phi_current = phi_t

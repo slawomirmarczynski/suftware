@@ -15,10 +15,8 @@ MAX_NUM_SAMPLES_FOR_Z = 1000
 # Import deft-related code
 from src import deft_core
 from src import laplacian
-
 from src.utils import ControlledError, enable_graphics, check
-from src.interpolated_density import InterpolatedDensity
-from src.interpolated_field import InterpolatedField
+from src.DensityEvaluator import DensityEvaluator
 
 class DensityEstimator:
     """This class will serve as the interface for running
@@ -126,6 +124,9 @@ class DensityEstimator:
         each grid point. The first index specifies grid points; the second
         specifies posterior samples.
 
+    sample_weights: (1D np.array)
+        The importance weights corresponding to each column of sample_values.
+
     """
 
     def __init__(self,
@@ -182,19 +183,39 @@ class DensityEstimator:
             self._run()
 
             # Save some results
-            self.results_dict = self.get_results_dict()
-            self.histogram = self.results_dict['R']
-            self.phi_star = InterpolatedField(self.results_dict['phi_star'],
-                                              self.grid,
-                                              self.bounding_box)
-            self.Q_star = InterpolatedDensity(self.phi_star)
+            self.histogram = self.results.R
+            self.phi_star_values = self.results.phi_star
+
+            # Compute evaluator for density
+            self.density_func = DensityEvaluator(self.phi_star_values,
+                                                 self.grid,
+                                                 self.bounding_box)
+
+            # Compute optimal density at grid points
             self.values = self.evaluate(self.grid)
-            self.sample_values = self.evaluate_samples(self.grid)
+
+            # If any posterior samples were taken
+            if num_posterior_samples > 0:
+
+                # Save sampled phi values and weights
+                self.sample_field_values = self.results.phi_samples
+                self.sample_weights = self.results.phi_weights
+
+                # Compute evaluator for all posterior samples
+                self.sample_density_funcs = [
+                    DensityEvaluator(field_values=self.sample_field_values[:, k],
+                                     grid=self.grid,
+                                     bounding_box=self.bounding_box)
+                    for k in range(self.num_posterior_samples)
+                ]
+
+                # Compute sampled values at grid points
+                self.sample_values = self.evaluate_samples(self.grid)
 
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
                 self.mistake = True
-                #sys.exit(1)
+
             elif should_fail is False:
                 print('Success, as expected.')
                 self.mistake = False
@@ -210,280 +231,180 @@ class DensityEstimator:
             elif should_fail is False:
                 print('MISTAKE: Failed but should have succeeded: ', e)
                 self.mistake = True
-                #sys.exit(1)
 
             else:
                 print('Error: ', e)
                 self.mistake = None
-                #sys.exit(1)
 
 
-    def _set_grid(self):
+    def plot(self, ax=None, save_as=None,
+             figsize=(4, 4),
+             fontsize=12,
+             title='',
+             xlabel='',
+             tight_layout=False,
+             show_now=True,
+             show_map=True,
+             map_color='blue',
+             map_linewidth=2,
+             map_alpha=1,
+             num_posterior_samples=None,
+             posterior_color='dodgerblue',
+             posterior_linewidth=1,
+             posterior_alpha=.2,
+             show_histogram=True,
+             histogram_color='orange',
+             histogram_alpha=1,
+             backend='TkAgg'):
         """
-        Sets the grid based on user input
-        :param: self
-        :return: None
-        """
+        Plot the density estimate.
 
-        data = self.data
-        grid = self.grid
-        grid_spacing = self.grid_spacing
-        num_grid_points = self.num_grid_points
-        bounding_box = self.bounding_box
-        alpha = self.alpha
+        parameters
+        ----------
 
-        # If grid is specified
-        if grid is not None:
+        ax: (plt.Axes)
+            A matplotlib axes object on which to draw. If None, one will be
+            created
 
-            # Check and set number of grid points
-            num_grid_points = len(grid)
-            assert(num_grid_points >= 2*alpha)
+        save_as: (str)
+            Name of file to save plot to. File type is determined by file
+            extension.
 
-            # Check and set grid spacing
-            diffs = np.diff(grid)
-            grid_spacing = diffs.mean()
-            assert (grid_spacing > 0)
-            assert (all(np.isclose(diffs, grid_spacing)))
+        figsize: ([float, float])
+            Figure size as (width, height) in inches.
 
-            # Check and set grid bounds
-            grid_padding = grid_spacing / 2
-            lower_bound = grid[0] - grid_padding
-            upper_bound = grid[-1] + grid_padding
-            bounding_box = np.array([lower_bound, upper_bound])
-            box_size = upper_bound - lower_bound
+        fontsize: (float)
+            Size of font to use in plot annotation.
 
-        # If grid is not specified
-        if grid is None:
+        title: (str)
+            Plot title.
 
-            ### First, set bounding box ###
+        xlabel: (str)
+            Plot xlabel.
 
-            # If bounding box is specified, use that.
-            if bounding_box is not None:
-                assert bounding_box[0] < bounding_box[1]
-                lower_bound = bounding_box[0]
-                upper_bound = bounding_box[1]
-                box_size = upper_bound - lower_bound
+        tight_layout: (bool)
+            Whether to call plt.tight_layout() after rendering graphics.
 
+        show_now: (bool)
+            Whether to show the plot immediately by calling plt.show()
 
-            # Otherwise set bounding box based on data
-            else:
-                assert isinstance(data, np.ndarray)
-                assert all(np.isfinite(data))
-                assert min(data) < max(data)
+        show_map: (bool)
+            Whether to show the MAP density.
 
-                # Choose bounding box to encapsulate all data, with extra room
-                data_max = max(data)
-                data_min = min(data)
-                data_span = data_max - data_min
-                lower_bound = data_min - .2 * data_span
-                upper_bound = data_max + .2 * data_span
+        map_color: (color spec)
+            MAP density color.
 
-                # Autoadjust lower bound
-                if data_min >= 0 and lower_bound < 0:
-                    lower_bound = 0
+        map_linewidth: (float)
+            MAP density linewidth.
 
-                # Autoadjust upper bound
-                if data_max <= 0 and upper_bound > 0:
-                    upper_bound = 0
-                if data_max <= 1 and upper_bound > 1:
-                    upper_bound = 1
-                if data_max <= 100 and upper_bound > 100:
-                    upper_bound = 100
+        map_alpha: (float)
+            Map density opacity (between 0 and 1).
 
-                # Extend bounding box outward a little for numerical safety
-                lower_bound -= SMALL_NUM*data_span
-                upper_bound += SMALL_NUM*data_span
-                box_size = upper_bound - lower_bound
+        num_posterior_samples: (int)
+            Number of posterior samples to display. If this is greater than
+            the number of posterior samples taken, all of the samples taken
+            will be shown.
 
-                # Set bounding box
-                bounding_box = np.array([lower_bound, upper_bound])
+        posterior_color: (color spec)
+            Sampled density color.
 
-            ### Next, define grid based on bounding box ###
+        posterior_linewidth: (float)
+            Sampled density linewidth.
 
-            # If grid_spacing is specified
-            if (grid_spacing is not None):
-                assert isinstance(grid_spacing, float)
-                assert np.isfinite(grid_spacing)
-                assert grid_spacing > 0
+        posterior_alpha: (float)
+            Sampled density opactity (between 0 and 1).
 
-                # Set number of grid points
-                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+        show_histogram: (bool)
+            Whether tho show the (normalized) data histogram.
 
-                # Check num_grid_points isn't too small
-                check(2*self.alpha <= num_grid_points,
-                      'Using grid_spacing = %f ' % grid_spacing +
-                      'produces num_grid_points = %d, ' % num_grid_points +
-                      'which is too small. Reduce grid_spacing or do not set.')
+        histogram_color: (color spec)
+            Face color of the data histogram.
 
-                # Check num_grid_points isn't too large
-                check(num_grid_points <= MAX_NUM_GRID_POINTS,
-                      'Using grid_spacing = %f ' % grid_spacing +
-                      'produces num_grid_points = %d, ' % num_grid_points +
-                      'which is too big. Increase grid_spacing or do not set.')
+        histogram_alpha: (float)
+            Data histogram opacity (between 0 and 1).
 
-                # Define grid padding
-                # Note: grid_spacing/2 <= grid_padding < grid_spacing
-                grid_padding = (box_size - (num_grid_points-1)*grid_spacing)/2
-                assert (grid_spacing/2 <= grid_padding < grid_spacing)
+        backend: (str)
+            Backend specification to send to sw.enable_graphics().
 
-                # Define grid to be centered in bounding box
-                grid_start = lower_bound + grid_padding
-                grid_stop = upper_bound - grid_padding
-                grid = np.linspace(grid_start,
-                                   grid_stop * (1 + SMALL_NUM), # For safety
-                                   num_grid_points)
+        returns
+        -------
 
-            # Otherwise, if num_grid_points is specified
-            elif (num_grid_points is not None):
-                assert isinstance(num_grid_points, int)
-                assert 2*alpha <= num_grid_points <= MAX_NUM_GRID_POINTS
+            None.
 
-                # Set grid spacing
-                grid_spacing = box_size / num_grid_points
-
-                # Define grid padding
-                grid_padding = grid_spacing/2
-
-                # Define grid to be centered in bounding box
-                grid_start = lower_bound + grid_padding
-                grid_stop = upper_bound - grid_padding
-                grid = np.linspace(grid_start,
-                                   grid_stop * (1 + SMALL_NUM), # For safety
-                                   num_grid_points)
-
-            # Otherwise, set grid_spacing and num_grid_points based on data
-            else:
-                assert isinstance(data, np.ndarray)
-                assert all(np.isfinite(data))
-                assert min(data) < max(data)
-
-                # Compute default grid spacing
-                default_grid_spacing = box_size/DEFAULT_NUM_GRID_POINTS
-
-                # Set minimum number of grid points
-                min_num_grid_points = 2 * alpha
-
-                # Set minimum grid spacing
-                data.sort()
-                diffs = np.diff(data)
-                min_grid_spacing = min(diffs[diffs > 0])
-                min_grid_spacing = min(min_grid_spacing,
-                                       box_size/min_num_grid_points)
-
-                # Set grid_spacing
-                grid_spacing = max(min_grid_spacing, default_grid_spacing)
-
-                # Set number of grid points
-                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
-
-                # Set grid padding
-                grid_padding = grid_spacing/2
-
-                # Define grid to be centered in bounding box
-                grid_start = lower_bound + grid_padding
-                grid_stop = upper_bound - grid_padding
-                grid = np.linspace(grid_start,
-                                   grid_stop * (1 + SMALL_NUM),  # For safety
-                                   num_grid_points)
-
-        # Set final grid
-        self.grid = grid
-        self.grid_spacing = grid_spacing
-        self.grid_padding = grid_padding
-        self.num_grid_points = num_grid_points
-        self.bounding_box = bounding_box
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
-        self.box_size = box_size
-
-        # Make sure that the final number of gridpoints is ok.
-        check(2 * self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
-              'After setting grid, we find that num_grid_points = %d; must have %d <= len(grid) <= %d. ' %
-              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS) +
-              'Something is wrong with input values of grid, grid_spacing, num_grid_points, or bounding_box.')
-
-        # Set bin edges
-        self.bin_edges = np.concatenate(([lower_bound],
-                                         grid[:-1]+grid_spacing/2,
-                                         [upper_bound]))
-
-
-    def get_results_dict(self, key=None):
-        """
-        Returns a dictionary whose keys access the attributes of the
-        results object returned by deft_1d._run()
-
-        [DOCUMENT]
-        """
-        if self.results is not None and key is None:
-            # return the dictionary containing results if no key provided
-            return self.results.__dict__
-        elif self.results is not None and key is not None:
-            try:
-                return self.results.__dict__.get(key)
-                #return self.results.__getattribute__(key)
-            except AttributeError as e:
-                print("Get results:",e)
-        else:
-            print("Get Results: Deft results are none. Please _run fit first.")
-
-
-    def get_Q_samples(self, importance_resampling=True):
-        """
-        Produces a set of sampled Q distributions. By default these are chosen
-        using importance resampling.
-
-        [DOCUMENT]
         """
 
-        # ensure parameters are legal
-        if self.results is not None and self.num_posterior_samples is not 0:
-            try:
-                if not isinstance(importance_resampling,bool):
-                    raise ControlledError('Q_samples syntax error. Please ensure importance_resampling is of type bool')
-            except ControlledError as e:
-                print(e)
-                sys.exit(1)
+        # check if matplotlib.pyplot is loaded. If not, load it carefully
+        if 'matplotlib.pyplot' not in sys.modules:
 
-            # return all samples here
-            Q_Samples = []
-            sample_weights = []
-            for sampleIndex in range(self.num_posterior_samples):
-                Q_Samples.append(
-                    InterpolatedDensity(InterpolatedField(self.results_dict['phi_samples'][:, sampleIndex], self.grid, self.bounding_box)))
+            # First, enable graphics with the proper backend
+            enable_graphics(backend=backend)
 
-                sample_weights.append(self.results_dict['phi_weights'][sampleIndex])
+            # Now we can import plt
+            import matplotlib.pyplot as plt
 
-            if importance_resampling:
+        # If axes is not specified, create it and a corresponding figure
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+            tight_layout = True
 
-                indices = range(self.num_posterior_samples)
-                index_probs = sample_weights / sum(sample_weights)
-                weighted_sample_indices = np.random.choice(indices, size=self.num_posterior_samples, p=index_probs)
+        # Plot histogram
+        if show_histogram:
+            ax.bar(self.grid,
+                   self.histogram,
+                   width=self.grid_spacing,
+                   color=histogram_color,
+                   alpha=histogram_alpha)
 
-                Q_samples_weighted = []
-                for weight_index in weighted_sample_indices:
-                    Q_samples_weighted.append(Q_Samples[weight_index])
+        # Set number of posterior samples to plot
+        if num_posterior_samples is None:
+            num_posterior_samples = self.num_posterior_samples
+        elif num_posterior_samples > self.num_posterior_samples:
+            num_posterior_samples = self.num_posterior_samples
 
-                #print("Warning, returning list of DensityEstimator objects; use index while using evaluate")
-                # return weight samples as default
-                return Q_samples_weighted
+        # Plot posterior samples
+        if num_posterior_samples > 0:
+            ax.plot(self.grid,
+                    self.sample_values[:, :num_posterior_samples],
+                    color=posterior_color,
+                    linewidth=posterior_linewidth,
+                    alpha=posterior_alpha)
 
-            #print("Warning, returning list of DensityEstimator objects; use index while using evaluate")
-            # we have samples Q_samples in a list
+        # Plot best fit density
+        if show_map:
+            ax.plot(self.grid,
+                    self.values,
+                    color=map_color,
+                    linewidth=map_linewidth,
+                    alpha=map_alpha)
 
-            return Q_Samples
+        # Style plot
+        ax.set_xlim(self.bounding_box)
+        ax.set_title(title, fontsize=fontsize)
+        ax.set_xlabel(xlabel, fontsize=fontsize)
+        ax.set_yticks([])
+        ax.tick_params('x', rotation=45, labelsize=fontsize)
 
-        else:
-            print("Q_Samples: Please ensure fit is _run and posterior sampling method is not None")
+        # Do tight_layout if requested
+        if tight_layout:
+            plt.tight_layout()
 
-    def evaluate(self, xs=None):
+        # Save figure if save_as is specified
+        if save_as is not None:
+            plt.draw()
+            plt.savefig(save_as)
+
+        # Show figure if show_now is True
+        if show_now:
+            plt.show()
+
+    def evaluate(self, xs):
         """
         Evaluate the optimal (i.e. MAP) density at the supplied value(s) of xs.
 
         parameters
         ----------
 
-        xs: (1D np.array)
+        xs: (np.array)
             A numpy array containing the locations in the data domain.
 
         returns
@@ -492,51 +413,74 @@ class DensityEstimator:
         A float or numpy array (the same size as xs) representing the
         values of the MAP density at the specified locations.
         """
-        return self.Q_star.evaluate(xs)
+        return self.density_func.evaluate(xs)
 
-    # returns Q_samples evaluated on the x-values provided
-    def evaluate_samples(self, xs=None):
+
+    def evaluate_samples(self, xs, resample=True):
         """
-        Evaluate sampled Qs at specified locations
+        Evaluate sampled densities at specified locations.
 
         parameters
         ----------
 
         xs: (1D np.array)
-            A float or numpy array of any dimension.
+            Locations at which to evaluate sampled densities.
+
+        resample: (bool)
+            Whether to use importance resampling, i.e., should the values
+            returned be from the original samples (obtained using a Laplace
+            approximated posterior) or should they be resampled to
+            account for the deviation between the true Bayesian posterior
+            and its Laplace approximation.
 
         returns
         -------
 
         A 2D numpy array representing the values of the posterior sampled
         densities at the specified locations. The first index corresponds to
-        grid points, the second to sampled densities.
+        values in xs, the second to sampled densities.
         """
 
-        # If xs are not provided use grid
-        if xs is None:
-            xs = self.get_grid()
+        # Cast input into 1D numpy array
+        xs = np.array(xs).ravel()
 
-        # Evaluate Q_samples on grid and return
-        if self.num_posterior_samples > 0:
-            Q_samples = self.get_Q_samples()
-            values = np.array([Q.evaluate(xs) for Q in Q_samples]).T
-        else:
-            values = None
+        # Make sure xs is not empty
+        check(len(xs) > 0,
+              'len(xs) = %d; must have at least 1 element.' % len(xs))
+
+        # Make sure that the elements of xs are numbers
+        check(isinstance(xs[0], numbers.Real),
+              'xs.dtype = %s is not a number.' % xs.dtype)
+
+        # Make sure that posterior samples were taken
+        check(self.num_posterior_samples > 0,
+              'Cannot evaluate samples because no posterior samples'
+              'have been computed.')
+
+        assert(len(self.sample_density_funcs) == self.num_posterior_samples)
+
+        # Evaluate all sampled densities at xs
+        values = np.array([d.evaluate(xs) for d
+                           in self.sample_density_funcs]).T
+
+        # If requested, resample columns of values array based on
+        # sample weights
+        if resample:
+            probs = self.sample_weights / self.sample_weights.sum()
+            old_cols = np.array(range(self.num_posterior_samples))
+            new_cols = np.random.choice(old_cols,
+                                        size=self.num_posterior_samples,
+                                        replace=True,
+                                        p=probs)
+            values = values[:, new_cols]
+
         return values
 
-    #
-    # The main DEFT algorithm in 1D.
-    #
 
     def _run(self):
         """
-        Runs DEFT 1D on data. Requires that all relevant input already be set
-        as attributes of class instance.
-
-        return:
-            results (class instance): A container class whose attributes contain
-            the results of the DEFT 1D algorithm.
+        Estimates the probability density from data using the DEFT algorithm.
+        Also samples posterior densities
         """
 
         # Extract information from Deft1D object
@@ -590,18 +534,17 @@ class DensityEstimator:
 
         # Compute initial t
         t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
-        if t_start < -10.0:
-            t_start /= 2
-        #print('t_start = %.2f' % t_start)
         if print_t:
             print('t_start = %0.2f' % t_start)
 
         # Do DEFT density estimation
-        core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-                                     tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop)
+        core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples,
+                                     t_start, DT_MAX, print_t,
+                                     tollerance, resolution, num_pt_samples,
+                                     fix_t_at_t_star,
+                                     max_log_evidence_ratio_drop)
 
         # Fill in results
-        #copy_start_time = time.clock()
         results = core_results # Get all results from deft_core
 
         # Normalize densities properly
@@ -619,7 +562,7 @@ class DensityEstimator:
         # Store results
         self.results = results
 
-    # Check inputs
+
     def _inputs_check(self):
         """
         Check all inputs NOT having to do with the choice of grid
@@ -805,7 +748,7 @@ class DensityEstimator:
               'max_log_evidence_ratio_drop = %f; must be > 0' %
               self.max_log_evidence_ratio_drop)
 
-    # This method will be used to clean user input data; it's for use with the API.
+
     def _clean_data(self):
         """
         Sanitize the assigned data
@@ -867,81 +810,191 @@ class DensityEstimator:
         # Set cleaned data
         self.data = data
 
-    def plot(self,
-             ax=None,
-             save_as=None,
-             figsize=[4,4],
-             fontsize=12,
-             title='',
-             xlabel='',
-             tight_layout=False,
-             show_now=True,
-             num_posterior_samples=None,
-             histogram_color='orange',
-             histogram_alpha=1,
-             posterior_color='dodgerblue',
-             posterior_line_width=1,
-             posterior_alpha=.2,
-             color='blue',
-             linewidth=2,
-             alpha=1,
-             backend='TkAgg'):
+
+    def _set_grid(self):
         """
-        Visualize the estimated density
-        :return: None
+        Sets the grid based on user input
         """
 
-        # check if matplotlib.pyplot is loaded. If not, load it carefully
-        if 'matplotlib.pyplot' not in sys.modules:
-            enable_graphics(backend=backend)
+        data = self.data
+        grid = self.grid
+        grid_spacing = self.grid_spacing
+        num_grid_points = self.num_grid_points
+        bounding_box = self.bounding_box
+        alpha = self.alpha
 
-        ### Plot results ###
-        if ax is None:
-            fig, ax = plt.subplots(figsize=figsize)
-            tight_layout = True
+        # If grid is specified
+        if grid is not None:
 
-        # Plot histogram
-        ax.bar(self.grid,
-               self.histogram,
-               width=self.grid_spacing,
-               color=histogram_color,
-               alpha=histogram_alpha)
+            # Check and set number of grid points
+            num_grid_points = len(grid)
+            assert(num_grid_points >= 2*alpha)
 
-        # Set number of posterior samples to plot
-        if num_posterior_samples is None:
-            num_posterior_samples = self.num_posterior_samples
+            # Check and set grid spacing
+            diffs = np.diff(grid)
+            grid_spacing = diffs.mean()
+            assert (grid_spacing > 0)
+            assert (all(np.isclose(diffs, grid_spacing)))
 
-        # Plot posterior samples
-        ax.plot(self.grid,
-                self.sample_values[:, :num_posterior_samples],
-                color=posterior_color,
-                linewidth=posterior_line_width,
-                alpha=posterior_alpha)
+            # Check and set grid bounds
+            grid_padding = grid_spacing / 2
+            lower_bound = grid[0] - grid_padding
+            upper_bound = grid[-1] + grid_padding
+            bounding_box = np.array([lower_bound, upper_bound])
+            box_size = upper_bound - lower_bound
 
-        # Plot best fit density
-        ax.plot(self.grid,
-                self.values,
-                color=color,
-                linewidth=linewidth,
-                alpha=alpha)
+        # If grid is not specified
+        if grid is None:
 
-        # Style plot
-        ax.set_xlim(self.bounding_box)
-        ax.set_title(title, fontsize=fontsize)
-        ax.set_xlabel(xlabel, fontsize=fontsize)
-        ax.set_yticks([])
-        ax.tick_params('x', rotation=45, labelsize=fontsize)
+            ### First, set bounding box ###
 
-        # Do tight_layout if requested
-        if tight_layout:
-            plt.tight_layout()
+            # If bounding box is specified, use that.
+            if bounding_box is not None:
+                assert bounding_box[0] < bounding_box[1]
+                lower_bound = bounding_box[0]
+                upper_bound = bounding_box[1]
+                box_size = upper_bound - lower_bound
 
-        # Save figure if save_as is specified
-        if save_as is not None:
-            plt.draw()
-            plt.savefig(save_as)
 
-        # Show figure if show_now is True
-        if show_now:
-            plt.show()
+            # Otherwise set bounding box based on data
+            else:
+                assert isinstance(data, np.ndarray)
+                assert all(np.isfinite(data))
+                assert min(data) < max(data)
+
+                # Choose bounding box to encapsulate all data, with extra room
+                data_max = max(data)
+                data_min = min(data)
+                data_span = data_max - data_min
+                lower_bound = data_min - .2 * data_span
+                upper_bound = data_max + .2 * data_span
+
+                # Autoadjust lower bound
+                if data_min >= 0 and lower_bound < 0:
+                    lower_bound = 0
+
+                # Autoadjust upper bound
+                if data_max <= 0 and upper_bound > 0:
+                    upper_bound = 0
+                if data_max <= 1 and upper_bound > 1:
+                    upper_bound = 1
+                if data_max <= 100 and upper_bound > 100:
+                    upper_bound = 100
+
+                # Extend bounding box outward a little for numerical safety
+                lower_bound -= SMALL_NUM*data_span
+                upper_bound += SMALL_NUM*data_span
+                box_size = upper_bound - lower_bound
+
+                # Set bounding box
+                bounding_box = np.array([lower_bound, upper_bound])
+
+            ### Next, define grid based on bounding box ###
+
+            # If grid_spacing is specified
+            if (grid_spacing is not None):
+                assert isinstance(grid_spacing, float)
+                assert np.isfinite(grid_spacing)
+                assert grid_spacing > 0
+
+                # Set number of grid points
+                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+
+                # Check num_grid_points isn't too small
+                check(2*self.alpha <= num_grid_points,
+                      'Using grid_spacing = %f ' % grid_spacing +
+                      'produces num_grid_points = %d, ' % num_grid_points +
+                      'which is too small. Reduce grid_spacing or do not set.')
+
+                # Check num_grid_points isn't too large
+                check(num_grid_points <= MAX_NUM_GRID_POINTS,
+                      'Using grid_spacing = %f ' % grid_spacing +
+                      'produces num_grid_points = %d, ' % num_grid_points +
+                      'which is too big. Increase grid_spacing or do not set.')
+
+                # Define grid padding
+                # Note: grid_spacing/2 <= grid_padding < grid_spacing
+                grid_padding = (box_size - (num_grid_points-1)*grid_spacing)/2
+                assert (grid_spacing/2 <= grid_padding < grid_spacing)
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   num_grid_points)
+
+            # Otherwise, if num_grid_points is specified
+            elif (num_grid_points is not None):
+                assert isinstance(num_grid_points, int)
+                assert 2*alpha <= num_grid_points <= MAX_NUM_GRID_POINTS
+
+                # Set grid spacing
+                grid_spacing = box_size / num_grid_points
+
+                # Define grid padding
+                grid_padding = grid_spacing/2
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   num_grid_points)
+
+            # Otherwise, set grid_spacing and num_grid_points based on data
+            else:
+                assert isinstance(data, np.ndarray)
+                assert all(np.isfinite(data))
+                assert min(data) < max(data)
+
+                # Compute default grid spacing
+                default_grid_spacing = box_size/DEFAULT_NUM_GRID_POINTS
+
+                # Set minimum number of grid points
+                min_num_grid_points = 2 * alpha
+
+                # Set minimum grid spacing
+                data.sort()
+                diffs = np.diff(data)
+                min_grid_spacing = min(diffs[diffs > 0])
+                min_grid_spacing = min(min_grid_spacing,
+                                       box_size/min_num_grid_points)
+
+                # Set grid_spacing
+                grid_spacing = max(min_grid_spacing, default_grid_spacing)
+
+                # Set number of grid points
+                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+
+                # Set grid padding
+                grid_padding = grid_spacing/2
+
+                # Define grid to be centered in bounding box
+                grid_start = lower_bound + grid_padding
+                grid_stop = upper_bound - grid_padding
+                grid = np.linspace(grid_start,
+                                   grid_stop * (1 + SMALL_NUM),  # For safety
+                                   num_grid_points)
+
+        # Set final grid
+        self.grid = grid
+        self.grid_spacing = grid_spacing
+        self.grid_padding = grid_padding
+        self.num_grid_points = num_grid_points
+        self.bounding_box = bounding_box
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
+        self.box_size = box_size
+
+        # Make sure that the final number of gridpoints is ok.
+        check(2 * self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
+              'After setting grid, we find that num_grid_points = %d; must have %d <= len(grid) <= %d. ' %
+              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS) +
+              'Something is wrong with input values of grid, grid_spacing, num_grid_points, or bounding_box.')
+
+        # Set bin edges
+        self.bin_edges = np.concatenate(([lower_bound],
+                                         grid[:-1]+grid_spacing/2,
+                                         [upper_bound]))
 

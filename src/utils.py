@@ -393,7 +393,7 @@ def enable_graphics(backend='TkAgg'):
     parameters
     ----------
 
-        backend (str):
+        backend: (str)
             Graphical backend to be passed to matplotlib.use().
             See the `matplotlib documentation <https://matplotlib.org/faq/usage_faq.html#what-is-a-backend>`_
             for more information on graphical backends.

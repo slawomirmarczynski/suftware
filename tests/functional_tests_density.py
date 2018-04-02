@@ -70,7 +70,7 @@ def run_grid_spacing_tests():
     print("Running Functional Test for parameter 'grid_spacing' \n")
     # values to be tested
     grid_spacing_fail_list = [0, 0.0, -0.1, '0.1', [0.1], 0.0001, 1000.0]
-    grid_spacing_success_list = [None, 0.02, 0.1, 0.5]
+    grid_spacing_success_list = [None, 0.05, 0.1, 0.5]
 
     # should fail
     [run_one_functional_test(grid_spacing=grid_spacing_fail_list[i], should_fail=True) for i in

@@ -12,7 +12,7 @@ from src.SimulatedData import SimulatedData
 from src.ExampleData import ExampleData
 
 # Interpolators
-from src.interpolated_density import InterpolatedDensity
+from src.DensityEvaluator import DensityEvaluator
 from src.interpolated_field import InterpolatedField
 
 # Error handling
