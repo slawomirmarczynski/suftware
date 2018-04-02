@@ -3,8 +3,8 @@ SUFTware
 ========
 
 .. image:: docs/who.alcohol_consumption.png
-   :height: 300px
-   :width: 300 px
+   :height: 100px
+   :width: 100 px
    :alt: Density estimation using alcohol consumption data from the WHO.
    :align: right
 
