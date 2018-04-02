@@ -2,21 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0282e274-e06c-4569-9ec8-50720220fb6a" name="Default" comment="Refactored to evaluation_method_for_Z">
-      <change afterPath="$PROJECT_DIR$/docs/documentation.rst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/example_alcohol.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/example_custom.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/example_wide.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/examples.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/DensityEstimator.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/ExampleData.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/SimulatedData.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/enable_graphics.rst" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.rst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DensityEstimator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/DensityEstimator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ExampleData.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ExampleDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatedData.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/suftware.py" beforeDir="false" afterPath="$PROJECT_DIR$/suftware.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,23 +13,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="suftware.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/suftware.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="22" column="7" lean-forward="true" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
-              <folding>
-                <element signature="e#91#140#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="190">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.rst" pinned="false" current-in-tab="false">
+      <file leaf-file-name="index.rst" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docs/index.rst">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="65" selection-start-line="17" selection-start-column="65" selection-end-line="17" selection-end-column="65" />
+            <state relative-caret-position="285">
+              <caret line="15" selection-start-line="15" selection-end-line="15" />
             </state>
           </provider>
         </entry>
@@ -155,8 +138,8 @@
         <option value="$PROJECT_DIR$/docs/example_wide.py" />
         <option value="$PROJECT_DIR$/docs/example_custom.py" />
         <option value="$PROJECT_DIR$/docs/documentation.rst" />
-        <option value="$PROJECT_DIR$/docs/index.rst" />
         <option value="$PROJECT_DIR$/suftware.py" />
+        <option value="$PROJECT_DIR$/docs/index.rst" />
       </list>
     </option>
   </component>
@@ -713,7 +696,7 @@
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13903111" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.13903111" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5005908" side_tool="true" weight="0.4195231" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3271237" />
@@ -721,7 +704,7 @@
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49901536" weight="0.3099851" />
       <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49940923" weight="0.4485842" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" weight="0.3181818" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" visible="true" weight="0.3181818" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49980307" weight="0.39940387" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -742,14 +725,14 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32935917" />
       <window_info anchor="right" id="Data View" order="3" weight="0.32962668" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49940923" weight="0.44871795" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.49940923" weight="0.4485842" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49980307" weight="0.39940387" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" visible="true" weight="0.1490313" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49704608" visible="true" weight="0.3181818" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5005908" side_tool="true" weight="0.4195231" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Version Control" order="9" sideWeight="0.49901536" weight="0.3099851" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32763532" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3271237" />
       <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
@@ -1059,13 +1042,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/docs/index.rst">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="65" selection-start-line="17" selection-start-column="65" selection-end-line="17" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/interpolated_field.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19">
@@ -1075,11 +1051,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/suftware.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="22" column="7" lean-forward="true" selection-start-line="22" selection-start-column="7" selection-end-line="22" selection-end-column="7" />
-          <folding>
-            <element signature="e#91#140#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="190">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/index.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
         </state>
       </provider>
     </entry>

@@ -12,10 +12,12 @@ SUFTware (Statistics Using Field Theory) provides fast and lightweight Python
 implementations of Bayesian Field Theory algorithms for low-dimensional
 statistical inference. SUFTware currently supports the one-dimenstional
 density estimation algorithm DEFT, described in [#Chen2018]_,
-[#Kinney2015]_, and [#Kinney2014]_. As an example, the image on the right shows
-DEFT applied to alcohol consumption data from the World Health Organization.
-Code for this and other examples can be found on the :doc:`examples` page.
-See the :doc:`documentation` page for details on the SUFTware API.
+[#Kinney2015]_, and [#Kinney2014]_. The image on the right shows DEFT applied
+to alcohol consumption data from
+the World Health Organization. This computation takes about 0.25 seconds on
+a standard laptop computer. Code for this and other examples can be found
+on the :doc:`examples` page. See the :doc:`documentation` page for details
+on the SUFTware API.
 
 Installation
 ------------
