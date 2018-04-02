@@ -11,7 +11,7 @@ VALID_DATASETS = ['.'.join(name.split('.')[:-1]) for name in
                   os.listdir(data_dir) if '.txt' in name]
 VALID_DATASETS.sort()
 
-class ExampleData:
+class ExampleDataset:
     """
     Provides an interface to example data provided with the SUFTware package.
 
@@ -19,7 +19,7 @@ class ExampleData:
     ----------
 
     dataset: (str)
-        Name of dataset to load. Run sw.ExampleData.list() to see
+        Name of dataset to load. Run sw.ExampleDataset.list() to see
         which datasets are available.
 
     """

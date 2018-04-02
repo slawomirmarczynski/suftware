@@ -2,20 +2,11 @@
 Head module. Contains classes for user interfacing.
 """
 
-# DensityEstimator estimation
+# Make classes local
 from src.DensityEstimator import DensityEstimator
-
-# Data simulation
-from src.SimulatedData import SimulatedData
-
-# Data examples
-from src.ExampleData import ExampleData
-
-# Interpolators
+from src.SimulatedDataset import SimulatedDataset
+from src.ExampleDataset import ExampleDataset
 from src.DensityEvaluator import DensityEvaluator
-from src.interpolated_field import InterpolatedField
-
-# Error handling
 from src.utils import ControlledError as ControlledError
 
 # Enable plotting

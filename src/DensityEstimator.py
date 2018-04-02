@@ -346,8 +346,8 @@ class DensityEstimator:
             # First, enable graphics with the proper backend
             enable_graphics(backend=backend)
 
-            # Now we can import plt
-            import matplotlib.pyplot as plt
+        # Make sure we have access to plt
+        import matplotlib.pyplot as plt
 
         # If axes is not specified, create it and a corresponding figure
         if ax is None:
