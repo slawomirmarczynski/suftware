@@ -8,6 +8,11 @@ sw.DensityEstimator
 .. autoclass:: suftware.DensityEstimator
     :members:
 
+sw.DensityEvaluator
+-------------------
+
+.. autoclass:: suftware.DensityEvaluator
+    :members:
 
 sw.ExampleDataset
 -----------------
