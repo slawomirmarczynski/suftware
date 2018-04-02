@@ -19,26 +19,25 @@ from src.utils import ControlledError, enable_graphics, check
 from src.DensityEvaluator import DensityEvaluator
 
 class DensityEstimator:
-    """This class will serve as the interface for running
-    deft1d
+    """Estimates a 1D probability density from sampled data.
 
     parameters
     ----------
-    data (np.array):
+    data (1D np.array):
         An array of data from which the probability density will be estimated.
 
-    grid (np.array):
+    grid (1D np.array):
         An array of evenly spaced grid points on which the probability density
         will be estimated. Default value is ``None``, in which case the grid is
         set automatically.
 
-    grid_spacing (float):
+    grid_spacing (float > 0):
         The distance at which to space neighboring grid points. Default value
-        is ``None``, in which case this spacing is set automatically
+        is ``None``, in which case this spacing is set automatically.
 
     num_grid_points (int):
         The number of grid points to draw within the data domain. Restricted
-        to 2*alpha <= num_grid_points <= 1000. Default value is ``None``, in
+        to ``2*alpha <= num_grid_points <= 1000``. Default value is ``None``, in
         which case the number of grid points is chosen automatically.
 
     bounding_box ([float, float]):
@@ -47,69 +46,76 @@ class DensityEstimator:
         bounding box is set automatically to encompass all of the data.
 
     alpha (int):
-        The order of the derivative used to define smoothness. Restricted to
-        1 <= alpha <= 4. Default value is 3.
+        The order of derivative constrained in the definition of smoothness.
+        Restricted to ``1 <= alpha <= 4``. Default value is 3.
 
     periodic (bool):
         Whether or not to impose periodic boundary conditions on the estimated
         probability density. Default False, in which case no boundary
-        conditions are used.
+        conditions are imposed.
 
-    num_posterior_samples (int):
+    num_posterior_samples (int >= 0):
         Number of samples to draw from the Bayesian posterior. Restricted to
-        0 <= num_posterior_samples <= 1000. Default value is 100.
+        0 <= num_posterior_samples <= MAX_NUM_POSTERIOR_SAMPLES.
 
-    max_t_step (float):
-        Upper bound on the amount by which the parameter ``t`` is incremented
-        when tracing the MAP curve. Restricted to 0 < max_t_step. Default
-        value is 1.0.
+    max_t_step (float > 0):
+        Upper bound on the amount by which the parameter ``t``
+        in the DEFT algorithm is incremented when tracing the MAP curve.
+        Default value is 1.0.
 
-    tollerance (float):
-        I FORGET WHAT THIS IS. Restricted to tollerance >= 0. Default value of
-        1E-6.
+    tollerance (float > 0):
+        Sets the convergence criterion for the corrector algorithm used in
+        tracing the MAP curve.
 
-    resolution (float):
+    resolution (float > 0):
+        The maximum geodesic distance allowed for neighboring points
+        on the MAP curve.
+
+    sample_only_at_l_star: (boolean)
+        Specifies whether to let l vary when sampling from the Bayesian
+        posterior.
+
+    max_log_evidence_ratio_drop: (float > 0)
+        If set, MAP curve tracing will terminate prematurely when
+        max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop.
+
     evaluation_method_for_Z: (string)
-        Method of evaluation of partition function. Possible values:
+        Method of evaluation of partition function Z. Possible values:
         'Lap'      : Laplace approximation (default).
         'Lap+Imp'  : Laplace approximation + importance sampling.
         'Lap+Fey'  : Laplace approximation + Feynman diagrams.
 
-    num_samples_for_Z: (int)
-        *** Note *** This parameter works only when evaluation_method_for_Z is 'Lap+Imp'.
-        Number of samples for the evaluation of the partition function.
-        More samples will help to evaluate a better density. More samples
-        will also make calculation slower. num_samples_for_Z = 0 means the Laplace
-        approximation for the evaluation of the partition function is used.
-
-    resolution: (float > 0)
-        Specifies max distance between neighboring points on the MAP curve.
+    num_samples_for_Z: (int >= 0)
+        Number of posterior samples to use when evaluating the paritation
+        function Z. Only has an affect when
+        ``evaluation_method_for_Z = 'Lap+Imp'``.
 
     seed: (int)
-        Specify random seed for evaluation of the partition function
-        and for the posterior sampling.
+        Seed provided to the random number generator before density estimation
+        commences. For development purposes only.
 
-    max_log_evidence_ratio_drop: (float > 0)
-        Stop criterion for traversing the MAP curve; deft stops when:
-        max_log_evidence - current_log_evidence >  max_log_evidence_ratio_drop
+    print_t: (bool)
+        Whether to print the values of ``t`` while tracing the MAP curve.
+        For development purposes only.
 
-    sample_only_at_l_star: (boolean)
-        If True : posterior samples drawn at l_star.
-        If False: posterior sampling done among l near l_star.
+    should_fail: (bool)
+        Flags whether the inference algorithm is expected to succeed. If
+        ``None``, this debugging feature is ignored. For development purposes
+        only.
 
     attributes
     ----------
     grid: (1D np.array)
-        The gridpoints used for density estimation.
+        See above.
 
-    grid_spacing: (float)
-        The spacing between adjacent grid points.
+    grid_spacing: (float > 0)
+        See above.
 
     num_grid_points: (int)
-        The number of grid points used.
+        See above.
 
     bounding_box: ([float, float])
-        The spatial domain in which the density was estimated.
+        See above.
 
     histogram: (1D np.array)
         A histogram of the data using ``grid`` for the centers
@@ -257,7 +263,8 @@ class DensityEstimator:
              histogram_alpha=1,
              backend='TkAgg'):
         """
-        Plot the density estimate.
+        Plot the MAP density, the posterior sampled densities, and the
+        data histogram.
 
         parameters
         ----------
