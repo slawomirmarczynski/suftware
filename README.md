@@ -1,5 +1,6 @@
-# SUFTware
+# SUFTware: Statistics Using Field Theory
 
-SUFTware (Statistics Using Field Theory) provides fast and lightweight Python
-implementations of Bayesian Field Theory algorithms for low-dimensional
-statistical inference. See the  [SUFTware documentation](docs/_build/html/index.html) for more information.
+:warning: ***WARNING (2 April 2018): UNDER ACTIVE DEVELOPMENT. DO NOT USE YET.*** :warning:
+
+SUFTware provides fast and lightweight Python implementations of Bayesian Field Theory algorithms for low-dimensional
+statistical inference. See the [SUFTware documentation](http://suftware.readthedocs.io) for installation and usage information.
