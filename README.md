@@ -6,12 +6,12 @@ pip install suftware
 
 Requirements 
 
-- Python >= 3.6.2 or Python = 2.7.10
-- numpy >= 1.10.1
-- scipy >= 1.0.0
-- matplotlib >= 2.0.0
+* Python >= 3.6.2 or Python = 2.7.10
+* numpy >= 1.10.1
+* scipy >= 1.0.0
+* matplotlib >= 2.0.0
 
 
-- Documentation: "http://suftware.readthedocs.org"
-- Github: "https://github.com/jbkinney/suftware"
-- PyPI: "https://pypi.python.org/pypi/suftware"
+* Documentation: "http://suftware.readthedocs.org"
+* Github: "https://github.com/jbkinney/suftware"
+* PyPI: "https://pypi.python.org/pypi/suftware"
