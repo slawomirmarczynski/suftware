@@ -2,8 +2,6 @@
 SUFTware
 ========
 
-**WARNING (2 April 2018): UNDER ACTIVE DEVELOPMENT. DO NOT USE YET.**
-
 .. image:: who.alcohol_consumption.png
    :height: 300px
    :width: 300 px
