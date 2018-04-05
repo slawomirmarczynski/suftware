@@ -8,4 +8,4 @@ data = np.random.randn(100)
 density = sw.DensityEstimator(data)
 
 # Plot results and save to file
-density.plot(title='Gaussian', save_as='custom.png')
+density.plot(title='Gaussian')

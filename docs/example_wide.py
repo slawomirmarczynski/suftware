@@ -7,5 +7,4 @@ dataset = sw.SimulatedDataset(distribution='wide', num_data_points=100)
 density = sw.DensityEstimator(dataset.data, bounding_box=dataset.bounding_box)
 
 # Plot results and save to file
-density.plot(title='Gaussian mixture, wide separation',
-             save_as='wide.png')
+density.plot(title='Gaussian mixture, wide separation')
