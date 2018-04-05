@@ -31,6 +31,14 @@ manager::
 The code for SUFTware is open source and available on
 `GitHub <https://github.com/jbkinney/suftware>`_.
 
+Quick Start
+-----------
+
+To make the figure shown above, do this from within Python::
+
+   import suftware as sw
+   sw.demo()
+
 Resources
 ---------
 

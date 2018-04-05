@@ -391,6 +391,9 @@ class DensityEstimator:
         ax.set_yticks([])
         ax.tick_params('x', rotation=45, labelsize=fontsize)
 
+        # Do not show interactive coordinates
+        ax.format_coord = lambda x, y: ''
+
         # Do tight_layout if requested
         if tight_layout:
             plt.tight_layout()
