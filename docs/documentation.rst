@@ -31,3 +31,8 @@ sw.enable_graphics
 
 .. autofunction:: suftware.enable_graphics
 
+sw.demo
+------------------
+
+.. autofunction:: suftware.demo
+

@@ -60,7 +60,7 @@ def demo(example='real_data'):
 
     example: (str)
         A string specifying which demo to run. Must be 'real_data',
-        'simulated_data', or 'custom_data'
+        'simulated_data', or 'custom_data'.
 
     Return
     ------
