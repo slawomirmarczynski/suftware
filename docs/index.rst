@@ -2,6 +2,7 @@
 SUFTware
 ========
 
+*Written by Wei-Chia Chen, Ammar Tareen, and Justin B. Kinney*
 
 .. image:: who.alcohol_consumption.png
    :height: 300px
@@ -45,13 +46,12 @@ Resources
 
 .. toctree::
 
+    tutorial
     examples
     documentation
 
-About
------
-
-Written by Wei-Chia Chen, Ammar Tareen, and Justin B. Kinney.
+Contact
+-------
 
 For technical assistance or to report bugs, please
 contact `Ammar Tareen <tareen@cshl.edu>`_.
