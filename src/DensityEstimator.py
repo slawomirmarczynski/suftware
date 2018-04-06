@@ -23,51 +23,51 @@ class DensityEstimator:
 
     parameters
     ----------
-    data (1D np.array):
+    data: (1D np.array)
         An array of data from which the probability density will be estimated.
 
-    grid (1D np.array):
+    grid: (1D np.array)
         An array of evenly spaced grid points on which the probability density
         will be estimated. Default value is ``None``, in which case the grid is
         set automatically.
 
-    grid_spacing (float > 0):
+    grid_spacing: (float > 0)
         The distance at which to space neighboring grid points. Default value
         is ``None``, in which case this spacing is set automatically.
 
-    num_grid_points (int):
+    num_grid_points: (int)
         The number of grid points to draw within the data domain. Restricted
         to ``2*alpha <= num_grid_points <= 1000``. Default value is ``None``, in
         which case the number of grid points is chosen automatically.
 
-    bounding_box ([float, float]):
+    bounding_box: ([float, float])
         The boundaries of the data domain, within which the probability density
         will be estimated. Default value is ``None``, in which case the
         bounding box is set automatically to encompass all of the data.
 
-    alpha (int):
+    alpha: (int)
         The order of derivative constrained in the definition of smoothness.
         Restricted to ``1 <= alpha <= 4``. Default value is 3.
 
-    periodic (bool):
+    periodic: (bool)
         Whether or not to impose periodic boundary conditions on the estimated
         probability density. Default False, in which case no boundary
         conditions are imposed.
 
-    num_posterior_samples (int >= 0):
+    num_posterior_samples: (int >= 0)
         Number of samples to draw from the Bayesian posterior. Restricted to
         0 <= num_posterior_samples <= MAX_NUM_POSTERIOR_SAMPLES.
 
-    max_t_step (float > 0):
+    max_t_step: (float > 0)
         Upper bound on the amount by which the parameter ``t``
         in the DEFT algorithm is incremented when tracing the MAP curve.
         Default value is 1.0.
 
-    tollerance (float > 0):
+    tollerance: (float > 0)
         Sets the convergence criterion for the corrector algorithm used in
         tracing the MAP curve.
 
-    resolution (float > 0):
+    resolution: (float > 0)
         The maximum geodesic distance allowed for neighboring points
         on the MAP curve.
 
@@ -106,32 +106,30 @@ class DensityEstimator:
     attributes
     ----------
     grid: (1D np.array)
-        See above.
+        The grid points at which the probability density was be estimated.
 
     grid_spacing: (float > 0)
-        See above.
+        The distance between neighboring grid points.
 
     num_grid_points: (int)
-        See above.
+        The number of grid points used.
 
     bounding_box: ([float, float])
-        See above.
+        The boundaries of the data domain within which the probability density
+        was be estimated.
 
     histogram: (1D np.array)
-        A histogram of the data using ``grid`` for the centers
-        of each bin.
+        A histogram of the data using ``grid`` for the centers of each bin.
 
     values: (1D np.array)
-        The values of the optimal (i.e., MAP) density at
-        each grid point.
+        The values of the optimal (i.e., MAP) density at each grid point.
 
     sample_values: (2D np.array)
-        The values of the posterior sampled densities at
-        each grid point. The first index specifies grid points; the second
-        specifies posterior samples.
+        The values of the posterior sampled densities at each grid point.
+        The first index specifies grid points, the second posterior samples.
 
     sample_weights: (1D np.array)
-        The importance weights corresponding to each column of sample_values.
+        The importance weights corresponding to each posterior sample.
 
     """
 
@@ -231,7 +229,7 @@ class DensityEstimator:
 
         except ControlledError as e:
             if should_fail is True:
-                print('Error, as expected:', e)
+                print('Error, as expected: ', e)
                 self.mistake = False
 
             elif should_fail is False:
@@ -293,7 +291,7 @@ class DensityEstimator:
             Whether to call plt.tight_layout() after rendering graphics.
 
         show_now: (bool)
-            Whether to show the plot immediately by calling plt.show()
+            Whether to show the plot immediately by calling plt.show().
 
         show_map: (bool)
             Whether to show the MAP density.
