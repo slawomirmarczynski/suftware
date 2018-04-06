@@ -2,6 +2,7 @@
 SUFTware
 ========
 
+
 .. image:: who.alcohol_consumption.png
    :height: 300px
    :width: 300 px
@@ -46,6 +47,23 @@ Resources
 
     examples
     documentation
+
+About
+-----
+
+Written by Wei-Chia Chen, Ammar Tareen, and Justin B. Kinney.
+
+For technical assistance or to report bugs, please
+contact `Ammar Tareen <tareen@cshl.edu>`_.
+
+For more general correspondence, please
+contact `Justin Kinney <jkinney@cshl.edu>`_.
+
+Other links:
+
+- `Kinney Lab <http://kinneylab.labsites.cshl.edu/>`_
+- `Simons Center for Quantitative Biology <https://www.cshl.edu/research/quantitative-biology/>`_
+- `Cold Spring Harbor Laboratory <https://www.cshl.edu/>`_
 
 
 References
