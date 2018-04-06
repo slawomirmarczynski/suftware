@@ -105,31 +105,38 @@ class DensityEstimator:
 
     attributes
     ----------
-    grid: (1D np.array)
+    grid:
         The grid points at which the probability density was be estimated.
+        (1D np.array)
 
-    grid_spacing: (float > 0)
+    grid_spacing:
         The distance between neighboring grid points.
+        (float > 0)
 
-    num_grid_points: (int)
+    num_grid_points:
         The number of grid points used.
+        (int)
 
-    bounding_box: ([float, float])
+    bounding_box:
         The boundaries of the data domain within which the probability density
-        was be estimated.
+        was be estimated. ([float, float])
 
-    histogram: (1D np.array)
+    histogram:
         A histogram of the data using ``grid`` for the centers of each bin.
+        (1D np.array)
 
-    values: (1D np.array)
+    values:
         The values of the optimal (i.e., MAP) density at each grid point.
+        (1D np.array)
 
-    sample_values: (2D np.array)
+    sample_values:
         The values of the posterior sampled densities at each grid point.
         The first index specifies grid points, the second posterior samples.
+        (2D np.array)
 
-    sample_weights: (1D np.array)
+    sample_weights:
         The importance weights corresponding to each posterior sample.
+        (1D np.array)
 
     """
 

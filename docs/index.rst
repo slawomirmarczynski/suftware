@@ -51,8 +51,9 @@ Resources
 References
 ----------
 
-.. [#Chen2018] Chen W, Tareen A, Kinney JB (2018) Density estimation on.
-   small datasets *arxiv:XXXX [physics.data-an]*.
+.. [#Chen2018] Chen W, Tareen A, Kinney JB (2018) Density estimation on
+   small datasets. *arXiv:1804.01932 [physics.data-an]*.
+   :download:`PDF </ChenEtAl2018v1.pdf>`.
 
 .. [#Kinney2015] Kinney JB (2015) Unification of field theory and maximum
    entropy methods for learning probability densities. *Phys Rev E* 92:032107.
