@@ -2,7 +2,7 @@
 SUFTware
 ========
 
-*Written by Wei-Chia Chen, Ammar Tareen, and Justin B. Kinney*
+*Written by Wei-Chia Chen, Ammar Tareen, and Justin B. Kinney.*
 
 .. image:: who.alcohol_consumption.png
    :height: 300px
@@ -16,10 +16,12 @@ statistical inference. SUFTware currently supports the one-dimenstional
 density estimation algorithm DEFT, described in [#Chen2018]_,
 [#Kinney2015]_, and [#Kinney2014]_. The image on the right shows DEFT applied
 to alcohol consumption data from
-the World Health Organization. This computation takes about 0.25 seconds on
-a standard laptop computer. Code for this and other examples can be found
-on the :doc:`examples` page. See the :doc:`documentation` page for details
-on the SUFTware API.
+the World Health Organization. This computation took about 0.25 seconds on
+a standard laptop computer.
+
+Code for this and other examples can be found on the :doc:`examples` page.
+The :doc:`tutorial` page contains a short tutorial on how to use SUFTware.
+The :doc:`documentation` page details the SUFTware API.
 
 Installation
 ------------
