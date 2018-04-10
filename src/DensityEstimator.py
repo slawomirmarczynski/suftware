@@ -5,6 +5,7 @@ import sys
 import time
 import pdb
 import numbers
+import pandas as pd
 
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
@@ -195,6 +196,7 @@ class DensityEstimator:
 
             # Save some results
             self.histogram = self.results.R
+            self.maxent = self.results.M
             self.phi_star_values = self.results.phi_star
 
             # Compute evaluator for density
@@ -221,7 +223,15 @@ class DensityEstimator:
                 ]
 
                 # Compute sampled values at grid points
-                self.sample_values = self.evaluate_samples(self.grid)
+                # These are NOT resampled
+                self.sample_values = self.evaluate_samples(self.grid,
+                                                           resample=False)
+
+                # Compute effective sample size and efficiency
+                self.effective_sample_size = np.sum(self.sample_weights)**2 \
+                                            / np.sum(self.sample_weights**2)
+                self.effective_sampling_efficiency = \
+                    self.effective_sample_size / self.num_posterior_samples
 
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
@@ -249,6 +259,7 @@ class DensityEstimator:
 
 
     def plot(self, ax=None, save_as=None,
+             resample=True,
              figsize=(4, 4),
              fontsize=12,
              title='',
@@ -281,6 +292,10 @@ class DensityEstimator:
         save_as: (str)
             Name of file to save plot to. File type is determined by file
             extension.
+
+        resample: (bool)
+            If true, sampled densities will be ploted only after importance
+            resampling.
 
         figsize: ([float, float])
             Figure size as (width, height) in inches.
@@ -375,8 +390,9 @@ class DensityEstimator:
 
         # Plot posterior samples
         if num_posterior_samples > 0:
+            sample_values = self.evaluate_samples(self.grid, resample=resample)
             ax.plot(self.grid,
-                    self.sample_values[:, :num_posterior_samples],
+                    sample_values[:, :num_posterior_samples],
                     color=posterior_color,
                     linewidth=posterior_linewidth,
                     alpha=posterior_alpha)
@@ -492,6 +508,137 @@ class DensityEstimator:
         return values
 
 
+    def get_stats(self, use_weights=True, show_samples=False):
+        """
+        Computes summary statistics for the estimated density
+
+        parameters
+        ----------
+
+        show_samples: (bool)
+            If True, summary stats are computed for each posterior sample.
+            If False, summary stats are returned for the "star" estimate,
+            the histogram, and the maxent estimate, along with the mean and
+            RMSD values of these stats across posterior samples.
+
+        use_weights: (bool)
+            If True, mean and RMSD are computed using importance weights.
+
+        returns
+        -------
+
+        df: (pd.DataFrame)
+            A pandas data frame listing summary statistics for the estimated
+            probability densities. These summary statistics include
+            "entropy" (in bits), "mean", "variance", "skewness", and
+            "kurtosis". If ``show_samples = False``, results will be shown for
+            the best estimate, as well as mean and RMDS values across all
+            samples. If ``show_samples = True``, results will be shown for
+            each sample. A column showing column weights will also be included.
+        """
+
+        # Define a function for each summary statistic
+        def entropy(Q):
+            h = self.grid_spacing
+            eps = 1E-10
+            assert (all(Q >= 0))
+            return np.sum(h * Q * np.log2(Q + eps))
+
+        def mean(Q):
+            x = self.grid
+            h = self.grid_spacing
+            return np.sum(h * Q * x)
+
+        def variance(Q):
+            mu = mean(Q)
+            x = self.grid
+            h = self.grid_spacing
+            return np.sum(h * Q * (x - mu) ** 2)
+
+        def skewness(Q):
+            mu = mean(Q)
+            x = self.grid
+            h = self.grid_spacing
+            return np.sum(h * Q * (x - mu) ** 3) / np.sum(
+                h * Q * (x - mu) ** 2) ** (3 / 2)
+
+        def kurtosis(Q):
+            mu = mean(Q)
+            x = self.grid
+            h = self.grid_spacing
+            return np.sum(h * Q * (x - mu) ** 4) / np.sum(
+                h * Q * (x - mu) ** 2) ** 2
+
+        # Index functions by their names and set these as columns
+        col2func_dict = {'entropy': entropy,
+                         'mean': mean,
+                         'variance': variance,
+                         'skewness': skewness,
+                         'kurtosis': kurtosis}
+        cols = list(col2func_dict.keys())
+        if show_samples:
+            cols += ['weight']
+
+        # Create list of row names
+        if show_samples:
+            rows = ['sample %d' % n
+                     for n in range(self.num_posterior_samples)]
+        else:
+            rows = ['star', 'histogram', 'maxent',
+                    'posterior mean', 'posterior RMSD']
+
+        # Initialize data frame
+        df = pd.DataFrame(columns=cols, index=rows)
+
+        # Set sample weights
+        if use_weights:
+            ws = self.sample_weights
+        else:
+            ws = np.ones(self.num_posterior_samples)
+
+        # Fill in data frame column by column
+        for col_num, col in enumerate(cols):
+
+            # If listing weights, do so
+            if col == 'weight':
+                df.loc[:, col] = ws
+
+            # If computing a summary statistic
+            else:
+
+                # Get summary statistic function
+                func = col2func_dict[col]
+
+                # Compute func value for each sample
+                ys = np.zeros(self.num_posterior_samples)
+                for n in range(self.num_posterior_samples):
+                    ys[n] = func(self.sample_values[:, n])
+
+                # If recording individual results for all samples, do so
+                if show_samples:
+                    df.loc[:, col] = ys
+
+                # Otherwise, record individual entries
+                else:
+                    # Fill in func value for start density
+                    df.loc['star', col] = func(self.values)
+
+                    # Fill in func value for histogram
+                    df.loc['histogram', col] = func(self.histogram)
+
+                    # Fill in func value for maxent point
+                    df.loc['maxent', col] = func(self.maxent)
+
+                    # Record mean and rmsd values across samples
+                    mu = np.sum(ys * ws) / np.sum(ws)
+                    df.loc['posterior mean', col] = mu
+                    df.loc['posterior RMSD', col] = np.sqrt(
+                        np.sum(ws * (ys - mu) ** 2) / np.sum(ws))
+
+        # Return data frame to user
+        return df
+
+
     def _run(self):
         """
         Estimates the probability density from data using the DEFT algorithm.
@@ -566,6 +713,7 @@ class DensityEstimator:
         results.h = h
         results.L = G*h
         results.R /= h
+        results.M /= h
         results.Q_star /= h
         results.l_star = h*(sp.exp(-results.t_star)*N)**(1/(2.*alpha))
         for p in results.map_curve.points:

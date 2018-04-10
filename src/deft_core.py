@@ -841,7 +841,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     if not (num_pt_samples == 0):
         Q_samples, phi_samples, phi_weights = \
-            supplements.posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star)
+            supplements.posterior_sampling(points, R, Delta, N, G,
+                                           num_pt_samples, fix_t_at_t_star)
             
 
 
@@ -866,6 +867,10 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     results.tollerance = tollerance
     results.resolution = resolution
     results.points = points
+
+    # Get maxent point
+    maxent_point = results.map_curve.get_maxent_point()
+    results.M = maxent_point.Q / np.sum(maxent_point.Q)
 
     # Include posterior sampling info if any sampling was performed
     if not (num_pt_samples == 0):

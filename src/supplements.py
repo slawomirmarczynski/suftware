@@ -644,8 +644,14 @@ def posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star):
                        pt_sampling=True)
             for k in range(num_samples):
                 phi_samples[:, sample_index] = phi_samples_at_t[:, k]
+
+                # JBK: I don't understand this
                 phi_weights[sample_index] = phi_weights_at_t[k] / \
                                             w_sample_means[i]
+
+                # JBK: I think this is what the weight should be
+                #phi_weights[sample_index] = phi_weights_at_t[k]
+
                 sample_index += 1
 
     # Convert phi samples to Q samples
