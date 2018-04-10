@@ -16,7 +16,7 @@ MAX_NUM_SAMPLES_FOR_Z = 1000
 # Import deft-related code
 from src import deft_core
 from src import laplacian
-from src.utils import ControlledError, enable_graphics, check
+from src.utils import ControlledError, enable_graphics, check, handle_errors
 from src.DensityEvaluator import DensityEvaluator
 
 class DensityEstimator:
@@ -99,11 +99,6 @@ class DensityEstimator:
         Whether to print the values of ``t`` while tracing the MAP curve.
         For development purposes only.
 
-    should_fail: (bool)
-        Flags whether the inference algorithm is expected to succeed. If
-        ``None``, this debugging feature is ignored. For development purposes
-        only.
-
     attributes
     ----------
     grid:
@@ -141,6 +136,7 @@ class DensityEstimator:
 
     """
 
+    @handle_errors
     def __init__(self,
                  data,
                  grid=None,
@@ -158,8 +154,7 @@ class DensityEstimator:
                  evaluation_method_for_Z='Lap',
                  num_samples_for_Z=1000,
                  seed=None,
-                 print_t=False,
-                 should_fail=None):
+                 print_t=False):
 
         # Record other inputs as class attributes
         self.alpha = alpha
@@ -182,83 +177,59 @@ class DensityEstimator:
         self.results = None
 
         # Validate inputs
-        try:
-            self._inputs_check()
+        self._inputs_check()
 
-            # clean input data
-            self._clean_data()
+        # clean input data
+        self._clean_data()
 
-            # Choose grid
-            self._set_grid()
+        # Choose grid
+        self._set_grid()
 
-            # Fit to data
-            self._run()
+        # Fit to data
+        self._run()
 
-            # Save some results
-            self.histogram = self.results.R
-            self.maxent = self.results.M
-            self.phi_star_values = self.results.phi_star
+        # Save some results
+        self.histogram = self.results.R
+        self.maxent = self.results.M
+        self.phi_star_values = self.results.phi_star
 
-            # Compute evaluator for density
-            self.density_func = DensityEvaluator(self.phi_star_values,
-                                                 self.grid,
-                                                 self.bounding_box)
+        # Compute evaluator for density
+        self.density_func = DensityEvaluator(self.phi_star_values,
+                                             self.grid,
+                                             self.bounding_box)
 
-            # Compute optimal density at grid points
-            self.values = self.evaluate(self.grid)
+        # Compute optimal density at grid points
+        self.values = self.evaluate(self.grid)
 
-            # If any posterior samples were taken
-            if num_posterior_samples > 0:
+        # If any posterior samples were taken
+        if num_posterior_samples > 0:
 
-                # Save sampled phi values and weights
-                self.sample_field_values = self.results.phi_samples
-                self.sample_weights = self.results.phi_weights
+            # Save sampled phi values and weights
+            self.sample_field_values = self.results.phi_samples
+            self.sample_weights = self.results.phi_weights
 
-                # Compute evaluator for all posterior samples
-                self.sample_density_funcs = [
-                    DensityEvaluator(field_values=self.sample_field_values[:, k],
-                                     grid=self.grid,
-                                     bounding_box=self.bounding_box)
-                    for k in range(self.num_posterior_samples)
-                ]
+            # Compute evaluator for all posterior samples
+            self.sample_density_funcs = [
+                DensityEvaluator(field_values=self.sample_field_values[:, k],
+                                 grid=self.grid,
+                                 bounding_box=self.bounding_box)
+                for k in range(self.num_posterior_samples)
+            ]
 
-                # Compute sampled values at grid points
-                # These are NOT resampled
-                self.sample_values = self.evaluate_samples(self.grid,
-                                                           resample=False)
+            # Compute sampled values at grid points
+            # These are NOT resampled
+            self.sample_values = self.evaluate_samples(self.grid,
+                                                       resample=False)
 
-                # Compute effective sample size and efficiency
-                self.effective_sample_size = np.sum(self.sample_weights)**2 \
-                                            / np.sum(self.sample_weights**2)
-                self.effective_sampling_efficiency = \
-                    self.effective_sample_size / self.num_posterior_samples
+            # Compute effective sample size and efficiency
+            self.effective_sample_size = np.sum(self.sample_weights)**2 \
+                                        / np.sum(self.sample_weights**2)
+            self.effective_sampling_efficiency = \
+                self.effective_sample_size / self.num_posterior_samples
 
-            if should_fail is True:
-                print('MISTAKE: Succeeded but should have failed.')
-                self.mistake = True
-
-            elif should_fail is False:
-                print('Success, as expected.')
-                self.mistake = False
-            else:
-                self.mistake = None
-
-
-        except ControlledError as e:
-            if should_fail is True:
-                print('Error, as expected: ', e)
-                self.mistake = False
-
-            elif should_fail is False:
-                print('MISTAKE: Failed but should have succeeded: ', e)
-                self.mistake = True
-
-            else:
-                print('Error: ', e)
-                self.mistake = None
-
-
-    def plot(self, ax=None, save_as=None,
+    @handle_errors
+    def plot(self, ax=None,
+             save_as=None,
              resample=True,
              figsize=(4, 4),
              fontsize=12,
@@ -277,6 +248,10 @@ class DensityEstimator:
              show_histogram=True,
              histogram_color='orange',
              histogram_alpha=1,
+             show_maxent=False,
+             maxent_color='maroon',
+             maxent_linewidth=1,
+             maxent_alpha=1,
              backend='TkAgg'):
         """
         Plot the MAP density, the posterior sampled densities, and the
@@ -294,7 +269,7 @@ class DensityEstimator:
             extension.
 
         resample: (bool)
-            If true, sampled densities will be ploted only after importance
+            If True, sampled densities will be ploted only after importance
             resampling.
 
         figsize: ([float, float])
@@ -342,13 +317,22 @@ class DensityEstimator:
             Sampled density opactity (between 0 and 1).
 
         show_histogram: (bool)
-            Whether tho show the (normalized) data histogram.
+            Whether to show the (normalized) data histogram.
 
         histogram_color: (color spec)
             Face color of the data histogram.
 
         histogram_alpha: (float)
             Data histogram opacity (between 0 and 1).
+
+        show_maxent: (bool)
+            Whether to show the MaxEnt density estimate.
+
+        maxent_color: (color spect)
+            Line color of the MaxEnt density estimate.
+
+        maxent_alpha: (float)
+            MaxEnt opacity (between 0 and 1).
 
         backend: (str)
             Backend specification to send to sw.enable_graphics().
@@ -381,6 +365,14 @@ class DensityEstimator:
                    width=self.grid_spacing,
                    color=histogram_color,
                    alpha=histogram_alpha)
+
+        # Plot maxent
+        if show_maxent:
+            ax.plot(self.grid,
+                    self.maxent,
+                    color=maxent_color,
+                    linewidth=maxent_linewidth,
+                    alpha=maxent_alpha)
 
         # Set number of posterior samples to plot
         if num_posterior_samples is None:
@@ -428,6 +420,8 @@ class DensityEstimator:
         if show_now:
             plt.show()
 
+
+    @handle_errors
     def evaluate(self, xs):
         """
         Evaluate the optimal (i.e. MAP) density at the supplied value(s) of xs.
@@ -444,9 +438,29 @@ class DensityEstimator:
         A float or numpy array (the same size as xs) representing the
         values of the MAP density at the specified locations.
         """
+
+        # Check input
+        check(isinstance(xs, np.ndarray),
+              'type(xs) = %s; must be np.ndarray.' % type(xs))
+
+        # Cast xs to 1D np.array
+        try:
+            xs = xs.ravel().astype(float)
+        except TypeError:
+            raise ControlledError('Could not cast xs as 1D array of floats.')
+
+        # Make sure xs is not empty
+        check(len(xs) >= 1, 'xs is empty.')
+
+        # Make sure elements of xs are all finite numbers
+        check(all(np.isfinite(xs)),
+              'Not all elements of xs are finite.')
+
+        # Return answer
         return self.density_func.evaluate(xs)
 
 
+    @handle_errors
     def evaluate_samples(self, xs, resample=True):
         """
         Evaluate sampled densities at specified locations.
@@ -472,16 +486,26 @@ class DensityEstimator:
         values in xs, the second to sampled densities.
         """
 
-        # Cast input into 1D numpy array
-        xs = np.array(xs).ravel()
+        # Check resample type
+        check(isinstance(resample, bool),
+              'type(resample) = %s. Must be bool.' % type(resample))
+
+        # Check xs type
+        check(isinstance(xs, np.ndarray),
+              'type(xs) = %s; must be np.ndarray.' % type(xs))
+
+        # Cast xs to 1D np.array
+        try:
+            xs = xs.ravel().astype(float)
+        except TypeError:
+            raise ControlledError('Could not cast xs as 1D array of floats.')
 
         # Make sure xs is not empty
-        check(len(xs) > 0,
-              'len(xs) = %d; must have at least 1 element.' % len(xs))
+        check(len(xs) >= 1, 'xs is empty.')
 
-        # Make sure that the elements of xs are numbers
-        check(isinstance(xs[0], numbers.Real),
-              'xs.dtype = %s is not a number.' % xs.dtype)
+        # Make sure elements of xs are all finite numbers
+        check(all(np.isfinite(xs)),
+              'Not all elements of xs are finite.')
 
         # Make sure that posterior samples were taken
         check(self.num_posterior_samples > 0,
@@ -507,8 +531,9 @@ class DensityEstimator:
 
         return values
 
-
-    def get_stats(self, use_weights=True, show_samples=False):
+    @handle_errors
+    def get_stats(self, use_weights=True,
+                  show_samples=False):
         """
         Computes summary statistics for the estimated density
 
@@ -536,6 +561,13 @@ class DensityEstimator:
             samples. If ``show_samples = True``, results will be shown for
             each sample. A column showing column weights will also be included.
         """
+
+
+        # Check inputs
+        check(isinstance(use_weights, bool),
+              'use_weights = %s; must be True or False.' % use_weights)
+        check(isinstance(show_samples, bool),
+              'show_samples = %s; must be True or False.' % show_samples)
 
         # Define a function for each summary statistic
         def entropy(Q):
@@ -637,7 +669,6 @@ class DensityEstimator:
 
         # Return data frame to user
         return df
-
 
     def _run(self):
         """

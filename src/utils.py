@@ -1,5 +1,6 @@
 import scipy as sp
 import numpy as np
+from functools import wraps
 from numpy.polynomial.legendre import legval, legval2d
 
 # A very small floating point number, used to prevent taking logs of 0
@@ -413,3 +414,37 @@ def enable_graphics(backend='TkAgg'):
         import matplotlib.pyplot as plt
     except:
         raise ControlledError('Could not import matplotlib.')
+
+
+def handle_errors(func):
+    """
+    Decorator function to handle SUFTware errors
+    """
+
+    @wraps(func)
+    def wrapped_func(*args, should_fail=None, **kwargs):
+
+        try:
+            result = func(*args, **kwargs)
+
+            if should_fail is True:
+                print('MISTAKE: Succeeded but should have failed.')
+
+            elif should_fail is False:
+                print('Success, as expected.')
+
+            else:
+                return result
+
+            return
+        except ControlledError as e:
+            if should_fail is True:
+                print('Error, as expected: ', e)
+
+            elif should_fail is False:
+                print('MISTAKE: Failed but should have succeeded: ', e)
+
+            else:
+                print('Error: ', e)
+
+    return wrapped_func
