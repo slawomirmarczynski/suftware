@@ -17,6 +17,10 @@ NUMBER = (int, float, int)
 # This is useful for testing whether something is an array
 ARRAY = (np.ndarray, list)
 
+# Dummy class
+class Dummy():
+    def __init__(self):
+        pass
 
 # Define error handling
 class ControlledError(Exception):
@@ -425,26 +429,58 @@ def handle_errors(func):
     def wrapped_func(*args, should_fail=None, **kwargs):
 
         try:
-            result = func(*args, **kwargs)
 
+            # Execute function
+            result = func(*args, **kwargs)
+            error = False
+
+            # If function didn't raise error, process results
             if should_fail is True:
                 print('MISTAKE: Succeeded but should have failed.')
+                mistake = True
 
             elif should_fail is False:
                 print('Success, as expected.')
+                mistake = False
 
             else:
-                return result
+                mistake = False
 
-            return
         except ControlledError as e:
+            error = True
+
             if should_fail is True:
                 print('Error, as expected: ', e)
+                mistake = False
 
             elif should_fail is False:
                 print('MISTAKE: Failed but should have succeeded: ', e)
+                mistake = True
 
+            # Otherwise, just print an error and don't return anything
             else:
                 print('Error: ', e)
+
+        # If not in debug mode
+        if should_fail is None:
+            if error:
+                return None
+            else:
+                return result
+
+        # Otherwise, if in debug mode
+        else:
+
+            # If this is a constructor, set 'mistake' attribute of self
+            if func.__name__ == '__init__':
+                assert len(args) > 0
+                args[0].mistake = mistake
+                return None
+
+            # Otherwise, create dummy object with mistake attribute
+            else:
+                obj = Dummy()
+                obj.mistake = mistake
+                return obj
 
     return wrapped_func
