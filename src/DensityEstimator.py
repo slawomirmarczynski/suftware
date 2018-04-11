@@ -25,8 +25,9 @@ class DensityEstimator:
 
     parameters
     ----------
-    data: (1D np.array)
+    data: (set, list, or np.array of numbers)
         An array of data from which the probability density will be estimated.
+        Infinite or NaN values will be discarded.
 
     grid: (1D np.array)
         An array of evenly spaced grid points on which the probability density
