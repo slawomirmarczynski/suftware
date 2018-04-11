@@ -12,6 +12,7 @@ Requirements
 * numpy >= 1.10.1
 * scipy >= 1.0.0
 * matplotlib >= 2.0.0
+* pandas >= 0.20.3
 <br/>
 
 * Documentation: "http://suftware.readthedocs.org"
