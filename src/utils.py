@@ -496,10 +496,7 @@ def handle_errors(func):
     def wrapped_func(*args, **kwargs):
 
         # Get should_fail debug flag
-        should_fail = kwargs.get('should_fail', None)
-
-        # Remove from dict if exists
-        kwargs.pop('should_fail', None)
+        should_fail = kwargs.pop('should_fail', None)
 
         try:
 
