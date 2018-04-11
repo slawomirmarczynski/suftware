@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Functional Tests for Suftware
+Functional Tests for SUFTware
 """
 
 # Standard modules
