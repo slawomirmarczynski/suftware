@@ -17,7 +17,7 @@ MAX_NUM_SAMPLES_FOR_Z = 1000
 from src import deft_core
 from src import laplacian
 from src.utils import ControlledError, enable_graphics, check, handle_errors,\
-    clean_numerical_input
+    clean_numerical_input, LISTLIKE
 from src.DensityEvaluator import DensityEvaluator
 
 class DensityEstimator:
@@ -938,30 +938,25 @@ class DensityEstimator:
         """
         data = self.data
 
-        try:
-            # if data is a list or set, cast into numpy array
-            if type(data) == list or type(data) == set:
-                data = np.array(data)
-            # if data already np array, do nothing
-            elif type(data) == np.ndarray:
-                pass
-            # think about whether the following is a good idea
-            elif type(data) != np.ndarray:
-                data = np.array(data)
-            else:
-                raise ControlledError("Error: could not cast data into an np.array")
-        except ControlledError as e:
-            print(e)
-            sys.exit(1)
+        # if data is a list-like, convert to 1D np.array
+        if isinstance(data, LISTLIKE):
+            data = np.array(data).ravel()
+        elif isinstance(data, set):
+            data = np.array(list(data)).ravel()
+        else:
+            raise ControlledError(
+                "Error: could not cast data into an np.array")
 
-        # remove nan's from the np data array
-        data = data[~np.isnan(data)]
-        # remove positive or negative infinite values from the np data array
-        data = data[~np.isinf(data)]
-        # remove complex numbers from data
-        data = data[~np.iscomplex(data)]
-        # make data floats
+        # Check that entries are numbers
+        check(all([isinstance(n, numbers.Real) for n in data]),
+              'not all entries in data are real numbers')
+
+        # Cast as 1D np.array of floats
         data = data.astype(float)
+
+        # Keep only finite numbers
+        data = data[np.isfinite(data)]
+
 
         try:
             if not (len(data) > 0):

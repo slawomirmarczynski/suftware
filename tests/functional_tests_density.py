@@ -46,8 +46,102 @@ def display_global_status():
     print('\033[1m' + "Total tests: passed: ", global_test_success_counter, " Total tests failed: ",
           global_test_fail_counter)
 
+#
+# sw.DensityEstimator.evaluate_samples()
+#
+
+def run_DensityEstimator_evaluate_samples_tests(var_name, fail_list,
+                                                success_list):
+    print("Testing '%s' parameter of " % var_name +
+          "sw.DensityEstimator.evaluate_samples() ...")
+    for x in fail_list:
+        kw = {var_name: x}
+        if 'x' not in kw:
+            kw['x'] = 0
+        test(func=density.evaluate_samples, should_fail=True, **kw)
+
+    for x in success_list:
+        kw = {var_name: x}
+        if 'x' not in kw:
+            kw['x'] = 0
+        test(func=density.evaluate_samples, should_fail=False, **kw)
+
+    display_local_status()
 
 
+def test_DensityEstimator_evaluate_samples():
+    run_DensityEstimator_evaluate_samples_tests(
+        var_name='x',
+        fail_list=[
+            None,
+            '1.0',
+            1+2j,
+            np.nan,
+            np.Inf,
+            {1:1, 2:2}.keys(),
+            {1:1, 2:2}.values()
+        ],
+        success_list=[
+            0,
+            -1,
+            1,
+            1E6,
+            range(10),
+            np.random.randn(10),
+            np.random.randn(3, 3),
+            np.matrix(range(10)),
+            np.matrix(range(10)).T,
+            np.random.randn(2, 2, 2, 2)
+        ]
+    )
+
+    run_DensityEstimator_evaluate_samples_tests(
+        var_name='resample',
+        fail_list=bool_fail_list,
+        success_list=bool_success_list
+    )
+
+#
+# sw.DensityEstimator.evaluate()
+#
+
+def run_DensityEstimator_evaluate_tests(var_name, fail_list, success_list):
+    print("Testing '%s' parameter of sw.DensityEstimator.evaluate() ..." \
+          % var_name)
+    for x in fail_list:
+        kw = {var_name: x}
+        test(func=density.evaluate, should_fail=True, **kw)
+    for x in success_list:
+        kw = {var_name: x}
+        test(func=density.evaluate, should_fail=False, **kw)
+    display_local_status()
+
+
+def test_DensityEstimator_evaluate():
+    run_DensityEstimator_evaluate_tests(
+        var_name='x',
+        fail_list=[
+            None,
+            '1.0',
+            1+2j,
+            np.nan,
+            np.Inf,
+            {1:1, 2:2}.keys(),
+            {1:1, 2:2}.values()
+        ],
+        success_list=[
+            0,
+            -1,
+            1,
+            1E6,
+            range(10),
+            np.random.randn(10),
+            np.random.randn(3, 3),
+            np.matrix(range(10)),
+            np.matrix(range(10)).T,
+            np.random.randn(2, 2, 2, 2)
+        ]
+    )
 
 #
 # sw.DensityEstimator.get_stats()
@@ -86,11 +180,37 @@ def run_DensityEstimator_tests(var_name, fail_list, success_list):
     print("Testing '%s' parameter of sw.DensityEstimator..." % var_name)
     for x in fail_list:
         kw = {var_name:x}
-        test(func=sw.DensityEstimator, data=data, should_fail=True, **kw)
+        if 'data' not in kw:
+            kw['data'] = data
+        test(func=sw.DensityEstimator, should_fail=True, **kw)
     for x in success_list:
         kw = {var_name:x}
-        test(func=sw.DensityEstimator, data=data, should_fail=False, **kw)
+        if 'data' not in kw:
+            kw['data'] = data
+        test(func=sw.DensityEstimator, should_fail=False, **kw)
     display_local_status()
+
+
+def test_DensityEstimator_data():
+    run_DensityEstimator_tests(
+        var_name='data',
+        fail_list=[
+            None,
+            5,
+            [str(x) for x in data],
+            [1]*5 + [2]*10,
+            data.astype(complex)
+        ],
+        success_list=[
+            data,
+            np.random.randn(10),
+            np.random.randn(int(1E6)),
+            range(100),
+            list(data),
+            list(data) + [np.nan, np.Inf, -np.Inf],
+            set(data)
+        ]
+    )
 
 
 def test_DensityEstimator_grid():
@@ -264,7 +384,8 @@ def test_DensityEstimator_max_log_evidence_ratio_drop():
 # Run functional tests
 if __name__ == '__main__':
 
-    # test DensityEstimator constructor
+    # DensityEstimator constructor
+    test_DensityEstimator_data()
     test_DensityEstimator_grid()
     test_DensityEstimator_grid_spacing()
     test_DensityEstimator_bounding_box()
@@ -281,7 +402,10 @@ if __name__ == '__main__':
     test_DensityEstimator_sample_only_at_l_star()
     test_DensityEstimator_max_log_evidence_ratio_drop()
 
-    # test DensityEstimator methods
+    # DensityEstimator methods
     test_DensityEstimator_get_stats()
+    test_DensityEstimator_evaluate()
+    test_DensityEstimator_evaluate_samples()
 
+    # Print results
     display_global_status()
