@@ -423,14 +423,14 @@ class DensityEstimator:
 
 
     @handle_errors
-    def evaluate(self, xs):
+    def evaluate(self, x):
         """
-        Evaluate the optimal (i.e. MAP) density at the supplied value(s) of xs.
+        Evaluate the optimal (i.e. MAP) density at the supplied value(s) of x.
 
         parameters
         ----------
 
-        xs: (number, list of numbers, or np.ndarray/np.matrix of numbers)
+        x: (number or list-like collection of numbers)
             The locations in the data domain at which to evaluate the MAP
             density.
 
@@ -441,44 +441,44 @@ class DensityEstimator:
         the specified locations.
         """
 
-        # If xs is a number, record this fact and transform to np.array
+        # If x is a number, record this fact and transform to np.array
         is_number = False
-        if isinstance(xs, numbers.Real):
+        if isinstance(x, numbers.Real):
 
-            # Record that xs is a single number
+            # Record that x is a single number
             is_number = True
 
             # Cast as 1D np.array of floats
-            xs = np.array([xs]).astype(float)
+            x = np.array([x]).astype(float)
 
         # Otherwise, if list-like, cast as 1D np.ndarray
-        elif isinstance(xs, LISTLIKE):
+        elif isinstance(x, LISTLIKE):
 
             # Cast as np.array
-            xs = np.array(xs).ravel()
+            x = np.array(x).ravel()
 
-            # Check if xs has any content
-            check(len(xs) > 0, 'xs is empty.')
+            # Check if x has any content
+            check(len(x) > 0, 'x is empty.')
 
             # Check that entries are numbers
-            check(all([isinstance(x, numbers.Real) for x in xs]),
-                  'not all entries in xs are real numbers')
+            check(all([isinstance(n, numbers.Real) for n in x]),
+                  'not all entries in x are real numbers')
 
             # Cast as 1D np.array of floats
-            xs = xs.astype(float)
+            x = x.astype(float)
 
         # Otherwise, raise error
         else:
             raise ControlledError(
-                'xs is not a number or list-like, i.e., one of %s.'
+                'x is not a number or list-like, i.e., one of %s.'
                 % str(LISTLIKE))
 
-        # Make sure elements of xs are all finite
-        check(all(np.isfinite(xs)),
-              'Not all elements of xs are finite.')
+        # Make sure elements of x are all finite
+        check(all(np.isfinite(x)),
+              'Not all elements of x are finite.')
 
         # Compute distribution values
-        values = self.density_func.evaluate(xs)
+        values = self.density_func.evaluate(x)
 
         # If input is a single number, return a single number
         if is_number:
@@ -489,15 +489,16 @@ class DensityEstimator:
 
 
     @handle_errors
-    def evaluate_samples(self, xs, resample=True):
+    def evaluate_samples(self, x, resample=True):
         """
         Evaluate sampled densities at specified locations.
 
         parameters
         ----------
 
-        xs: (1D np.array)
-            Locations at which to evaluate sampled densities.
+        x: (number or list-like collection of numbers)
+            The locations in the data domain at which to evaluate sampled
+            density.
 
         resample: (bool)
             Whether to use importance resampling, i.e., should the values
@@ -509,31 +510,47 @@ class DensityEstimator:
         returns
         -------
 
-        A 2D numpy array representing the values of the posterior sampled
-        densities at the specified locations. The first index corresponds to
-        values in xs, the second to sampled densities.
+        A 1D np.array (if x is a number) or a 2D np.array (if x is list-like),
+        representing the values of the posterior sampled densities at the
+        specified locations. The first index corresponds to values in x, the
+        second to sampled densities.
         """
+
+        # If x is a number, record this fact and transform to np.array
+        is_number = False
+        if isinstance(x, numbers.Real):
+
+            # Record that x is a single number
+            is_number = True
+
+            # Cast as 1D np.array of floats
+            x = np.array([x]).astype(float)
+
+        # Otherwise, if list-like, cast as 1D np.ndarray
+        elif isinstance(x, LISTLIKE):
+
+            # Cast as np.array
+            x = np.array(x).ravel()
+
+            # Check if x has any content
+            check(len(x) > 0, 'x is empty.')
+
+            # Check that entries are numbers
+            check(all([isinstance(n, numbers.Real) for n in x]),
+                  'not all entries in x are real numbers')
+
+            # Cast as 1D np.array of floats
+            x = x.astype(float)
+
+        # Otherwise, raise error
+        else:
+            raise ControlledError(
+                'x is not a number or list-like, i.e., one of %s.'
+                % str(LISTLIKE))
 
         # Check resample type
         check(isinstance(resample, bool),
               'type(resample) = %s. Must be bool.' % type(resample))
-
-        # Check xs type
-        check(isinstance(xs, np.ndarray),
-              'type(xs) = %s; must be np.ndarray.' % type(xs))
-
-        # Cast xs to 1D np.array
-        try:
-            xs = xs.ravel().astype(float)
-        except TypeError:
-            raise ControlledError('Could not cast xs as 1D array of floats.')
-
-        # Make sure xs is not empty
-        check(len(xs) >= 1, 'xs is empty.')
-
-        # Make sure elements of xs are all finite numbers
-        check(all(np.isfinite(xs)),
-              'Not all elements of xs are finite.')
 
         # Make sure that posterior samples were taken
         check(self.num_posterior_samples > 0,
@@ -542,8 +559,8 @@ class DensityEstimator:
 
         assert(len(self.sample_density_funcs) == self.num_posterior_samples)
 
-        # Evaluate all sampled densities at xs
-        values = np.array([d.evaluate(xs) for d
+        # Evaluate all sampled densities at x
+        values = np.array([d.evaluate(x) for d
                            in self.sample_density_funcs]).T
 
         # If requested, resample columns of values array based on
@@ -556,6 +573,10 @@ class DensityEstimator:
                                         replace=True,
                                         p=probs)
             values = values[:, new_cols]
+
+        # If number was passed as input, return 1D np.array
+        if is_number:
+            values = values.ravel()
 
         return values
 
