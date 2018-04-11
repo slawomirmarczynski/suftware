@@ -1,5 +1,6 @@
 import scipy as sp
 import numpy as np
+import sys
 from functools import wraps
 from numpy.polynomial.legendre import legval, legval2d
 
@@ -463,8 +464,12 @@ def handle_errors(func):
 
         # If not in debug mode
         if should_fail is None:
+
+            # If error, exit
             if error:
-                return None
+                sys.exit(1)
+
+            # Otherwise, just return normal result
             else:
                 return result
 

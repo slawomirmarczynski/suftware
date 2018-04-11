@@ -46,20 +46,11 @@ def display_global_status():
     print('\033[1m' + "Total tests: passed: ", global_test_success_counter, " Total tests failed: ",
           global_test_fail_counter)
 
-def run_DensityEstimator_tests(var_name, fail_list, success_list):
-    print("Testing '%s' parameter of sw.DensityEstimator..." % var_name)
-    for x in fail_list:
-        kw = {var_name:x}
-        test(func=sw.DensityEstimator, data=data, should_fail=True, **kw)
-    for x in success_list:
-        kw = {var_name:x}
-        test(func=sw.DensityEstimator, data=data, should_fail=False, **kw)
-    display_local_status()
 
 
 
 #
-# sw.DensityEstimator.get_stats
+# sw.DensityEstimator.get_stats()
 #
 
 def run_DensityEstimator_get_stats_tests(var_name, fail_list, success_list):
@@ -88,7 +79,7 @@ def test_DensityEstimator_get_stats():
     )
 
 #
-# sw.DensityEstimator constructor
+# sw.DensityEstimator()
 #
 
 def run_DensityEstimator_tests(var_name, fail_list, success_list):

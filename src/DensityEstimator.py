@@ -12,6 +12,7 @@ MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
 MAX_NUM_SAMPLES_FOR_Z = 1000
+LISTLIKE = (list, np.ndarray, np.matrix, range)
 
 # Import deft-related code
 from src import deft_core
@@ -429,35 +430,62 @@ class DensityEstimator:
         parameters
         ----------
 
-        xs: (np.array)
-            A numpy array containing the locations in the data domain.
+        xs: (number, list of numbers, or np.ndarray/np.matrix of numbers)
+            The locations in the data domain at which to evaluate the MAP
+            density.
 
         returns
         -------
 
-        A float or numpy array (the same size as xs) representing the
-        values of the MAP density at the specified locations.
+        A float or 1D np.array representing the values of the MAP density at
+        the specified locations.
         """
 
-        # Check input
-        check(isinstance(xs, np.ndarray),
-              'type(xs) = %s; must be np.ndarray.' % type(xs))
+        # If xs is a number, record this fact and transform to np.array
+        is_number = False
+        if isinstance(xs, numbers.Real):
 
-        # Cast xs to 1D np.array
-        try:
-            xs = xs.ravel().astype(float)
-        except TypeError:
-            raise ControlledError('Could not cast xs as 1D array of floats.')
+            # Record that xs is a single number
+            is_number = True
 
-        # Make sure xs is not empty
-        check(len(xs) >= 1, 'xs is empty.')
+            # Cast as 1D np.array of floats
+            xs = np.array([xs]).astype(float)
 
-        # Make sure elements of xs are all finite numbers
+        # Otherwise, if list-like, cast as 1D np.ndarray
+        elif isinstance(xs, LISTLIKE):
+
+            # Cast as np.array
+            xs = np.array(xs).ravel()
+
+            # Check if xs has any content
+            check(len(xs) > 0, 'xs is empty.')
+
+            # Check that entries are numbers
+            check(all([isinstance(x, numbers.Real) for x in xs]),
+                  'not all entries in xs are real numbers')
+
+            # Cast as 1D np.array of floats
+            xs = xs.astype(float)
+
+        # Otherwise, raise error
+        else:
+            raise ControlledError(
+                'xs is not a number or list-like, i.e., one of %s.'
+                % str(LISTLIKE))
+
+        # Make sure elements of xs are all finite
         check(all(np.isfinite(xs)),
               'Not all elements of xs are finite.')
 
+        # Compute distribution values
+        values = self.density_func.evaluate(xs)
+
+        # If input is a single number, return a single number
+        if is_number:
+            values = values[0]
+
         # Return answer
-        return self.density_func.evaluate(xs)
+        return values
 
 
     @handle_errors
