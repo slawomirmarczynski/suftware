@@ -15,42 +15,50 @@ import suftware as sw
 np.random.seed(0)
 data = np.random.randn(100)
 
-# simple test
+# Generate density so methods can be tested
 density = sw.DensityEstimator(data)
-global_mistake = False
-global_test_success_counter = 0
-global_test_fail_counter = 0
+
+global_success_counter = 0
+global_fail_counter = 0
 
 # Common success and fail lists
 bool_fail_list = [0, -1, 'True', 'x', 1]
 bool_success_list = [False, True]
 
-# helper method for functional test
-def test(func, *args, **kw):
-    functional_test = func(*args, **kw)
-    global global_mistake
-    global_mistake = functional_test.mistake
-    if global_mistake is True:
-        global global_test_fail_counter
-        global_test_fail_counter += 1
-    else:
-        global global_test_success_counter
-        global_test_success_counter += 1
-
-# helper method for displaying pass/fail status
-def display_local_status():
-    print("Tests: passed: ", global_test_success_counter, ", tests failed: ", global_test_fail_counter,"\n")
-
-
-def display_global_status():
-    print('\033[1m' + "Total tests: passed: ", global_test_success_counter, " Total tests failed: ",
-          global_test_fail_counter)
-
-
-def test_parameter(func, var_name, fail_list, success_list, **kwargs):
+# helper method for functional test_for_mistake
+def test_for_mistake(func, *args, **kw):
     """
-    Tests successful execution of specified function for given values of a
-    variable name.
+    Run a function with the specified parameters and register whether
+    success or failure was a mistake
+
+    parameters
+    ----------
+
+    func: (function or class constructor)
+        An executable function to which *args and **kwargs are passed.
+
+    return
+    ------
+
+    None.
+    """
+
+    # Run function
+    obj = func(*args, **kw)
+
+    # Increment appropriate counter
+    if obj.mistake:
+        global global_fail_counter
+        global_fail_counter += 1
+    else:
+        global global_success_counter
+        global_success_counter += 1
+
+
+def test_parameter_values(func, var_name, fail_list, success_list, **kwargs):
+    """
+    Tests predictable success & failure of different values for a
+    specified parameter when passed to a specified function
 
     parameters
     ----------
@@ -59,7 +67,7 @@ def test_parameter(func, var_name, fail_list, success_list, **kwargs):
         Executable to test. Can be function or class constructor.
 
     var_name: (str)
-        Name of variable to test
+        Name of variable to test.
 
     fail_list: (list)
         List of values for specified variable that should fail
@@ -83,14 +91,15 @@ def test_parameter(func, var_name, fail_list, success_list, **kwargs):
     # Test parameter values that should fail
     for x in fail_list:
         kwargs[var_name] = x
-        test(func=func, should_fail=True, **kwargs)
+        test_for_mistake(func=func, should_fail=True, **kwargs)
 
     # Test parameter values that should succeed
     for x in success_list:
         kwargs[var_name] = x
-        test(func=func, should_fail=False, **kwargs)
+        test_for_mistake(func=func, should_fail=False, **kwargs)
 
-    display_local_status()
+    print("Tests passed: %d. Tests failed: %d.\n" %
+          (global_success_counter, global_fail_counter))
 
 
 
@@ -100,7 +109,7 @@ def test_DensityEstimator_evaluate_samples():
     """
 
     # x
-    test_parameter(
+    test_parameter_values(
         func=density.evaluate_samples,
         var_name='x',
         fail_list=[
@@ -127,7 +136,7 @@ def test_DensityEstimator_evaluate_samples():
     )
 
     # resample
-    test_parameter(
+    test_parameter_values(
         func=density.evaluate_samples,
         var_name='resample',
         fail_list=bool_fail_list,
@@ -142,7 +151,7 @@ def test_DensityEstimator_evaluate():
     """
 
     # x
-    test_parameter(
+    test_parameter_values(
         func=density.evaluate,
         var_name='x',
         fail_list=[
@@ -175,7 +184,7 @@ def test_DensityEstimator_get_stats():
     """
 
     # use_weights
-    test_parameter(
+    test_parameter_values(
         func=density.get_stats,
         var_name='use_weights',
         fail_list=bool_fail_list,
@@ -183,7 +192,7 @@ def test_DensityEstimator_get_stats():
     )
 
     # show_samples
-    test_parameter(
+    test_parameter_values(
         func=density.get_stats,
         var_name='show_samples',
         fail_list=bool_fail_list,
@@ -198,7 +207,7 @@ def test_DensityEstimator___init__():
     """
 
     # data
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         var_name='data',
         fail_list=[
@@ -220,7 +229,7 @@ def test_DensityEstimator___init__():
     )
 
     # grid
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='grid',
@@ -248,7 +257,7 @@ def test_DensityEstimator___init__():
     )
 
     # grid_spacing
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='grid_spacing',
@@ -270,7 +279,7 @@ def test_DensityEstimator___init__():
     )
 
     # bounding_box
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='bounding_box',
@@ -295,7 +304,7 @@ def test_DensityEstimator___init__():
     )
 
     # num_grid_points
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='num_grid_points',
@@ -304,7 +313,7 @@ def test_DensityEstimator___init__():
     )
 
     # alpha
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='alpha',
@@ -313,7 +322,7 @@ def test_DensityEstimator___init__():
     )
 
     # periodic
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='periodic',
@@ -322,7 +331,7 @@ def test_DensityEstimator___init__():
     )
 
     # evaluation_method_for_Z
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='evaluation_method_for_Z',
@@ -331,7 +340,7 @@ def test_DensityEstimator___init__():
     )
 
     # num_samples_for_Z
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='num_samples_for_Z',
@@ -340,7 +349,7 @@ def test_DensityEstimator___init__():
     )
 
     # tolerance
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='tolerance',
@@ -349,7 +358,7 @@ def test_DensityEstimator___init__():
     )
 
     # resolution
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='resolution',
@@ -358,7 +367,7 @@ def test_DensityEstimator___init__():
     )
 
     # seed
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='seed',
@@ -367,7 +376,7 @@ def test_DensityEstimator___init__():
     )
 
     # print_t
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='print_t',
@@ -376,7 +385,7 @@ def test_DensityEstimator___init__():
     )
 
     # num_posterior_samples
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='num_posterior_samples',
@@ -385,7 +394,7 @@ def test_DensityEstimator___init__():
     )
 
     # sample_only_at_l_star
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='sample_only_at_l_star',
@@ -394,7 +403,7 @@ def test_DensityEstimator___init__():
     )
 
     # max_log_evidence_ratio_drop
-    test_parameter(
+    test_parameter_values(
         func=sw.DensityEstimator,
         data=data,
         var_name='max_log_evidence_ratio_drop',
@@ -413,4 +422,5 @@ if __name__ == '__main__':
     test_DensityEstimator_evaluate_samples()
 
     # Print results
-    display_global_status()
+    print("Total tests passed: %d. Total tests failed: %d.\n" %
+          (global_success_counter, global_fail_counter))
