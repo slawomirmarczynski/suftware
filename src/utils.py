@@ -1,6 +1,7 @@
 import scipy as sp
 import numpy as np
 import sys
+import numbers
 from functools import wraps
 from numpy.polynomial.legendre import legval, legval2d
 
@@ -10,6 +11,7 @@ TINY_FLOAT32 = sp.finfo(sp.float32).tiny
 PHI_MIN = -500 
 PHI_MAX = 500
 PHI_STD_REG = 100.0
+LISTLIKE = (list, np.ndarray, np.matrix, range)
 
 # This is useful for testing whether something is a number
 #NUMBER = (int, float, long)
@@ -367,6 +369,69 @@ def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0,1.0]):
     # Return normalized basis
     return basis
 
+def clean_numerical_input(x):
+    """
+    Returns a 1D np.array containing the numerical values in x or the
+    value of x itself. Also returns well as a flag indicating whether x was
+    passed as a single number or a list-like array.
+
+    parameters
+    ----------
+
+    x: (number or list-like collection of numbers)
+        The locations in the data domain at which to evaluate sampled
+        density.
+
+    returns
+    -------
+
+    x_arr: (1D np.array)
+        Array containing numerical values of x.
+
+    is_number: (bool)
+        Flag indicating whether x was passed as a single number.
+
+    """
+
+    # If x is a number, record this fact and transform to np.array
+    is_number = False
+    if isinstance(x, numbers.Real):
+
+        # Record that x is a single number
+        is_number = True
+
+        # Cast as 1D np.array of floats
+        x = np.array([x]).astype(float)
+
+    # Otherwise, if list-like, cast as 1D np.ndarray
+    elif isinstance(x, LISTLIKE):
+
+        # Cast as np.array
+        x = np.array(x).ravel()
+
+        # Check if x has any content
+        check(len(x) > 0, 'x is empty.')
+
+        # Check that entries are numbers
+        check(all([isinstance(n, numbers.Real) for n in x]),
+              'not all entries in x are real numbers')
+
+        # Cast as 1D np.array of floats
+        x = x.astype(float)
+
+    # Otherwise, raise error
+    else:
+        raise ControlledError(
+            'x is not a number or list-like, i.e., one of %s.'
+            % str(LISTLIKE))
+
+    # Make sure elements of x are all finite
+    check(all(np.isfinite(x)),
+          'Not all elements of x are finite.')
+
+    return x, is_number
+
+
 def check(condition, message):
     '''
     Checks a condition; raises a ControlledError with message if condition fails.
@@ -376,6 +441,7 @@ def check(condition, message):
     '''
     if not condition:
         raise ControlledError(message)
+
 
 def enable_graphics(backend='TkAgg'):
     """

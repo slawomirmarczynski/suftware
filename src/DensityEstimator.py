@@ -12,12 +12,12 @@ MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
 MAX_NUM_SAMPLES_FOR_Z = 1000
-LISTLIKE = (list, np.ndarray, np.matrix, range)
 
 # Import deft-related code
 from src import deft_core
 from src import laplacian
-from src.utils import ControlledError, enable_graphics, check, handle_errors
+from src.utils import ControlledError, enable_graphics, check, handle_errors,\
+    clean_numerical_input
 from src.DensityEvaluator import DensityEvaluator
 
 class DensityEstimator:
@@ -441,44 +441,11 @@ class DensityEstimator:
         the specified locations.
         """
 
-        # If x is a number, record this fact and transform to np.array
-        is_number = False
-        if isinstance(x, numbers.Real):
-
-            # Record that x is a single number
-            is_number = True
-
-            # Cast as 1D np.array of floats
-            x = np.array([x]).astype(float)
-
-        # Otherwise, if list-like, cast as 1D np.ndarray
-        elif isinstance(x, LISTLIKE):
-
-            # Cast as np.array
-            x = np.array(x).ravel()
-
-            # Check if x has any content
-            check(len(x) > 0, 'x is empty.')
-
-            # Check that entries are numbers
-            check(all([isinstance(n, numbers.Real) for n in x]),
-                  'not all entries in x are real numbers')
-
-            # Cast as 1D np.array of floats
-            x = x.astype(float)
-
-        # Otherwise, raise error
-        else:
-            raise ControlledError(
-                'x is not a number or list-like, i.e., one of %s.'
-                % str(LISTLIKE))
-
-        # Make sure elements of x are all finite
-        check(all(np.isfinite(x)),
-              'Not all elements of x are finite.')
+        # Clean input
+        x_arr, is_number = clean_numerical_input(x)
 
         # Compute distribution values
-        values = self.density_func.evaluate(x)
+        values = self.density_func.evaluate(x_arr)
 
         # If input is a single number, return a single number
         if is_number:
@@ -516,37 +483,8 @@ class DensityEstimator:
         second to sampled densities.
         """
 
-        # If x is a number, record this fact and transform to np.array
-        is_number = False
-        if isinstance(x, numbers.Real):
-
-            # Record that x is a single number
-            is_number = True
-
-            # Cast as 1D np.array of floats
-            x = np.array([x]).astype(float)
-
-        # Otherwise, if list-like, cast as 1D np.ndarray
-        elif isinstance(x, LISTLIKE):
-
-            # Cast as np.array
-            x = np.array(x).ravel()
-
-            # Check if x has any content
-            check(len(x) > 0, 'x is empty.')
-
-            # Check that entries are numbers
-            check(all([isinstance(n, numbers.Real) for n in x]),
-                  'not all entries in x are real numbers')
-
-            # Cast as 1D np.array of floats
-            x = x.astype(float)
-
-        # Otherwise, raise error
-        else:
-            raise ControlledError(
-                'x is not a number or list-like, i.e., one of %s.'
-                % str(LISTLIKE))
+        # Clean input
+        x_arr, is_number = clean_numerical_input(x)
 
         # Check resample type
         check(isinstance(resample, bool),
@@ -560,7 +498,7 @@ class DensityEstimator:
         assert(len(self.sample_density_funcs) == self.num_posterior_samples)
 
         # Evaluate all sampled densities at x
-        values = np.array([d.evaluate(x) for d
+        values = np.array([d.evaluate(x_arr) for d
                            in self.sample_density_funcs]).T
 
         # If requested, resample columns of values array based on
