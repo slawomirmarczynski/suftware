@@ -6,6 +6,7 @@ Functional Tests for SUFTware
 # Standard modules
 import numpy as np
 import sys
+import time
 
 # Import suftware 
 sys.path.append('../')
@@ -42,20 +43,28 @@ def test_for_mistake(func, *args, **kw):
 
     None.
     """
+    global global_fail_counter
+    global global_success_counter
+
+    # print test number
+    test_num = global_fail_counter + global_success_counter
+    print('Test # %d: ' % test_num, end='')
 
     # Run function
     obj = func(*args, **kw)
 
     # Increment appropriate counter
     if obj.mistake:
-        global global_fail_counter
         global_fail_counter += 1
     else:
-        global global_success_counter
         global_success_counter += 1
 
 
-def test_parameter_values(func, var_name, fail_list, success_list, **kwargs):
+def test_parameter_values(func,
+                          var_name=None,
+                          fail_list=[],
+                          success_list=[],
+                          **kwargs):
     """
     Tests predictable success & failure of different values for a
     specified parameter when passed to a specified function
@@ -67,7 +76,8 @@ def test_parameter_values(func, var_name, fail_list, success_list, **kwargs):
         Executable to test. Can be function or class constructor.
 
     var_name: (str)
-        Name of variable to test.
+        Name of variable to test. If not specified, function is
+        tested for success in the absence of any passed parameters.
 
     fail_list: (list)
         List of values for specified variable that should fail
@@ -85,22 +95,136 @@ def test_parameter_values(func, var_name, fail_list, success_list, **kwargs):
 
     """
 
-    # User feedback
-    print("Testing %s() parameter %s ..." % (func.__name__, var_name))
+    # If variable name is specified, test each value in fail_list
+    # and success_list
+    if var_name is not None:
 
-    # Test parameter values that should fail
-    for x in fail_list:
-        kwargs[var_name] = x
-        test_for_mistake(func=func, should_fail=True, **kwargs)
+        # User feedback
+        print("Testing %s() parameter %s ..." % (func.__name__, var_name))
 
-    # Test parameter values that should succeed
-    for x in success_list:
-        kwargs[var_name] = x
+        # Test parameter values that should fail
+        for x in fail_list:
+            kwargs[var_name] = x
+            test_for_mistake(func=func, should_fail=True, **kwargs)
+
+        # Test parameter values that should succeed
+        for x in success_list:
+            kwargs[var_name] = x
+            test_for_mistake(func=func, should_fail=False, **kwargs)
+
+        print("Tests passed: %d. Tests failed: %d.\n" %
+              (global_success_counter, global_fail_counter))
+
+    # Otherwise, make sure function without parameters succeeds
+    else:
+
+        # User feedback
+        print("Testing %s() without parameters." % func.__name__)
+
+        # Test function
         test_for_mistake(func=func, should_fail=False, **kwargs)
 
-    print("Tests passed: %d. Tests failed: %d.\n" %
-          (global_success_counter, global_fail_counter))
 
+def test_SimulatedDataset___init__():
+    """
+    Test SimulatedDataset()
+    """
+
+    # No parameters
+    test_parameter_values(func=sw.SimulatedDataset)
+
+    # dataset
+    test_parameter_values(
+        func=sw.SimulatedDataset,
+        var_name='distribution',
+        fail_list=[
+            None,
+            1,
+            [],
+            'bogus_distribution'
+        ],
+        success_list=sw.SimulatedDataset.list()
+    )
+
+    # num_data_points
+    test_parameter_values(
+        func=sw.SimulatedDataset,
+        var_name='num_data_points',
+        fail_list=[
+            None,
+            -1,
+            'nonsense',
+            0,
+            100.0,
+            1E6,
+            int(1E6)+1,
+        ],
+        success_list=[
+            1,
+            100,
+            int(1E6),
+        ]
+    )
+
+    # seed
+    test_parameter_values(
+        func=sw.SimulatedDataset,
+        var_name='seed',
+        fail_list=[
+            -1,
+            'nonsense',
+            100.0,
+            2**32,
+        ],
+        success_list=[
+            None,
+            0,
+            1,
+            1000,
+            2**32-1
+        ]
+    )
+
+def test_SimulatedDataset_list():
+    """
+    Test SimulatedDataset.list()
+    """
+
+    # No parameters
+    test_parameter_values(func=sw.SimulatedDataset.list)
+
+
+
+
+def test_ExampleDataset___init__():
+    """
+    Test ExampleDataset()
+    """
+
+    # No parameters
+    test_parameter_values(func=sw.ExampleDataset)
+
+    # dataset
+    test_parameter_values(
+        func=sw.ExampleDataset,
+        var_name='dataset',
+        fail_list=[
+            None,
+            1,
+            [],
+            'nonexistent_dataset',
+            'who.',
+        ],
+        success_list=sw.ExampleDataset.list()
+    )
+
+
+def test_ExampleDensity_list():
+    """
+    Test ExampleDensity.list()
+    """
+    # No parameters
+    test_parameter_values(func=sw.ExampleDataset.list)
 
 
 def test_DensityEstimator_evaluate_samples():
@@ -415,12 +539,29 @@ def test_DensityEstimator___init__():
 # Run functional tests
 if __name__ == '__main__':
 
-    # # DensityEstimator methods
+    # Start timer
+    start_time = time.time()
+
+    # DensityEstimator methods
     test_DensityEstimator___init__()
     test_DensityEstimator_get_stats()
     test_DensityEstimator_evaluate()
     test_DensityEstimator_evaluate_samples()
 
+    # ExampleDensity methods
+    test_ExampleDataset___init__()
+    test_ExampleDensity_list()
+
+    # SimulateDensity methods
+    test_SimulatedDataset___init__()
+    test_SimulatedDataset_list()
+
+    # Compute time
+    t = time.time() - start_time
+    t_min = int(t/60)
+    t_sec = int(t)%60
+
     # Print results
+    print("\nFunctional tests took %d min %d sec." % (t_min, t_sec))
     print("Total tests passed: %d. Total tests failed: %d.\n" %
           (global_success_counter, global_fail_counter))

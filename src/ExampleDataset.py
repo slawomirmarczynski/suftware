@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import numpy as np
-from src.utils import ControlledError
+from src.utils import ControlledError, check, handle_errors
 import os
 
 # Load directory of file
@@ -15,42 +15,40 @@ class ExampleDataset:
     """
     Provides an interface to example data provided with the SUFTware package.
 
-    Parameters
+    parameters
     ----------
 
     dataset: (str)
         Name of dataset to load. Run sw.ExampleDataset.list() to see
         which datasets are available.
 
+    attributes
+    ----------
+
+    data: (np.array)
+        An array containing sampled data
+
+    details: (np.array, optional)
+        Optional return value containing meta information
+
+
     """
 
-
+    # Constructor
+    @handle_errors
     def __init__(self, dataset='old_faithful_eruption_times'):
-        """
-        Returns data from a predefined dataset
 
-        Args:
-            - dataset (str): Name of the dataset to load
+        # Check that dataset is valid
+        check(dataset in self.list(),
+              'Distribution "%s" not recognized.' % dataset)
 
-        Returns:
-            - data (numpy.array): An array containing sampled data
-            - details (np.array, optional): Optional return value containing
-                meta information
-        """
+        # Set file dataset
+        file_name = '%s/%s.txt' % (data_dir, dataset)
 
         # Load data
-        if dataset in VALID_DATASETS:
-            # Set file dataset
-            file_name = '%s/%s.txt'%(data_dir, dataset)
+        self._load_dataset(file_name)
 
-            # Load data
-            self._load_dataset(file_name)
-
-        else:
-            raise ControlledError('Distribution type "%s" not recognized.' %
-                                  dataset)
-
-
+    @handle_errors
     def _load_dataset(self, file_name):
         # Load data
         self.data = np.genfromtxt(file_name)
@@ -70,6 +68,7 @@ class ExampleDataset:
                                 (key, value))
 
     @staticmethod
+    @handle_errors
     def list():
         """
         Return list of available datasets.
