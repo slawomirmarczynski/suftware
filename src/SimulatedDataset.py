@@ -4,7 +4,8 @@ import math
 import scipy as sp
 import scipy.stats as stats
 import sys
-from src.utils import ControlledError
+import numbers
+from src.utils import ControlledError, handle_errors, check
 
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
@@ -35,7 +36,7 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
     assert len(weights)==len(mus)==len(sigmas)
 
     # Get xs to sample
-    xs = np.linspace(bbox[0],bbox[1],1E4)
+    xs = np.linspace(bbox[0], bbox[1], 1E4)
 
     # Build pdf strings
     pdf_py = '0'
@@ -60,7 +61,7 @@ class SimulatedDataset:
     """
     Simulates data from a variety of distributions.
 
-    Parameters
+    parameters
     ----------
 
     distribution: (str)
@@ -73,20 +74,62 @@ class SimulatedDataset:
 
     seed: (int)
         Seed passed to random number generator.
+
+    attributes
+    ----------
+
+    data: (np.array)
+        The simulated dataset
+
+    bounding_box: ([float, float])
+        Bounding box within which data is generated.
+
+    distribution: (str)
+        Name of the simualted distribution
+
+    pdf_js: (str)
+        Formula for probability density in JavaScript
+
+    pdf_py: (str)
+        Formula for probaiblity density in Python.
+
+    periodic: (bool)
+        Whether the simulated distribution is periodic within bounding_box.
+
     """
 
+    @handle_errors
     def __init__(self,
                  distribution='gaussian',
                  num_data_points=100,
                  seed=None):
 
-        periodic = False
+        # Check that distribution is valid
+        check(distribution in self.list(),
+              'distribution = %s is not valid' % distribution)
 
-        # If seed is specified, set it
-        if not (seed is None):
+        # Check num_data_points is integral
+        check(isinstance(num_data_points, numbers.Integral),
+              'num_data_points = %s is not an integer.' % num_data_points)
+
+        # Cast num_data_points as an integer
+        num_data_points = int(num_data_points)
+
+        # Check value
+        check(0 < num_data_points <= MAX_DATASET_SIZE,
+              'num_data_points = %d; must have 0 < num_data_points <= %d.'
+              % (num_data_points, MAX_DATASET_SIZE))
+
+        # Run seed and catch errors
+        try:
             np.random.seed(seed)
-        else:
-            np.random.seed(None)
+        except TypeError:
+            raise ControlledError('type(seed) = %s; invalid type.' % type(seed))
+        except ValueError:
+            raise ControlledError('seed = %s; invalid value.' % seed)
+
+        # Set default value for periodic
+        periodic = False
 
         # If gaussian distribution
         if distribution == 'gaussian':
@@ -228,7 +271,10 @@ class SimulatedDataset:
             setattr(self, key, value)
 
     @staticmethod
+    @handle_errors
     def list():
         """
         Return list of valid distributions.
         """
+
+        return VALID_DISTRIBUTIONS

@@ -493,7 +493,10 @@ def handle_errors(func):
     """
 
     @wraps(func)
-    def wrapped_func(*args, should_fail=None, **kwargs):
+    def wrapped_func(*args, **kwargs):
+
+        # Get should_fail debug flag
+        should_fail = kwargs.pop('should_fail', None)
 
         try:
 
@@ -510,8 +513,13 @@ def handle_errors(func):
                 print('Success, as expected.')
                 mistake = False
 
-            else:
+            elif should_fail is None:
                 mistake = False
+
+            else:
+                print('FATAL: should_fail = %s is not bool or None' %
+                      should_fail)
+                sys.exit(1)
 
         except ControlledError as e:
             error = True
