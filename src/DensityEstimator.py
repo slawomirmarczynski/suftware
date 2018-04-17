@@ -61,6 +61,11 @@ class DensityEstimator:
         Number of samples to draw from the Bayesian posterior. Restricted to
         0 <= num_posterior_samples <= MAX_NUM_POSTERIOR_SAMPLES.
 
+    compute_K_coeff: (bool)
+        Whether to compute the K coefficient (Kinney, 2015, PRE, Eq. 29),
+        the sign of which tests the validity of the MaxEnt hypothesis on the
+        data provided.
+
     max_t_step: (float > 0)
         Upper bound on the amount by which the parameter ``t``
         in the DEFT algorithm is incremented when tracing the MAP curve.
@@ -136,6 +141,20 @@ class DensityEstimator:
         The importance weights corresponding to each posterior sample.
         (1D np.array)
 
+    K_coeff:
+        The value of the K coefficient (Kinney, 2015, Eq. 29). (float)
+
+    ells:
+        The smoothness length scales at which the MAP curve was computed.
+        (np.array)
+
+    log_Es:
+        The log evidence ratio values (Kinney, 2015, Eq. 27) at each length
+        scale along the MAP curve. (np.array)
+
+    max_log_E:
+        The log evidence ratio at the optimal length scale. (float)
+
     """
 
     @handle_errors
@@ -148,6 +167,7 @@ class DensityEstimator:
                  alpha=3,
                  periodic=False,
                  num_posterior_samples=100,
+                 compute_K_coeff=True,
                  max_t_step=1.0,
                  tolerance=1E-6,
                  resolution=0.1,
@@ -176,6 +196,7 @@ class DensityEstimator:
         self.sample_only_at_l_star = sample_only_at_l_star
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
         self.data = data
+        self.compute_K_coefficient = compute_K_coeff
         self.results = None
 
         # Validate inputs
@@ -194,6 +215,9 @@ class DensityEstimator:
         self.histogram = self.results.R
         self.maxent = self.results.M
         self.phi_star_values = self.results.phi_star
+
+        # Save K coefficient
+        self.K_coeff = self.results.K_coeff
 
         # Compute evaluator for density
         self.density_func = DensityEvaluator(self.phi_star_values,
@@ -719,14 +743,12 @@ class DensityEstimator:
             print('t_start = %0.2f' % t_start)
 
         # Do DEFT density estimation
-        core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples,
-                                     t_start, DT_MAX, print_t,
-                                     tollerance, resolution, num_pt_samples,
-                                     fix_t_at_t_star,
-                                     max_log_evidence_ratio_drop)
-
-        # Fill in results
-        results = core_results # Get all results from deft_core
+        results = deft_core.run(counts, Delta, Z_eval, num_Z_samples,
+                                t_start, DT_MAX, print_t,
+                                tollerance, resolution, num_pt_samples,
+                                fix_t_at_t_star,
+                                max_log_evidence_ratio_drop,
+                                self.compute_K_coefficient)
 
         # Normalize densities properly
         results.h = h
@@ -740,6 +762,13 @@ class DensityEstimator:
         if not (num_pt_samples == 0):
             results.Q_samples /= h
         results.Delta = Delta
+
+        # Save evidence-related results
+        points = results.map_curve.points
+        self.ts = np.array([p.t for p in points])
+        self.ells = h*(sp.exp(-self.ts)*N)**(1/(2.*alpha))
+        self.log_Es = np.array([p.log_E for p in points])
+        self.max_log_E = self.log_Es.max()
 
         # Store results
         self.results = results
@@ -844,6 +873,11 @@ class DensityEstimator:
         # periodic is bool
         check(isinstance(self.periodic, bool),
               'type(periodic) = %s; must be bool' % type(self.periodic))
+
+        # compute_K_coefficient is bool
+        check(isinstance(self.compute_K_coefficient, bool),
+              'type(compute_K_coefficient) = %s; must be bool' %
+              type(self.periodic))
 
         # evaluation_method_for_Z is valid
         Z_evals = ['Lap', 'Lap+Imp', 'Lap+Fey']

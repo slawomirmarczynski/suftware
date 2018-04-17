@@ -1,14 +1,9 @@
 import scipy as sp
 import numpy as np
-from scipy.sparse import csr_matrix, diags, spdiags
-from scipy.sparse.linalg import spsolve, eigsh
-from scipy.linalg import det, eigh, solve, eigvalsh, inv
-import scipy.optimize as opt
+from scipy.sparse import diags
+from scipy.sparse.linalg import spsolve
+from scipy.linalg import det, eigh, eigvalsh
 import time
-
-#import utils
-#import supplements
-#import maxent
 
 # python 3 imports
 from src import utils
@@ -16,7 +11,6 @@ from src import supplements
 from src import maxent
 
 # Import error handling
-#from utils import ControlledError
 from src.utils import ControlledError
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
@@ -775,11 +769,78 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     return map_curve
 
 
+
+#
+# Compute the K coefficient (Kinney 2015 PRE, Eq. 12)
+#
+
+def _compute_K_coeff(res):
+
+    # Compute the spectrum of Delta
+    Delta = res.Delta.get_dense_matrix()
+    alpha = int(-Delta[0, 1])
+    lambdas, psis = eigh(Delta)  # Columns of psi are eigenvectors
+    original_psis = sp.array(psis)
+
+    R = res.R
+    M = res.M
+    N = res.N
+    G = len(R)
+
+    # Get normalized M and R, with unit grid spacing
+    M = sp.array(M / sp.sum(M)).T
+    R = sp.array(R / sp.sum(R)).T
+
+    # Diagonalize first alpha psis with respect to diag_M
+    # This does the trick
+    diag_M_mat = sp.mat(sp.diag(M))
+    psis_ker_mat = sp.mat(original_psis[:, :alpha])
+    diag_M_ker = psis_ker_mat.T * diag_M_mat * psis_ker_mat
+    omegas, psis_ker_coeffs = eigh(diag_M_ker)
+
+    psis = original_psis.copy()
+    psis[:, :alpha] = psis_ker_mat * psis_ker_coeffs
+
+    # Now compute relevant coefficients
+    # i: range(G)
+    # j,k: range(alpha)
+    v_is = sp.array([sp.sum((M - R) * psis[:, i]) for i in range(G)])
+    z_iis = sp.array([sp.sum(M * psis[:, i] * psis[:, i]) for i in range(G)])
+    z_ijs = sp.array(
+        [[sp.sum(M * psis[:, i] * psis[:, j]) for j in range(alpha)] for i in
+         range(G)])
+    z_ijks = sp.array([[[sp.sum(M * psis[:, i] * psis[:, j] * psis[:, k]) for j
+                         in range(alpha)] for k in range(alpha)] for i in
+                       range(G)])
+
+    K_pos_terms = sp.array(
+        [(N * v_is[i] ** 2) / (2 * lambdas[i]) for i in range(alpha, G)])
+    K_neg_terms = sp.array(
+        [(-z_iis[i]) / (2 * lambdas[i]) for i in range(alpha, G)])
+    K_ker1_terms = sp.array([sum(
+        [z_ijs[i, j] ** 2 / (2 * lambdas[i] * omegas[j]) for j in range(alpha)])
+                             for i in range(alpha, G)])
+    K_ker2_terms = sp.array([sum(
+        [v_is[i] * z_ijks[i, j, j] / (2 * lambdas[i] * omegas[j]) for j in
+         range(alpha)]) for i in range(alpha, G)])
+    K_ker3_terms = sp.array([sum([sum([-v_is[i] * z_ijs[i, j] * z_ijks[
+        j, k, k] / (2 * lambdas[i] * omegas[k] * omegas[j]) for j in
+                                       range(alpha)]) for k in range(alpha)])
+                             for i in range(alpha, G)])
+
+    # I THINK THIS IS RIGHT!!!
+    K_coeff = K_pos_terms.sum() + K_neg_terms.sum() + K_ker1_terms.sum() + K_ker2_terms.sum() + K_ker3_terms.sum()
+
+    # Return the K coefficient
+    return K_coeff
+
+
 #
 # Core DEFT algorithm
 #
 def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-        tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop, details=False):
+        tollerance, resolution, num_pt_samples, fix_t_at_t_star,
+        max_log_evidence_ratio_drop, compute_K_coeff, details=False):
     """
     The core algorithm of DEFT, used for both 1D and 2D density estmation.
 
@@ -854,6 +915,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     results = Results()
 
     # Fill in info that's guaranteed to be there
+    results.Delta = Delta
     results.phi_star = phi_star
     results.Q_star = Q_star
     results.R = R
@@ -871,6 +933,13 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Get maxent point
     maxent_point = results.map_curve.get_maxent_point()
     results.M = maxent_point.Q / np.sum(maxent_point.Q)
+
+    # Compute K coefficient if requested
+    if compute_K_coeff:
+        results.K_coeff = _compute_K_coeff(results)
+    else:
+        results.K_coeff = None
+
 
     # Include posterior sampling info if any sampling was performed
     if not (num_pt_samples == 0):
