@@ -6,6 +6,7 @@ import time
 import pdb
 import numbers
 import pandas as pd
+import time
 
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
@@ -155,6 +156,9 @@ class DensityEstimator:
     max_log_E:
         The log evidence ratio at the optimal length scale. (float)
 
+    runtime:
+        The amount of time (in seconds) taken to execute.
+
     """
 
     @handle_errors
@@ -177,6 +181,9 @@ class DensityEstimator:
                  num_samples_for_Z=1000,
                  seed=None,
                  print_t=False):
+
+        # Start timer
+        start_time = time.time()
 
         # Record other inputs as class attributes
         self.alpha = alpha
@@ -252,6 +259,9 @@ class DensityEstimator:
                                         / np.sum(self.sample_weights**2)
             self.effective_sampling_efficiency = \
                 self.effective_sample_size / self.num_posterior_samples
+
+        # Store execution time in seconds
+        self.runtime = time.time() - start_time
 
     @handle_errors
     def plot(self, ax=None,
