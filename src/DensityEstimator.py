@@ -123,7 +123,7 @@ class DensityEstimator:
 
     bounding_box:
         The boundaries of the data domain within which the probability density
-        was be estimated. ([float, float])
+        was estimated. ([float, float])
 
     histogram:
         A histogram of the data using ``grid`` for the centers of each bin.
