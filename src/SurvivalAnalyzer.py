@@ -15,7 +15,7 @@ class SurvivalAnalyzer:
     flag_col: (str, None)
         The name of the column in data_df containing event flags. True
         indicates an observed event, False indicates a right-censored event.
-        If None, all events will assume to be observed
+        If None, all events will assume to be observed.
 
     covariate_cols: (list of str, None)
         The name of the columns in data_df containing covariates, which must be
