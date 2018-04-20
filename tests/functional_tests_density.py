@@ -9,7 +9,7 @@ import sys
 import time
 
 # Import suftware 
-sys.path.append('../')
+sys.path.append('.')
 import suftware as sw
 
 # Generate data
