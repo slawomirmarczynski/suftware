@@ -27,13 +27,19 @@ Installation
 ------------
 
 SUFTware can be installed from
-`PyPI <https://pypi.python.org/pypi/suftware>`_ using the ``pip`` package
+`PyPI <https://pypi.python.org/pypi/suftware>`_ using the pip package
 manager. At the command line::
 
     pip install suftware
 
 The code for SUFTware is open source and available on
 `GitHub <https://github.com/jbkinney/suftware>`_.
+
+
+**Known issue (2 May 2018):** SUFTware is incompatible with the latest version of pip (>= v10.0.0), at least on some systems, due to a change in the pip API. Until this is fixed, you can install SUFTware using an older version of pip, e.g., by running::
+
+	pip install pip==9.0.3
+
 
 Quick Start
 -----------
@@ -71,16 +77,12 @@ Other links:
 References
 ----------
 
-.. [#Chen2018] Chen W, Tareen A, Kinney JB (2018) Density estimation on
-   small datasets. *arXiv:1804.01932 [physics.data-an]*.
-   :download:`PDF </ChenEtAl2018v1.pdf>`.
+.. [#Chen2018] Chen W, Tareen A, Kinney JB (2018) `Density estimation on small datasets. <https://arxiv.org/abs/1804.01932>`_ *arXiv:1804.01932 [physics.data-an]*.
 
-.. [#Kinney2015] Kinney JB (2015) Unification of field theory and maximum
-   entropy methods for learning probability densities. *Phys Rev E* 92:032107.
+.. [#Kinney2015] Kinney JB (2015) `Unification of field theory and maximum entropy methods for learning probability densities. <https://journals.aps.org/pre/abstract/10.1103/PhysRevE.92.032107>`_ *Phys Rev E* 92:032107.
    :download:`PDF </Kinney2015.pdf>`.
 
-.. [#Kinney2014] Kinney JB (2014) Estimation of probability densities using
-   scale-free field theories. *Phys Rev E* 90:011301(R).
+.. [#Kinney2014] Kinney JB (2014) `Estimation of probability densities using scale-free field theories. <https://journals.aps.org/pre/abstract/10.1103/PhysRevE.90.011301>`_ *Phys Rev E* 90:011301(R).
    :download:`PDF <Kinney2014.pdf>`.
 
 Indices and tables
