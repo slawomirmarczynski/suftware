@@ -36,11 +36,6 @@ The code for SUFTware is open source and available on
 `GitHub <https://github.com/jbkinney/suftware>`_.
 
 
-**Known issue (2 May 2018):** SUFTware is incompatible with the latest version of pip (>= v10.0.0), at least on some systems, due to a change in the pip API. Until this is fixed, you can install SUFTware using an older version of pip, e.g., by running::
-
-	pip install pip==9.0.3
-
-
 Quick Start
 -----------
 
