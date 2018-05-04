@@ -28,7 +28,7 @@ Installation
 
 SUFTware can be installed from
 `PyPI <https://pypi.python.org/pypi/suftware>`_ using the pip package
-manager. At the command line::
+manager (version 9.0.0 or higher). At the command line::
 
     pip install suftware
 
