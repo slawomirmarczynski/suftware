@@ -1,13 +1,55 @@
 import numpy as np
-from src.Density import Density
 from src.GaussianMixtureDensity import GaussianMixtureDensity
 from src.ScipyStatsDensity import ScipyStatsDensity
-from src.utils import check
+from src.utils import check, handle_errors
 import scipy.stats as ss
+
+@handle_errors
+def SimulatedDensity(name):
+    """
+    This is actually a function, not a class.
+    Returns an pre-defined Density object with the specified name.
+    """
+    check(name in density_dict.keys(),
+          "Example density name '%s' is invalid. "
+          "Please choose a valid name from: "
+          "\n\t%s" % (name, '\n\t'.join(density_names)))
+
+    return density_dict[name]
+
+@handle_errors
+def SimulatedDataset(name='DoubleGaussian', num_data_points=100, seed=None):
+    """
+    Simulates data from a variety of distributions.
+
+    parameters
+    ----------
+
+    distribution: (str)
+        The distribution from which to draw data. Run sw.SimulatedDataset.list()
+        to which distributions are available.
+
+    num_data_points: (int > 0)
+        The number of data points to simulate. Must satisfy
+        0 <= N <= MAX_DATASET_SIZE.
+
+    seed: (int)
+        Seed passed to random number generator.
+
+    """
+
+    density = SimulatedDensity(name)
+    dataset = density.sample(num_samples=num_data_points, seed=seed)
+    return dataset
+
+@handle_errors
+def list_simulated_densities():
+    """ Returns a list of valid example density names"""
+    return density_names.copy()
 
 
 #
-# Create list of example densities
+# Create list of simulated densities below
 #
 
 density_list = []
@@ -142,50 +184,7 @@ density_list.append(
                       ss_obj=ss.wrapcauchy(c=.4),
                       bounding_box=[0, 2*np.pi]))
 
-
 # Convert list to dictionary
 density_names = [d.name for d in density_list]
 density_dict = dict(zip(density_names, density_list))
 density_names.sort()
-
-def list_example_densities():
-    """ Returns a list of valid example density names"""
-    return density_names.copy()
-
-def SimulatedDensity(name):
-    """
-    This is actually a function, not a class.
-    Returns an pre-defined Density object with the specified name.
-    """
-    check(name in density_dict.keys(),
-          """
-Example density name "%s" is invalid. 
-Please choose a valid name from:
-%s
-          """ % (name, '\n'.join(density_names)))
-
-    return density_dict[name]
-
-def SimulatedDataset(name='Gaussian', num_data_points=100, seed=None):
-    """
-    Simulates data from a variety of distributions.
-
-    parameters
-    ----------
-
-    distribution: (str)
-        The distribution from which to draw data. Run sw.SimulatedDataset.list()
-        to which distributions are available.
-
-    num_data_points: (int > 0)
-        The number of data points to simulate. Must satisfy
-        0 <= N <= MAX_DATASET_SIZE.
-
-    seed: (int)
-        Seed passed to random number generator.
-
-    """
-
-    density = SimulatedDensity(name)
-    dataset = density.sample(num_samples=num_data_points, seed=seed)
-    return dataset

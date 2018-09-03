@@ -2,7 +2,7 @@ import numpy as np
 import scipy.stats as ss
 from src.utils import grid_info_from_bbox_and_G
 from src.Density import Density
-from src.utils import check
+from src.utils import check, handle_errors
 
 class ScipyStatsDensity(Density):
     """
@@ -31,6 +31,7 @@ class ScipyStatsDensity(Density):
 
     """
 
+    @handle_errors
     def __init__(self, ss_obj, name=None, bounding_box=None, num_gridpoints=10000,
                  **ss_obj_params):
 

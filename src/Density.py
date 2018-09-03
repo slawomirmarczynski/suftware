@@ -1,7 +1,7 @@
 import numpy as np
+import sys
 from scipy import interpolate
-from src.utils import check
-
+from src.utils import check, handle_errors, enable_graphics
 
 class Density:
     """
@@ -50,11 +50,15 @@ class Density:
 
     """
 
+    @handle_errors
     def __init__(self, grid, values=None, field_values=None,
-                 interpolation_method='cubic', min_value=1E-20):
+                 interpolation_method='cubic', min_value=1E-20, name=None):
 
         # Set grid
         self.grid = grid
+
+        # Set name
+        self.name = name
 
         # Make sure field_values or values are specified
         check((values is not None) or (field_values is not None),
@@ -82,9 +86,11 @@ class Density:
         # Compute grid spacing
         self.grid_spacing = (grid[-1]-grid[0])/(len(grid)-1)
 
-        # Compute bounding box
+        # Compute bounding box and x lims
         self.bounding_box = [self.grid[0] - self.grid_spacing/2,
                              self.grid[-1] + self.grid_spacing/2]
+        self.xmin = self.bounding_box[0]
+        self.xmax = self.bounding_box[1]
 
         # Compute normalization constant and normalize values
         self.Z = np.sum(self.grid_spacing * self.values)
@@ -105,6 +111,7 @@ class Density:
 
         return self.evaluate(*args, **kwargs)
 
+    @handle_errors
     def evaluate(self, xs):
         """
         Evaluates the probability density at specified positions.
@@ -132,6 +139,7 @@ class Density:
         values[zero_indices] = 0.0
         return values
 
+    @handle_errors
     def sample(self, num_samples, num_gridpoints=None, seed=None):
         """
         Samples the probability density
@@ -187,3 +195,106 @@ class Density:
 
         # Return samples to user
         return sample
+
+    @handle_errors
+    def plot(self, ax=None,
+             save_as=None,
+             figsize=(4, 4),
+             fontsize=12,
+             title=None,
+             xlabel='',
+             tight_layout=False,
+             show_now=True,
+             backend='TkAgg'):
+        """
+        Plot the MAP density, the posterior sampled densities, and the
+        data histogram.
+
+        parameters
+        ----------
+
+        ax: (plt.Axes)
+            A matplotlib axes object on which to draw. If None, one will be
+            created
+
+        save_as: (str)
+            Name of file to save plot to. File type is determined by file
+            extension.
+
+        resample: (bool)
+            If True, sampled densities will be ploted only after importance
+            resampling.
+
+        figsize: ([float, float])
+            Figure size as (width, height) in inches.
+
+        fontsize: (float)
+            Size of font to use in plot annotation.
+
+        title: (str)
+            Plot title.
+
+        xlabel: (str)
+            Plot xlabel.
+
+        tight_layout: (bool)
+            Whether to call plt.tight_layout() after rendering graphics.
+
+        show_now: (bool)
+            Whether to show the plot immediately by calling plt.show().
+
+        backend: (str)
+            Backend specification to send to sw.enable_graphics().
+
+        returns
+        -------
+
+            None.
+
+        """
+
+
+        # check if matplotlib.pyplot is loaded. If not, load it carefully
+        if 'matplotlib.pyplot' not in sys.modules:
+            # First, enable graphics with the proper backend
+            enable_graphics(backend=backend)
+
+        # Make sure we have access to plt
+        import matplotlib.pyplot as plt
+
+        # If axes is not specified, create it and a corresponding figure
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+            tight_layout = True
+
+        # Plot best fit density
+        ax.fill_between(self.grid,
+                        self.values,
+                        color='silver')
+
+        if title is None:
+            title = 'Simulated Density: %s' % self.name
+
+        # Style plot
+        ax.set_xlim(self.bounding_box)
+        ax.set_title(title, fontsize=fontsize)
+        ax.set_xlabel(xlabel, fontsize=fontsize)
+        ax.set_yticks([])
+        ax.set_ylim([0, 1.5*max(self.values)])
+        ax.tick_params('x', rotation=45, labelsize=fontsize)
+
+        # Do not show interactive coordinates
+        ax.format_coord = lambda x, y: ''
+
+        # Do tight_layout if requested
+        if tight_layout:
+            plt.tight_layout()
+
+        # Save figure if save_as is specified
+        if save_as is not None:
+            plt.draw()
+            plt.savefig(save_as)
+
+        # Show figure if show_now is True
+        if show_now:
+            plt.show()

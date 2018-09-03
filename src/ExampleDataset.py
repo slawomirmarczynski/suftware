@@ -67,12 +67,11 @@ class ExampleDataset:
                           'of metadata is invalid. key = %s, value = %s' %
                                 (key, value))
 
-    @staticmethod
-    @handle_errors
-    def list():
-        """
-        Return list of available datasets.
-        """
-        return VALID_DATASETS
+@handle_errors
+def list_example_datasets():
+    """
+    Return list of available datasets.
+    """
+    return VALID_DATASETS
 
 
