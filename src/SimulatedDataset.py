@@ -24,6 +24,25 @@ gamma
 triangular
 laplace
 vonmises
+Argus
+Beta
+Betaprime
+Bradford
+Cauchy
+ChiSquare
+ExpNormal
+ExpPower
+ExpWeibull
+FoldedNormal
+Gaussain
+DoubleGaussian
+Pareto
+Semicircular
+SkewNorm
+vonMises
+Wald
+WeibullMin
+WrapCauchy
 '''.split()
 
 # Maximum number of samples this algorithm will simulate
@@ -56,6 +75,18 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
 
     # Return valuables
     return data, pdf_py, pdf_js
+
+
+class Distribution:
+
+    def __init__(self, pdf, xmin, xmax, params={}, name=''):
+        self.pdf = pdf
+        self.xmin = xmin
+        self.xmax = xmax
+        self.params = params
+        self.name = name
+
+
 
 class SimulatedDataset:
     """
@@ -254,6 +285,14 @@ class SimulatedDataset:
             description = 'von Mises distribution'
             pdf_js = "Math.exp(Math.cos(x))/7.95493"
             pdf_py = "np.exp(np.cos(x))/7.95493"
+
+
+        #
+        # elif distribution == 'Argus':
+        #
+        #
+        #     Distribution(pdf=stats.argus.pdf, xmin=0, xmax=1,
+        #                  params={'chi': .1})
 
         else:
             raise ControlledError('Distribution type "%s" not recognized.' % distribution)

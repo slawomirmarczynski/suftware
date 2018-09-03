@@ -6,8 +6,10 @@ Head module. Contains classes for user interfacing.
 from src.DensityEstimator import DensityEstimator
 from src.SimulatedDataset import SimulatedDataset
 from src.ExampleDataset import ExampleDataset
-from src.DensityEvaluator import DensityEvaluator
+from src.Density import Density
+from src.GaussianMixtureDensity import GaussianMixtureDensity
 from src.utils import ControlledError as ControlledError
+from src.ExampleDensity import ExampleDensity, list_example_densities
 
 # Enable plotting
 from src.utils import enable_graphics, check, ControlledError

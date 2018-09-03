@@ -18,7 +18,7 @@ from src import deft_core
 from src import laplacian
 from src.utils import ControlledError, enable_graphics, check, handle_errors,\
     clean_numerical_input, LISTLIKE
-from src.DensityEvaluator import DensityEvaluator
+from src.Density import Density
 
 class DensityEstimator:
     """Estimates a 1D probability density from sampled data.
@@ -196,9 +196,8 @@ class DensityEstimator:
         self.phi_star_values = self.results.phi_star
 
         # Compute evaluator for density
-        self.density_func = DensityEvaluator(self.phi_star_values,
-                                             self.grid,
-                                             self.bounding_box)
+        self.density_func = Density(field_values=self.phi_star_values,
+                                    grid=self.grid)
 
         # Compute optimal density at grid points
         self.values = self.evaluate(self.grid)
@@ -212,9 +211,8 @@ class DensityEstimator:
 
             # Compute evaluator for all posterior samples
             self.sample_density_funcs = [
-                DensityEvaluator(field_values=self.sample_field_values[:, k],
-                                 grid=self.grid,
-                                 bounding_box=self.bounding_box)
+                Density(field_values=self.sample_field_values[:, k],
+                        grid=self.grid)
                 for k in range(self.num_posterior_samples)
             ]
 
