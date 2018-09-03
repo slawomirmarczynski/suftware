@@ -23,6 +23,9 @@ class GaussianMixtureDensity(Density):
     sigmas: (np.ndarray)
         Standard deviations for each Gaussian component.
 
+    name: (str)
+        A user-defined name for the distribution, if any.
+
     num_gridpoints: (int >= 2)
         Number of grid points on which to sample. Defaults to number of
         grid points used to create the density.

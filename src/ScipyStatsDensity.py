@@ -5,8 +5,33 @@ from src.Density import Density
 from src.utils import check
 
 class ScipyStatsDensity(Density):
+    """
+    Creates a SUFTware density from a built-in scipy.stats density
 
-    def __init__(self, ss_obj, bounding_box=None, num_gridpoints=10000,
+    Parameters
+    ----------
+
+    ss_obj:
+        A scipy.stats density object, such as scipy.stats.beta or
+        scipy.stats.gamma(a=3). Can be either frozen or not frozen.
+
+    name: (str)
+        A user-defined name for the distribution, if any.
+
+    bounding_box: ([float, float])
+        Box in which to create density. If None, bounding_box is automatically
+        chosen to contain 99% of the distribution's mass.
+
+    num_gridpoints: (int >= 2)
+        Number of grid points on which to sample. Defaults to number of
+        grid points used to create the density.
+
+    **ss_obj_params:
+        Keyword parameters, if any, taken by ss_obj.
+
+    """
+
+    def __init__(self, ss_obj, name=None, bounding_box=None, num_gridpoints=10000,
                  **ss_obj_params):
 
         # If bounding box is not specified, created one containing central
@@ -34,3 +59,4 @@ class ScipyStatsDensity(Density):
         # Save ss_obj and parameters
         self.ss_obj = ss_obj
         self.ss_obj_params = ss_obj_params
+        self.name = name
