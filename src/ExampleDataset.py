@@ -39,7 +39,7 @@ class ExampleDataset:
     def __init__(self, dataset='old_faithful_eruption_times'):
 
         # Check that dataset is valid
-        check(dataset in self.list(),
+        check(dataset in list_example_datasets(),
               'Distribution "%s" not recognized.' % dataset)
 
         # Set file dataset
