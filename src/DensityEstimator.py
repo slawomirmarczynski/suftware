@@ -12,7 +12,7 @@ SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
-MAX_NUM_SAMPLES_FOR_Z = 1000
+MAX_NUM_SAMPLES_FOR_Z = 1000000
 
 # Import deft-related code
 from src import deft_core
@@ -172,6 +172,7 @@ class DensityEstimator:
                  periodic=False,
                  num_posterior_samples=100,
                  compute_K_coeff=True,
+                 t_start=None,
                  max_t_step=1.0,
                  tolerance=1E-6,
                  resolution=0.1,
@@ -194,6 +195,7 @@ class DensityEstimator:
         self.periodic = periodic
         self.Z_evaluation_method = evaluation_method_for_Z
         self.num_samples_for_Z = num_samples_for_Z
+        self.t_start = t_start
         self.max_t_step = max_t_step
         self.print_t = print_t
         self.tolerance = tolerance
@@ -704,6 +706,7 @@ class DensityEstimator:
         periodic = self.periodic
         Z_eval = self.Z_evaluation_method
         num_Z_samples = self.num_samples_for_Z
+        t_start = self.t_start
         DT_MAX = self.max_t_step
         print_t = self.print_t
         tollerance = self.tolerance
@@ -746,7 +749,10 @@ class DensityEstimator:
               (num_nonempty_bins, self.alpha))
 
         # Compute initial t
-        t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
+        if t_start is None:
+            t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
+            if t_start < -10.0:
+                t_start /= 2
         if print_t:
             print('t_start = %0.2f' % t_start)
 

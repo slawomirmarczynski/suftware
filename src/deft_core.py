@@ -28,11 +28,12 @@ class Results():
 
 # Represents a point along the MAP curve
 class MAP_curve_point:
-    def __init__(self, t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details=False):
+    def __init__(self, t, phi, Q, log_E, log_Z_correction, sample_mean, sample_mean_std_dev, details=False):
         self.t = t
         self.phi = phi
         self.Q = Q
         self.log_E = log_E
+        self.log_Z_correction = log_Z_correction
         self.sample_mean = sample_mean
         self.sample_mean_std_dev = sample_mean_std_dev
         # self.details = details
@@ -44,8 +45,8 @@ class MAP_curve:
         self.points = []
         self._is_sorted = False
 
-    def add_point(self, t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details=False):
-        point = MAP_curve_point(t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details)
+    def add_point(self, t, phi, Q, log_E, log_Z_correction, sample_mean, sample_mean_std_dev, details=False):
+        point = MAP_curve_point(t, phi, Q, log_E, log_Z_correction, sample_mean, sample_mean_std_dev, details)
         self.points.append(point)
         self._is_sorted = False
 
@@ -249,39 +250,39 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
     t = -np.inf
     num_samples = num_Z_samples
     if Z_eval == 'Lap':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             0.0, 1.0, 0.0
     if Z_eval == 'Lap+Imp':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False)
     if Z_eval == 'Lap+Imp+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True)
     if Z_eval == 'GLap':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False, sampling=False)
     if Z_eval == 'GLap+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True, sampling=False)
     if Z_eval == 'GLap+Sam':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False, sampling=True)
     if Z_eval == 'GLap+Sam+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True, sampling=True)
     if Z_eval == 'Lap+Fey':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Feynman_diagrams(phi_M, R, Delta, t, N)
 
-    # Make sure correction is valid
-    if not np.isreal(correction):
-        raise ControlledError('/log_ptgd_at_maxent/ correction is not real: correction = %s' % correction)
-    if not np.isfinite(correction):
-        raise ControlledError('/log_ptgd_at_maxent/ correction is not finite: correction = %s' % correction)
+    # Make sure log_Z_correction is valid
+    if not np.isreal(log_Z_correction):
+        raise ControlledError('/log_ptgd_at_maxent/ log_Z_correction is not real: correction = %s' % correction)
+    if not np.isfinite(log_Z_correction):
+        raise ControlledError('/log_ptgd_at_maxent/ log_Z_correction is not finite: correction = %s' % correction)
 
-    log_ptgd_at_maxent += correction
+    log_ptgd_at_maxent += log_Z_correction
 
-    return log_ptgd_at_maxent, w_sample_mean, w_sample_mean_std
+    return log_ptgd_at_maxent, log_Z_correction, w_sample_mean, w_sample_mean_std
 
 
 # Computes the log of ptgd at t
@@ -331,37 +332,37 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
     # If requested, incorporate corrections to the partition function
     num_samples = num_Z_samples
     if Z_eval == 'Lap':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             0.0, 1.0, 0.0
     if Z_eval == 'Lap+Imp':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False)
     if Z_eval == 'Lap+Imp+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True)
     if Z_eval == 'GLap':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False, sampling=False)
     if Z_eval == 'GLap+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True, sampling=False)
     if Z_eval == 'GLap+Sam':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False, sampling=True)
     if Z_eval == 'GLap+Sam+P':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True, sampling=True)
     if Z_eval == 'Lap+Fey':
-        correction, w_sample_mean, w_sample_mean_std = \
+        log_Z_correction, w_sample_mean, w_sample_mean_std = \
             supplements.Feynman_diagrams(phi, R, Delta, t, N)
 
-    # Make sure correction is valid
-    if not np.isreal(correction):
-        raise ControlledError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
-    if not np.isfinite(correction):
-        raise ControlledError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
+    # Make sure log_Z_correction is valid
+    if not np.isreal(log_Z_correction):
+        raise ControlledError('/log_ptgd/ log_Z_correction is not real at t = %s: correction = %s' % (t, correction))
+    if not np.isfinite(log_Z_correction):
+        raise ControlledError('/log_ptgd/ log_Z_correction is not finite at t = %s: correction = %s' % (t, correction))
 
-    log_ptgd += correction
+    log_ptgd += log_Z_correction
 
     details = Results()
     details.S = S
@@ -372,7 +373,7 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
     details.log_det = log_det
     details.phi = phi
 
-    return log_ptgd, w_sample_mean, w_sample_mean_std
+    return log_ptgd, log_Z_correction, w_sample_mean, w_sample_mean_std
 
 
 # Computes predictor step
@@ -595,9 +596,10 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     phi_R = utils.prob_to_field(R)
     log_E_R = -np.Inf
     t_R = np.Inf
+    log_Z_correction_R = 0.0
     w_sample_mean_R = 1.0
     w_sample_mean_std_R = 0.0
-    map_curve.add_point(t_R, phi_R, R, log_E_R, w_sample_mean_R, w_sample_mean_std_R)
+    map_curve.add_point(t_R, phi_R, R, log_E_R, log_Z_correction_R, w_sample_mean_R, w_sample_mean_std_R)
 
     #
     # Then compute maxent stuff
@@ -610,13 +612,13 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     M = utils.field_to_prob(phi_infty)
 
     # Compute the maxent log_ptgd. Important to keep this around to compute log_E at finite t
-    log_ptgd_M, w_sample_mean_M, w_sample_mean_std_M = \
+    log_ptgd_M, log_Z_correction_M, w_sample_mean_M, w_sample_mean_std_M = \
         log_ptgd_at_maxent(phi_infty, R, Delta, N, Z_eval, num_Z_samples)
 
     # This corresponds to a log_E of zero
     log_E_M = 0
     t_M = -sp.Inf
-    map_curve.add_point(t_M, phi_infty, M, log_E_M, w_sample_mean_M, w_sample_mean_std_M)
+    map_curve.add_point(t_M, phi_infty, M, log_E_M, log_Z_correction_M, w_sample_mean_M, w_sample_mean_std_M)
 
     # Set maximum log evidence ratio so far encountered
     log_E_max = -np.Inf
@@ -632,7 +634,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     Q_start = utils.field_to_prob(phi_start)
 
     # Compute log ptgd
-    log_ptgd_start, w_sample_mean_start, w_sample_mean_std_start = \
+    log_ptgd_start, log_Z_correction_start, w_sample_mean_start, w_sample_mean_std_start = \
         log_ptgd(phi_start, R, Delta, t_start, N, Z_eval, num_Z_samples)
 
     # Compute corresponding evidence ratio
@@ -644,7 +646,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     # Set start as first MAP curve point
     if print_t:
         print('t = %.2f' % t_start)
-    map_curve.add_point(t_start, phi_start, Q_start, log_E_start, w_sample_mean_start, w_sample_mean_std_start)
+    map_curve.add_point(t_start, phi_start, Q_start, log_E_start, log_Z_correction_start, w_sample_mean_start, w_sample_mean_std_start)
 
     #
     # Finally trace along the MAP curve
@@ -661,6 +663,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
         t = t_start
         Q = Q_start
         log_E = log_E_start
+        log_Z_correction = log_Z_correction_start
         w_sample_mean = w_sample_mean_start
         w_sample_mean_std_dev = w_sample_mean_std_start
 
@@ -699,7 +702,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             Q_new = utils.field_to_prob(phi_new)
 
             # Compute log ptgd
-            log_ptgd_new, w_sample_mean_new, w_sample_mean_std_new = \
+            log_ptgd_new, log_Z_correction_new, w_sample_mean_new, w_sample_mean_std_new = \
                 log_ptgd(phi_new, R, Delta, t_new, N, Z_eval, num_Z_samples)
 
             # Compute corresponding evidence ratio
@@ -710,6 +713,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             Q = Q_new
             phi = phi_new
             log_E = log_E_new
+            log_Z_correction = log_Z_correction_new
             w_sample_mean = w_sample_mean_new
             w_sample_mean_std = w_sample_mean_std_new
 
@@ -729,7 +733,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
                 # Add new point to map curve
                 if print_t:
                     print('t = %.2f' % t)
-                map_curve.add_point(t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
+                map_curve.add_point(t, phi, Q, log_E, log_Z_correction, w_sample_mean, w_sample_mean_std)
                 break
 
             slope_new = np.sign(log_ptgd_new - log_ptgd0)
@@ -758,7 +762,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             # Add new point to MAP curve
             if print_t:
                 print('t = %.2f' % t)
-            map_curve.add_point(t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
+            map_curve.add_point(t, phi, Q, log_E, log_Z_correction, w_sample_mean, w_sample_mean_std)
 
     # Sort points along the MAP curve
     map_curve.sort()
