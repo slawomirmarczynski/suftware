@@ -73,6 +73,7 @@ References
 ----------
 
 .. [#Chen2018] Chen W, Tareen A, Kinney JB (2018) `Density estimation on small datasets. <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.121.160605>`_ *Phys. Rev. Lett. 121, 160605*.
+   :download:`PDF <ChenEtAlPRL2018.pdf>`.
 
 .. [#Kinney2015] Kinney JB (2015) `Unification of field theory and maximum entropy methods for learning probability densities. <https://journals.aps.org/pre/abstract/10.1103/PhysRevE.92.032107>`_ *Phys Rev E* 92:032107.
    :download:`PDF </Kinney2015.pdf>`.
