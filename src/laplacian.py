@@ -3,7 +3,12 @@ import numpy as np
 from scipy.sparse import csr_matrix, diags
 from scipy.sparse.linalg import spsolve
 from scipy.linalg import det, eigh, qr
-from scipy.misc import comb
+# AT: fixing SciPy comb import bug: 8_19_2019
+# for SciPy versions >= 0.19
+try:  
+    from scipy.special import comb
+except ImportError:
+    from scipy.misc import comb
 import pickle
 
 from src import utils
