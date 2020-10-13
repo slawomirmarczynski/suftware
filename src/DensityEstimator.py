@@ -596,7 +596,7 @@ class DensityEstimator:
             h = self.grid_spacing
             eps = 1E-10
             assert (all(Q >= 0))
-            return np.sum(h * Q * np.log2(Q + eps))
+            return -np.sum(h * Q * np.log2(Q + eps))
 
         def mean(Q):
             x = self.grid
