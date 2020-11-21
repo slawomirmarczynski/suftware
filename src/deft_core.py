@@ -882,9 +882,9 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Compute the MAP curve
     #
 
-    start_time = time.clock()
+    start_time = time.time()
     map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution,max_log_evidence_ratio_drop)
-    end_time = time.clock()
+    end_time = time.time()
     map_curve_compute_time = end_time - start_time
     if print_t:
         print('MAP curve computation took %.2f sec' % map_curve_compute_time)
