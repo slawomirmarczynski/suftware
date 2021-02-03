@@ -19,6 +19,9 @@ from src import maxent
 #from utils import ControlledError
 from src.utils import ControlledError
 
+from src.consumedtimetimer import ConsumedTimeTimer
+
+
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
 T_MAX = 40
 T_MIN = -40
@@ -817,10 +820,10 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Compute the MAP curve
     #
 
-    start_time = time.clock()
+    clock = ConsumedTimeTimer()
+    clock.tic()
     map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution,max_log_evidence_ratio_drop)
-    end_time = time.clock()
-    map_curve_compute_time = end_time - start_time
+    map_curve_compute_time = clock.toc()
     if print_t:
         print('MAP curve computation took %.2f sec' % map_curve_compute_time)
 
@@ -843,7 +846,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
         Q_samples, phi_samples, phi_weights = \
             supplements.posterior_sampling(points, R, Delta, N, G,
                                            num_pt_samples, fix_t_at_t_star)
-            
+
 
 
     #

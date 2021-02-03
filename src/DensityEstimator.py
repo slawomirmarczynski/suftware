@@ -7,6 +7,8 @@ import pdb
 import numbers
 import pandas as pd
 
+from src.consumedtimetimer import ConsumedTimeTimer
+
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
@@ -682,7 +684,8 @@ class DensityEstimator:
         max_log_evidence_ratio_drop = self.max_log_evidence_ratio_drop
 
         # Start clock
-        start_time = time.clock()
+        clock = ConsumedTimeTimer()
+        start_time = clock()
 
         # If deft_seed is specified, set it
         if not (deft_seed is None):
@@ -691,13 +694,13 @@ class DensityEstimator:
             np.random.seed(None)
 
         # Create Laplacian
-        laplacian_start_time = time.clock()
+        laplacian_start_time = clock()
         if periodic:
             op_type = '1d_periodic'
         else:
             op_type = '1d_bilateral'
         Delta = laplacian.Laplacian(op_type, alpha, G)
-        laplacian_compute_time = time.clock() - laplacian_start_time
+        laplacian_compute_time = clock() - laplacian_start_time
         if print_t:
             print('Laplacian computed de novo in %f sec.'%laplacian_compute_time)
 
