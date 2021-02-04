@@ -16,15 +16,17 @@ class ConsumedTimeTimer:
     An adapter/facade/strategy to timer functions for various Pythons.
 
     Since Python 3.8 the old gold time.clock() method does not work. The method
-    had been marked as deprecated since Python 3.3. After the update/upgrade to
-    Python 3.8 a call of time.clock() raises an AttributeError exception
-    the message "module 'time' has no attribute 'clock'". This make some older
-    code forward incompatible. The simple solution would be replacing
-    time.clock() with time.process_time(). Nethertheless, this may lead to
-    backward incompatible code. Therefore, in order to overcome these
-    difficulties, the idea was born to create ConsumedTimeTimer class as
-    an object-oriented facade that simplifies the choice of strategy for
-    selecting the appropriate time function.
+    clock() from module time had been marked as deprecated since Python 3.3.
+    After the update/upgrade to Python 3.8 a call of time.clock() raises
+    an AttributeError exception the message "module 'time' has no attribute
+    'clock'". This make some older code forward incompatible.
+
+    The simple solution would be replacing time.clock() deprecated method with
+    time.process_time(). Nethertheless, this may lead to a backward
+    incompatible code. Therefore, in order to overcome these difficulties,
+    the idea was born to create ConsumedTimeTimer class as an object-oriented
+    facade that encapsulate the choice of strategy for selecting
+    the appropriate time-related function in the run time.
     """
 
     def __init__(self, exclude_sleep_time=True):
@@ -32,7 +34,7 @@ class ConsumedTimeTimer:
         Initialize an ConsumedTime object.
 
         Args:
-            exclude_sleep: allows to select whether to measure only
+            exclude_sleep: allows to select whether to prefer measure only
                            the actively spent time (time used by the process),
                            or also the inactivity time (i.e. wall time).
                            Defaults to True.
@@ -51,17 +53,17 @@ class ConsumedTimeTimer:
 
     def __call__(self):
         """
-        An redefinition of the call operator. This makes using ConsumedTime
-        objects very easy, see example below::
+        An redefinition of the call operator. This makes using
+        ConsumedTimeTimer objects very easy, see example below::
 
-            timer = ConsumedTimeTimer()
-            t1 = timer()
+            clock = ConsumedTimeTimer()
+            t1 = clock()
             print('currently timer shows', t1, 'seconds')
-            t2 = timer()
+            t2 = clock()
             print(t2 - t1, 'seconds missed from previous message')
 
-        Notice, that t1 is not (maybe not) equal 0. This is because objects
-        ConsumedTime neither reset clock nor remeber a time offset.
+        Notice, that t1 would be probably not equal 0. This is because objects
+        ConsumedTimeTimer neither reset clock nor remeber a time offset.
 
         Returns:
             float: the time as a float point number of seconds.
@@ -74,10 +76,10 @@ class ConsumedTimeTimer:
         An method like Matlab toc - use it to start measuring computation
         time::
 
-            timer = ConsumedTimeTimer()
-            timer.tic()
+            clock = ConsumedTimeTimer()
+            clock.tic()
             ...
-            consumed_time = timer.toc()
+            consumed_time = clock.toc()
 
         Returns:
             float: time, in seconds, between the call of tic and the call toc
