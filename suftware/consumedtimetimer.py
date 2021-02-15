@@ -90,6 +90,9 @@ class ConsumedTimeTimer:
 
     def toc(self):
         delta = self() - self._last_tic_time
-        # Remove comment to print messages like Matlab do.
-        # print('Elapsed time is', delta, 'seconds.')
+
+        # Print a message like Matlab do.
+        #
+        print('Elapsed time is', delta, 'seconds.')
+        
         return delta

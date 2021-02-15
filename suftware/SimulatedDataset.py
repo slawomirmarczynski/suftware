@@ -1,11 +1,12 @@
-#!/usr/bin/python
-import numpy as np
-import math
-import scipy as sp
-import scipy.stats as stats
 import sys
 import numbers
-from src.utils import ControlledError, handle_errors, check
+import math
+
+import numpy as np
+import scipy as sp
+import scipy.stats as stats
+
+from utils import ControlledError, handle_errors, check
 
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
