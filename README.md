@@ -12,7 +12,11 @@ the deprecated time.clock() function was removed.
 
 **Installation**
 
-pip install suftware
+There should be possible to use pip:
+
+    pip install suftware-refactored
+
+Nevertheless it not works yet.
 
 **Requirements**
 
@@ -26,8 +30,8 @@ pip install suftware
 
 * Documentation for the original Suftware
 
-    * Documentation: http://suftware.readthedocs.org
-    * Github: https://github.com/jbkinney/suftware
+    * Read The Docs: http://suftware.readthedocs.org
+    * GitHub: https://github.com/jbkinney/suftware
     * PyPI: https://pypi.python.org/pypi/suftware
 
 * Documentation for this fork
