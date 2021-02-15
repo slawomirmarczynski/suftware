@@ -26,9 +26,9 @@ pip install suftware
 
 * Documentation for the original Suftware
 
-    * Documentation: "http://suftware.readthedocs.org"
-    * Github: "https://github.com/jbkinney/suftware"
-    * PyPI: "https://pypi.python.org/pypi/suftware"
+    * Documentation: http://suftware.readthedocs.org
+    * Github: https://github.com/jbkinney/suftware
+    * PyPI: https://pypi.python.org/pypi/suftware
 
 * Documentation for this fork
 
