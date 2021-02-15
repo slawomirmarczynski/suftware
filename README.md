@@ -1,21 +1,36 @@
-# SUFTware: Statistics Using Field Theory
-
-SUFTware (Statistics Using Field Theory) provides a fast and lightweight Python implementation of Bayesian Field Theory algorithms for low-dimensional statistical inference. SUFTware currently supports the one-dimenstional density estimation algorithm DEFT. See the Documentation page for details on the SUFTware API.
+# A fork of **SUFTware: Statistics Using Field Theory**
 
 
-**Installation** :
+*SUFTware* (Statistics Using Field Theory) is Python implementation
+of Bayesian field theory algorithms for low-dimensional statistical inference. It currently uses the one-dimensional density estimation algorithm DEFT.
+
+The previous version of this software had been written by Wei-Chia Chen, Ammar Tareen and Justin B. Kinney.
+
+This version of the Suftware library package has been created as an attempt to fix some bugs and limitation of the original.
+The structure of the project was changed and streamlined, 
+the deprecated time.clock() function was removed.
+
+**Installation**
+
 pip install suftware
 
-Requirements 
+**Requirements**
 
-* Python >= 3.6.2 or Python = 2.7.10
-* numpy >= 1.10.1
-* scipy >= 1.0.0
-* matplotlib >= 2.0.0
-* pandas >= 0.20.3
-<br/>
+* decent Python 3, preferable >= 3.8
+* numpy
+* scipy
+* matplotlib
+* pandas
 
-* Documentation: "http://suftware.readthedocs.org"
-* Github: "https://github.com/jbkinney/suftware"
-* PyPI: "https://pypi.python.org/pypi/suftware"
+**Documentation**
+
+* Documentation for the original Suftware
+
+    * Documentation: "http://suftware.readthedocs.org"
+    * Github: "https://github.com/jbkinney/suftware"
+    * PyPI: "https://pypi.python.org/pypi/suftware"
+
+* Documentation for this fork
+
+    The separate documentation for this fork has not been created.
 
