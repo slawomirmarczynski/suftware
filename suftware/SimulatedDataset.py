@@ -8,6 +8,8 @@ import scipy.stats as stats
 
 from utils import ControlledError, handle_errors, check
 
+
+
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
 gaussian
