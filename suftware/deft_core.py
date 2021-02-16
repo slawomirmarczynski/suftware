@@ -11,9 +11,9 @@ import time
 #import maxent
 
 # python 3 imports
-from src import utils
-from src import supplements
-from src import maxent
+import utils
+import supplements
+import maxent
 
 # Import error handling
 #from utils import ControlledError
