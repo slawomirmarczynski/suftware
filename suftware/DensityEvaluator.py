@@ -1,102 +1,73 @@
+"""
+The definition of InterpolatedPDF factory class.
+"""
+
 import numpy as np
-from scipy import interpolate
-from src.utils import check
+import scipy as sp
 
-class DensityEvaluator:
+class InterpolatedPDF:
     """
-    A probability density that can be evaluated at anywhere
+    The interpolation of the probabilility density function (PDF) is fabricated
+    from given data by creating an InterpolatedPDF object. The object has got
+    redefinied operator __call__(), i.e. it is a function-like object, i.e.::
 
-    Parameters
-    ----------
-
-    field_values: (1D np.array)
-
-        The values of the field used to computed this density.
-
-    grid: (1D np.array)
-
-        The grid points at which the field values are defined. Must be the same
-        the same shape as field.
-
-    Attributes
-    ----------
-
-    field_values:
-        See above.
-
-    grid:
-        See above.
-
-    grid_spacing: (float)
-        The spacing between neighboring gridpoints.
-
-    values: (1D np.array)
-        The values of the probability density at all grid points.
-
-    bounding_box:
-        The domain in which the density is nonzero.
-
-    Z:
-        The normalization constant used to convert the field to a density.
-
+        r = 0.5  # an value of a random variable 
+        p = InterpolatedPDF()
+        probability = p(r)  # probability density value for given r
     """
 
-    def __init__(self, field_values, grid, bounding_box,
-                 interpolation_method='cubic'):
+    #? zmiana kolejności parametrów - było y,x ma być x,y
+    #?
+    def __init__(self, x, y, low=None, high=None, method='cubic'):
+        """
+        Args:
+            x: abscissae, must be monotonic, i.e. x[n] < x[n + 1] for each n
+            y: ordinates
+            low (float): low limit for abscissae values
+            high (float): high limit for abscissae values
+            method: the method to be used by SciPy interpolate.interp1d,
+                may be 'linear', 'nearest', 'nearest-up', 'zero', 'slinear',
+                'quadratic', 'cubic', 'previous' or 'next' (see also SciPy 1.6.0
+                Reference Guide); default is 'cubic' and probably it is a safe
+                choice.
+        """
 
-        # Make sure grid and field are the same size
-        self.field_values = field_values
-        self.grid = grid
-        self.bounding_box = bounding_box
-
-        # Compute grid spacing
-        self.grid_spacing = grid[1]-grid[0]
+        self._low = low
+        self._high = high
 
         # Compute normalization constant
-        self.Z = np.sum(self.grid_spacing * np.exp(-self.field_values))
+        #
+        step = x[1] - x[0]
+        self.__z_normalization = step * np.sum(np.exp(-self._y))
 
-        # Interpolate using extended grid and extended phi
-        self.field_func = interpolate.interp1d(self.grid,
-                                               self.field_values,
-                                               kind=interpolation_method,
-                                               bounds_error=False,
-                                               fill_value='extrapolate',
-                                               assume_sorted=True)
+        # Create an auxiliary interpolating function.
+        #
+        self.__aux_fun = sp.interpolate.interp1d(x, y, method, 
+            bounds_error=False, fill_value='extrapolate', assume_sorted=True)
 
-        # Compute density values at supplied grid points
-        self.values = self.evaluate(xs=self.grid)
+    def __f(self, x):
+        """
+        Compute distribution function value for scalar abscissa value.
 
+        Args:
+            x (float): an value
+        """
+        if self.__low <= x <= self.__high:
+            return np.exp(-self.__aux_func(x)) / self.__z_normalization
+        else:
+            return 0.0
 
-    def evaluate(self, xs):
+    def __call__(self, x):
         """
         Evaluates the probability density at specified positions.
 
-        Note: self(xs) can be used instead of self.evaluate(xs).
+        Args:
+            x (np.array): locations at which to evaluate the density.
 
-        Parameters
-        ----------
-
-        xs: (np.array)
-            Locations at which to evaluate the density.
-
-        Returns
-        -------
-
-        (np.array)
-            Values of the density at the specified positions. Values at
-            positions outside the bounding box are evaluated to zero.
-
+        Returns:
+            np.array: values of the density at the specified positions.
+                Values at positions outside the bounding box are evaluated to
+                zero.
         """
-
-        values = np.exp(-self.field_func(xs)) / self.Z
-        zero_indices = (xs < self.bounding_box[0]) | \
-                       (xs > self.bounding_box[1])
-        values[zero_indices] = 0.0
-        return values
-
-    def __call__(self, *args, **kwargs):
-        """
-        Same as evaluate()
-        """
-
-        return self.evaluate(*args, **kwargs)
+        v = np.vectorize(self.__f)
+        return v(x)

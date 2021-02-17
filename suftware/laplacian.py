@@ -90,40 +90,30 @@ class Laplacian:
                 # Reduce dimension going left
                 #
                 for a in range(alpha):
-                    rhs = derivative_matrix_1d(npts - a, step) * rhs
+                    # Compute the derivative matrix (matrix of derivatives?)
+                    #
+                    m = np.eye(npts - a) - np.eye(npts - a, npts - a, -1)
+                    rhs = (m[1:,:] / step) * rhs 
 
-                # Construct final bilateral laplacian
+                # Construct final bilateral laplacian???
                 step = rhs.T * rhs
 
-
             # x is a vector filled with values from -1 to +1 (inclusive).
+            #
             x = np.linspace(-1.0, +1.0, npts)
             basis = np.zeros((npts, alpha))
             for i in range(alpha):
-                c = np.eye(alpha, alpha, i - 1)
-                basis[:,i] = np.polynomial.legendre.legval(x, c)
+                m = np.eye(alpha, alpha, i - 1)
+                basis[:,i] = np.polynomial.legendre.legval(x, m)
             basis = utils.normalize(basis, step)
 
-
-            # Sparsify matrix if requested
-            if sparse:
-                step = csr_matrix(step)
-
-
-            self._G = self._kernel_basis.shape[0]
+            self.G = self._kernel_basis.shape[0]
             self._kernel_dim = self._kernel_basis.shape[1]
-            self._alpha = operator_order
 
             return step, kernel_basis
 
 
-        elif '2d' in operator_type:
-            self._coordinate_dim = 2
-
-
-
-            self._type = operator_type
-
+        elif dimension == 2:
             self._sparse_matrix, self._kernel_basis = \
                 laplacian_2d( num_gridpoints,
                               operator_order,
@@ -179,14 +169,7 @@ class Laplacian:
 
 
 def derivative_matrix_1d(npts, step):
-    """ Returns a (npts-1) x npts sized 1d derivative matrix. """
-
-    # Create matrix
-    tmp_mat = sp.diag(sp.ones(npts),0) + sp.diag(-1.0*sp.ones(npts-1),-1)
-    right_partial = tmp_mat[1:,:]/step
-
-    return sp.mat(right_partial)
-
+.......
 
 
 
