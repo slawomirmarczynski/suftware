@@ -29,7 +29,7 @@ class DensityEstimator:
     def __init__(self,
                  data,
                  grid=None,
-                 grid_spacing=None,
+                 step=None,
                  num_grid_points=None,
                  bounding_box=None,
                  alpha=3,
@@ -48,7 +48,7 @@ class DensityEstimator:
         # Record other inputs as class attributes
         self.alpha = alpha
         self.grid = grid
-        self.grid_spacing = grid_spacing
+        self.step = step
         self.num_grid_points = num_grid_points
         self.bounding_box = bounding_box
         self.periodic = periodic
@@ -251,41 +251,35 @@ class DensityEstimator:
         """
 
 
-        # Check inputs
-        check(isinstance(use_weights, bool),
-              'use_weights = %s; must be True or False.' % use_weights)
-        check(isinstance(show_samples, bool),
-              'show_samples = %s; must be True or False.' % show_samples)
-
         # Define a function for each summary statistic
         def entropy(Q):
-            h = self.grid_spacing
+            h = self.step
             eps = 1E-10
             assert (all(Q >= 0))
             return np.sum(h * Q * np.log2(Q + eps))
 
         def mean(Q):
             x = self.grid
-            h = self.grid_spacing
+            h = self.step
             return np.sum(h * Q * x)
 
         def variance(Q):
             mu = mean(Q)
             x = self.grid
-            h = self.grid_spacing
+            h = self.step
             return np.sum(h * Q * (x - mu) ** 2)
 
         def skewness(Q):
             mu = mean(Q)
             x = self.grid
-            h = self.grid_spacing
+            h = self.step
             return np.sum(h * Q * (x - mu) ** 3) / np.sum(
                 h * Q * (x - mu) ** 2) ** (3 / 2)
 
         def kurtosis(Q):
             mu = mean(Q)
             x = self.grid
-            h = self.grid_spacing
+            h = self.step
             return np.sum(h * Q * (x - mu) ** 4) / np.sum(
                 h * Q * (x - mu) ** 2) ** 2
 
@@ -367,7 +361,7 @@ class DensityEstimator:
         # Extract information from Deft1D object
         data = self.data
         G = self.num_grid_points
-        h = self.grid_spacing
+        h = self.step
         alpha = self.alpha
         periodic = self.periodic
         Z_eval = self.Z_evaluation_method
@@ -510,104 +504,46 @@ class DensityEstimator:
 
         data = self.data
         grid = self.grid
-        grid_spacing = self.grid_spacing
+        step = self.step
         num_grid_points = self.num_grid_points
-        bounding_box = self.bounding_box
+#?        bounding_box = self.bounding_box
+        low = self.low
+        high = self.high
+
         alpha = self.alpha
 
-        # If grid is specified
-        if grid is not None:
-
-            # Check and set number of grid points
-            num_grid_points = len(grid)
-            assert(num_grid_points >= 2*alpha)
-
-            # Check and set grid spacing
-            diffs = np.diff(grid)
-            grid_spacing = diffs.mean()
-            assert (grid_spacing > 0)
-            assert (all(np.isclose(diffs, grid_spacing)))
-
-            # Check and set grid bounds
-            grid_padding = grid_spacing / 2
-            lower_bound = grid[0] - grid_padding
-            upper_bound = grid[-1] + grid_padding
-            bounding_box = np.array([lower_bound, upper_bound])
-            box_size = upper_bound - lower_bound
-
-        # If grid is not specified
+        # When this method is called there are only two possibilities: 
+        # we have got no grid or we have got a grid.
+        #
         if grid is None:
-
-            ### First, set bounding box ###
-
-            # If bounding box is specified, use that.
-            if bounding_box is not None:
-                assert bounding_box[0] < bounding_box[1]
-                lower_bound = bounding_box[0]
-                upper_bound = bounding_box[1]
-                box_size = upper_bound - lower_bound
-
-
-            # Otherwise set bounding box based on data
-            else:
-                assert isinstance(data, np.ndarray)
-                assert all(np.isfinite(data))
-                assert min(data) < max(data)
-
-                # Choose bounding box to encapsulate all data, with extra room
-                data_max = max(data)
-                data_min = min(data)
-                data_span = data_max - data_min
-                lower_bound = data_min - .2 * data_span
-                upper_bound = data_max + .2 * data_span
-
-                # Autoadjust lower bound
-                if data_min >= 0 and lower_bound < 0:
-                    lower_bound = 0
-
-                # Autoadjust upper bound
-                if data_max <= 0 and upper_bound > 0:
-                    upper_bound = 0
-                if data_max <= 1 and upper_bound > 1:
-                    upper_bound = 1
-                if data_max <= 100 and upper_bound > 100:
-                    upper_bound = 100
-
-                # Extend bounding box outward a little for numerical safety
-                lower_bound -= SMALL_NUM*data_span
-                upper_bound += SMALL_NUM*data_span
-                box_size = upper_bound - lower_bound
-
-                # Set bounding box
-                bounding_box = np.array([lower_bound, upper_bound])
 
             ### Next, define grid based on bounding box ###
 
-            # If grid_spacing is specified
-            if (grid_spacing is not None):
-                assert isinstance(grid_spacing, float)
-                assert np.isfinite(grid_spacing)
-                assert grid_spacing > 0
+            # If step is specified
+            if (step is not None):
+                assert isinstance(step, float)
+                assert np.isfinite(step)
+                assert step > 0
 
                 # Set number of grid points
-                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+                num_grid_points = np.floor(box_size/step).astype(int)
 
                 # Check num_grid_points isn't too small
                 check(2*self.alpha <= num_grid_points,
-                      'Using grid_spacing = %f ' % grid_spacing +
+                      'Using step = %f ' % step +
                       'produces num_grid_points = %d, ' % num_grid_points +
-                      'which is too small. Reduce grid_spacing or do not set.')
+                      'which is too small. Reduce step or do not set.')
 
                 # Check num_grid_points isn't too large
                 check(num_grid_points <= MAX_NUM_GRID_POINTS,
-                      'Using grid_spacing = %f ' % grid_spacing +
+                      'Using step = %f ' % step +
                       'produces num_grid_points = %d, ' % num_grid_points +
-                      'which is too big. Increase grid_spacing or do not set.')
+                      'which is too big. Increase step or do not set.')
 
                 # Define grid padding
-                # Note: grid_spacing/2 <= grid_padding < grid_spacing
-                grid_padding = (box_size - (num_grid_points-1)*grid_spacing)/2
-                assert (grid_spacing/2 <= grid_padding < grid_spacing)
+                # Note: step/2 <= grid_padding < step
+                grid_padding = (box_size - (num_grid_points-1)*step)/2
+                assert (step/2 <= grid_padding < step)
 
                 # Define grid to be centered in bounding box
                 grid_start = lower_bound + grid_padding
@@ -622,10 +558,10 @@ class DensityEstimator:
                 assert 2*alpha <= num_grid_points <= MAX_NUM_GRID_POINTS
 
                 # Set grid spacing
-                grid_spacing = box_size / num_grid_points
+                step = box_size / num_grid_points
 
                 # Define grid padding
-                grid_padding = grid_spacing/2
+                grid_padding = step/2
 
                 # Define grid to be centered in bounding box
                 grid_start = lower_bound + grid_padding
@@ -634,14 +570,14 @@ class DensityEstimator:
                                    grid_stop * (1 + SMALL_NUM), # For safety
                                    num_grid_points)
 
-            # Otherwise, set grid_spacing and num_grid_points based on data
+            # Otherwise, set step and num_grid_points based on data
             else:
                 assert isinstance(data, np.ndarray)
                 assert all(np.isfinite(data))
                 assert min(data) < max(data)
 
                 # Compute default grid spacing
-                default_grid_spacing = box_size/DEFAULT_NUM_GRID_POINTS
+                default_step = box_size/DEFAULT_NUM_GRID_POINTS
 
                 # Set minimum number of grid points
                 min_num_grid_points = 2 * alpha
@@ -649,18 +585,18 @@ class DensityEstimator:
                 # Set minimum grid spacing
                 data.sort()
                 diffs = np.diff(data)
-                min_grid_spacing = min(diffs[diffs > 0])
-                min_grid_spacing = min(min_grid_spacing,
+                min_step = min(diffs[diffs > 0])
+                min_step = min(min_step,
                                        box_size/min_num_grid_points)
 
-                # Set grid_spacing
-                grid_spacing = max(min_grid_spacing, default_grid_spacing)
+                # Set step
+                step = max(min_step, default_step)
 
                 # Set number of grid points
-                num_grid_points = np.floor(box_size/grid_spacing).astype(int)
+                num_grid_points = np.floor(box_size/step).astype(int)
 
                 # Set grid padding
-                grid_padding = grid_spacing/2
+                grid_padding = step/2
 
                 # Define grid to be centered in bounding box
                 grid_start = lower_bound + grid_padding
@@ -669,9 +605,30 @@ class DensityEstimator:
                                    grid_stop * (1 + SMALL_NUM),  # For safety
                                    num_grid_points)
 
+
+        if grid is not None:
+
+            # Check and set number of grid points
+            num_grid_points = len(grid)
+            assert(num_grid_points >= 2*alpha)
+
+            # Check and set grid spacing
+            diffs = np.diff(grid)
+            step = diffs.mean()
+            assert (step > 0)
+            assert (all(np.isclose(diffs, step)))
+
+            # Check and set grid bounds
+            grid_padding = step / 2
+            lower_bound = grid[0] - grid_padding
+            upper_bound = grid[-1] + grid_padding
+            bounding_box = np.array([lower_bound, upper_bound])
+            box_size = upper_bound - lower_bound
+
+
         # Set final grid
         self.grid = grid
-        self.grid_spacing = grid_spacing
+        self.step = step
         self.grid_padding = grid_padding
         self.num_grid_points = num_grid_points
         self.bounding_box = bounding_box
@@ -679,14 +636,26 @@ class DensityEstimator:
         self.upper_bound = upper_bound
         self.box_size = box_size
 
-        # Make sure that the final number of gridpoints is ok.
-        check(2 * self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
-              'After setting grid, we find that num_grid_points = %d; must have %d <= len(grid) <= %d. ' %
-              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS) +
-              'Something is wrong with input values of grid, grid_spacing, num_grid_points, or bounding_box.')
 
         # Set bin edges
         self.bin_edges = np.concatenate(([lower_bound],
-                                         grid[:-1]+grid_spacing/2,
+                                         grid[:-1]+step/2,
                                          [upper_bound]))
+
+    def _init_bbox(self):
+
+        #? Assuming that data is a matrix n-by-2 with x, y values
+
+        PADDING_FACTOR = 0.2
+
+        x1 = np.min(data[:, 0])
+        x2 = np.max(data[:, 0])
+        self.low = x1 - (x2 - x1) * PADDING_FACTOR
+        self.high = x2 + (x2 - x1) * PADDING_FACTOR
+
+        if self.low < 0 and x1 >= 0:
+            self.low = 0
+
+        if self.high > 0 and x2 > 0:
+            self.high = 0
 

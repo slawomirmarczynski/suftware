@@ -1,6 +1,8 @@
 """
 The definition of InterpolatedPDF factory class.
 """
+#@todo: CHANGE FILE NAME TO interpolatedpdf.py OR place the content with other
+#       fragments of the program code.
 
 import numpy as np
 import scipy as sp
@@ -9,10 +11,10 @@ class InterpolatedPDF:
     """
     The interpolation of the probabilility density function (PDF) is fabricated
     from given data by creating an InterpolatedPDF object. The object has got
-    redefinied operator __call__(), i.e. it is a function-like object, i.e.::
+    redefinied operator __call__(), i.e. it is function-like::
 
         r = 0.5  # an value of a random variable 
-        p = InterpolatedPDF()
+        p = InterpolatedPDF(x, y)
         probability = p(r)  # probability density value for given r
     """
 
@@ -32,8 +34,8 @@ class InterpolatedPDF:
                 choice.
         """
 
-        self._low = low
-        self._high = high
+        self.__low = low
+        self.__high = high
 
         # Compute normalization constant
         #
