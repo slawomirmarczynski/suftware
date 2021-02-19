@@ -27,7 +27,7 @@ class SimpleDensityEstimator:
     """
 
     def __init__(self, data,
-                 num_grid_points=DEFAULT_NUM_GRID_POINTS,
+                 npts=DEFAULT_NUM_GRID_POINTS,
                  alpha=3,
                  periodic=False,
                  max_t_step=1.0,
@@ -36,15 +36,13 @@ class SimpleDensityEstimator:
                  sample_only_at_l_star=False,
                  max_log_evidence_ratio_drop=20,
                  evaluation_method_for_Z='Lap',
-                 num_samples_for_Z=1000,
-                 seed=None,
-                 print_t=False):
+                 num_samples_for_Z=1000):
 
         # Record other inputs as class attributes
         self.alpha = alpha
         self.grid = None
         self.step = None
-        self.num_grid_points = num_grid_points
+        self.npts = npts
         self.low = None
         self.high = None
         self.bounding_box = bounding_box
@@ -54,7 +52,6 @@ class SimpleDensityEstimator:
         self.max_t_step = max_t_step
         self.print_t = print_t
         self.tolerance = tolerance
-        self.seed = seed
         self.resolution = resolution
         self.sample_only_at_l_star = sample_only_at_l_star
         self.max_log_evidence_ratio_drop = max_log_evidence_ratio_drop
@@ -85,13 +82,13 @@ class SimpleDensityEstimator:
         # bounding box): set grid spacing, define grid padding, define grid to
         # be centered in bounding box, set bin edges.
         #
-        self.step = (self.high - self.low) / self.num_grid_points
+        self.step = (self.high - self.low) / self.npts
         self.grid_padding = self.step / 2
         grid_start = self.low + self.grid_padding
         grid_stop = self.high - self.grid_padding
         self.grid = np.linspace(
             grid_start, grid_stop * (1 + SMALL_NUM), # For safety?!?!? WTF?!
-            self.num_grid_points)
+            self.npts)
         self.bin_edges = np.concatenate(
             ([self.low], self.grid[:-1] + self.step / 2, [self.high]))
 
@@ -247,33 +244,20 @@ class SimpleDensityEstimator:
     def _run(self):
         """
         Estimates the probability density from data using the DEFT algorithm.
-        Also samples posterior densities
         """
 
         # Extract information from Deft1D object
 
-        G = self.num_grid_points
-        self.low = None,
-        h = self.step
-        alpha = self.alpha
-        periodic = self.periodic
-        Z_eval = self.Z_evaluation_method
-        num_Z_samples = self.num_samples_for_Z
-        DT_MAX = self.max_t_step
-        print_t = self.print_t
-        tollerance = self.tolerance
-        resolution = self.resolution
-        deft_seed = self.seed
-        num_pt_samples = self.num_posterior_samples
-        fix_t_at_t_star = self.sample_only_at_l_star
-        max_log_evidence_ratio_drop = self.max_log_evidence_ratio_drop
+        #? G == self.npts # just remove G-something
 
-        # Start clock - anyway it is not a good idea - the computation time is
-        # not a revelant result.
+
+        # Create an clock object to measure time - anyway it is not a good idea
+        # - the computation time is not a revelant result.
         #
         clock = ConsumedTimeTimer()
 
-        # Create Laplacian
+        # Create Laplace something - always it is 1D, funny
+        #
         clock.tic()
         Delta = laplacian.Laplacian(1, self.periodic, self.alpha, G)
         print('laplace operator constructed')
@@ -283,100 +267,40 @@ class SimpleDensityEstimator:
 
         # Histogram based on bin centers
         counts, _ = np.histogram(data, self.bin_edges)
-        N = sum(counts)
-
-        # Make sure a sufficient number of bins are nonzero
-        num_nonempty_bins = sum(counts > 0)
-        check(num_nonempty_bins > self.alpha,
-              'Histogram has %d nonempty bins; must be > %d.' %
-              (num_nonempty_bins, self.alpha))
+        counts_total = sum(counts)
 
         # Compute initial t
-        t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
-        if print_t:
-            print('t_start = %0.2f' % t_start)
+        #
+        t_start = min(0.0, 
+                      np.log(counts_total) 
+                      - 2 * self.alpha * np.log(self.alpha / self.step))
 
         # Do DEFT density estimation
-        core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples,
-                                     t_start, DT_MAX, print_t,
-                                     tollerance, resolution, num_pt_samples,
-                                     fix_t_at_t_star,
-                                     max_log_evidence_ratio_drop)
-
-        # Fill in results
-        results = core_results # Get all results from deft_core
+        #
+        self.results = deft_core.run(
+            counts, 
+            Delta, 
+            Z_eval, 
+            num_Z_samples,                            
+            t_start, 
+            DT_MAX, 
+            print_t,
+            tollerance, 
+            resolution, 
+            num_pt_samples,
+            fix_t_at_t_star,
+            max_log_evidence_ratio_drop)
 
         # Normalize densities properly
-        results.h = h
-        results.L = G*h
-        results.R /= h
-        results.M /= h
-        results.Q_star /= h
-        results.l_star = h*(sp.exp(-results.t_star)*N)**(1/(2.*alpha))
-        for p in results.map_curve.points:
-            p.Q /= h
+        self.results.step = self.step
+        self.results.L = self.npts * self.step
+        self.results.R /= self.step
+        self.results.M /= self.step
+        self.results.Q_star /= self.step
+        self.results.l_star = self.step * (
+            sp.exp(-self.results.t_star) * counts_total)**(1/(2.*self.alpha))
+        for p in self.results.map_curve.points:
+            p.Q /= self.step
         if not (num_pt_samples == 0):
-            results.Q_samples /= h
-        results.Delta = Delta
-
-        # Store results
-        self.results = results
-
-
-    def _clean_data(self):
-        """
-        Sanitize the assigned data
-        :param: self
-        :return: None
-        """
-        data = self.data
-
-        # if data is a list-like, convert to 1D np.array
-        if isinstance(data, LISTLIKE):
-            data = np.array(data).ravel()
-        elif isinstance(data, set):
-            data = np.array(list(data)).ravel()
-        else:
-            raise ControlledError(
-                "Error: could not cast data into an np.array")
-
-        # Check that entries are numbers
-        check(all([isinstance(n, numbers.Real) for n in data]),
-              'not all entries in data are real numbers')
-
-        # Cast as 1D np.array of floats
-        data = data.astype(float)
-
-        # Keep only finite numbers
-        data = data[np.isfinite(data)]
-
-
-        try:
-            if not (len(data) > 0):
-                raise ControlledError(
-                    'Input check failed, data must have length > 0: data = %s' % data)
-        except ControlledError as e:
-            print(e)
-            sys.exit(1)
-
-        try:
-            data_spread = max(data) - min(data)
-            if not np.isfinite(data_spread):
-                raise ControlledError(
-                    'Input check failed. Data[max]-Data[min] is not finite: Data spread = %s' % data_spread)
-        except ControlledError as e:
-            print(e)
-            sys.exit(1)
-
-        try:
-            if not (data_spread > 0):
-                raise ControlledError(
-                    'Input check failed. Data[max]-Data[min] must be > 0: data_spread = %s' % data_spread)
-        except ControlledError as e:
-            print(e)
-            sys.exit(1)
-
-        # Set cleaned data
-        self.data = data
-
-
+            results.Q_samples /= self.step
+        self.results.Delta = Delta
