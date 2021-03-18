@@ -4,17 +4,14 @@ import numbers
 import numpy as np
 import scipy as sp
 
-from consumedtimetimer import ConsumedTimeTimer
-
 # Import deft-related code
+
 import deft_core
 import laplacian
-from utils import ControlledError, enable_graphics, check, handle_errors,\
-    clean_numerical_input, LISTLIKE
-from DensityEvaluator import InterpolatedPDF
+from densityevaluator import InterpolatedPDF
 
 
-SMALL_NUM = 1E-6  #? arbitrary, non-coherent with the `utils` module. 
+SMALL_NUM = 1E-6  #? arbitrary, non-coherent with the `utils` module.
 MAX_NUM_GRID_POINTS = 1000 #? what for? I have BIG COMPUTER - and...
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
@@ -39,6 +36,7 @@ class SimpleDensityEstimator:
                  num_samples_for_Z=1000):
 
         # Record other inputs as class attributes
+        #
         self.alpha = alpha
         self.grid = None
         self.step = None
@@ -58,14 +56,6 @@ class SimpleDensityEstimator:
         self.data = data
         self.results = None
 
-        # Data should be numeric and finite. Thus any NAN/INF values are removed
-        # - notice that it is possible that an exception may be raised.
-        #
-        #? Remove it - it is not pythonic - just assume that data MUST BE VALID
-        #
-        data = np.mat(data, float)
-        data = data[np.isfinite(data)]
-
         # init_bbox
         #
         PADDING_FACTOR = 0.2
@@ -78,7 +68,7 @@ class SimpleDensityEstimator:
         if self.high > 0 and x2 > 0:
             self.high = 0
 
-        # Define a grid based on self.low and self.high (i.e. based on the 
+        # Define a grid based on self.low and self.high (i.e. based on the
         # bounding box): set grid spacing, define grid padding, define grid to
         # be centered in bounding box, set bin edges.
         #
@@ -98,7 +88,7 @@ class SimpleDensityEstimator:
 
         #? WTF, the results are already avaliable as self.results.*
         #?
-        # Save some results 
+        # Save some results
         #
         self.histogram = self.results.R
         self.maxent = self.results.M
@@ -246,22 +236,10 @@ class SimpleDensityEstimator:
         Estimates the probability density from data using the DEFT algorithm.
         """
 
-        # Extract information from Deft1D object
-
         #? G == self.npts # just remove G-something
 
-
-        # Create an clock object to measure time - anyway it is not a good idea
-        # - the computation time is not a revelant result.
-        #
-        clock = ConsumedTimeTimer()
-
-        # Create Laplace something - always it is 1D, funny
-        #
-        clock.tic()
-        Delta = laplacian.Laplacian(1, self.periodic, self.alpha, G)
-        print('laplace operator constructed')
-        clock.toc()
+        laplace_operator = laplacian.Laplacian(self.periodic, self.alpha, 
+                self.npts)
 
         # Get histogram counts and grid centers
 
@@ -271,22 +249,21 @@ class SimpleDensityEstimator:
 
         # Compute initial t
         #
-        t_start = min(0.0, 
-                      np.log(counts_total) 
+        t_start = min(0.0,
+                      np.log(counts_total)
                       - 2 * self.alpha * np.log(self.alpha / self.step))
 
         # Do DEFT density estimation
         #
         self.results = deft_core.run(
-            counts, 
-            Delta, 
-            Z_eval, 
-            num_Z_samples,                            
-            t_start, 
-            DT_MAX, 
+            counts,
+            laplace_operator,
+            Z_eval,
+         num_Z_samples,
+    self.npts       t_start,
             print_t,
-            tollerance, 
-            resolution, 
+            tollerance,
+            resolution,
             num_pt_samples,
             fix_t_at_t_star,
             max_log_evidence_ratio_drop)
@@ -303,4 +280,3 @@ class SimpleDensityEstimator:
             p.Q /= self.step
         if not (num_pt_samples == 0):
             results.Q_samples /= self.step
-        self.results.Delta = Delta

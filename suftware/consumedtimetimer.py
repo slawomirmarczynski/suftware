@@ -94,5 +94,5 @@ class ConsumedTimeTimer:
         # Print a message like Matlab do.
         #
         print('Elapsed time is', delta, 'seconds.')
-        
+
         return delta
