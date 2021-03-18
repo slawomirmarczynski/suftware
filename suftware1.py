@@ -13,44 +13,30 @@ from numpy.polynomial.legendre import legval, legval2d
 import pandas as pd
 import sys
 import time
-import pdb
-import numbers
-import math
-import sys
 import numbers
 import os
 from functools import wraps
 
-from scipy.sparse import csr_matrix, diags, spdiags
-from scipy.sparse.linalg import spsolve, eigsh
-from scipy.linalg import det, eigh, solve, eigvalsh, inv
-import scipy.optimize as opt
-import time
-
-from __future__ import division
-from scipy.sparse import diags
-import multiprocessing as mp
-import itertools
-import time
-import sys
-from scipy.linalg import solve, det, norm
-
 from scipy.sparse import csr_matrix, diags
 from scipy.sparse.linalg import spsolve
-from scipy.linalg import det, eigh, qr
+from scipy.linalg import det, eigh, solve, eigvalsh
+
+import multiprocessing as mp
+import itertools
+from scipy.linalg import norm
+
 
 # AT: fixing SciPy comb import bug: 8_19_2019
 # for SciPy versions >= 0.19
-try:  
+try:
     from scipy.special import comb
 except ImportError:
     from scipy.misc import comb
-import pickle
 
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # BIG IMPORTS HERE
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 class ConsumedTimeTimer:
     """
@@ -137,12 +123,13 @@ class ConsumedTimeTimer:
         # print('Elapsed time is', delta, 'seconds.')
         return delta
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 # A very small floating point number, used to prevent taking logs of 0
 TINY_FLOAT64 = sp.finfo(sp.float64).tiny
 TINY_FLOAT32 = sp.finfo(sp.float32).tiny
-PHI_MIN = -500 
+PHI_MIN = -500
 PHI_MAX = 500
 PHI_STD_REG = 100.0
 LISTLIKE = (list, np.ndarray, np.matrix, range)
@@ -154,10 +141,12 @@ NUMBER = (int, float, int)
 # This is useful for testing whether something is an array
 ARRAY = (np.ndarray, list)
 
+
 # Dummy class
 class Dummy():
     def __init__(self):
         pass
+
 
 # Define error handling
 class ControlledError(Exception):
@@ -169,8 +158,8 @@ class ControlledError(Exception):
         return self.value
 
 
-# Evaluate geodesic distance 
-def geo_dist(P,Q):
+# Evaluate geodesic distance
+def geo_dist(P, Q):
 
     # Make sure P is valid
     if not all(np.isreal(P)):
@@ -192,21 +181,24 @@ def geo_dist(P,Q):
         raise ControlledError('/geo_dist/ Q is vanishing: Q = %s' % Q)
 
     # Enforce proper normalization
-    P_prob = P/sp.sum(P) 
-    Q_prob = Q/sp.sum(Q) 
+    P_prob = P/sp.sum(P)
+    Q_prob = Q/sp.sum(Q)
 
     # Return geo-distance. Arc-cosine can behave badly if argument is too close to one, so prepare for this
     try:
         dist = 2*sp.arccos(sp.sum(sp.sqrt(P_prob*Q_prob)))
         if not np.isreal(dist):
-            raise ControlledError('/geo_dist/ dist is not real: dist = %s' % dist)
+            raise ControlledError(
+                '/geo_dist/ dist is not real: dist = %s' % dist)
         if not (dist >= 0):
-            raise ControlledError('/geo_dist/ dist is not >= 0: dist = %s' % dist)
+            raise ControlledError(
+                '/geo_dist/ dist is not >= 0: dist = %s' % dist)
     except:
         if sp.sum(sp.sqrt(P_prob*Q_prob)) > 1 - TINY_FLOAT32:
             dist = 0
         else:
-            raise ControlledError('/geo_dist/ dist cannot be computed correctly!')
+            raise ControlledError(
+                '/geo_dist/ dist cannot be computed correctly!')
 
     # Return geo-distance
     return dist
@@ -214,43 +206,49 @@ def geo_dist(P,Q):
 
 # Convert field to non-normalized quasi probability distribution
 def field_to_quasiprob(raw_phi):
-    phi = np.copy(raw_phi) 
+    phi = np.copy(raw_phi)
     G = len(phi)
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise ControlledError('/field_to_quasiprob/ phi is not real: phi = %s' % phi)
+        raise ControlledError(
+            '/field_to_quasiprob/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise ControlledError('/field_to_quasiprob/ phi is not finite: phi = %s' % phi)
-    
+        raise ControlledError(
+            '/field_to_quasiprob/ phi is not finite: phi = %s' % phi)
+
     if any(phi < PHI_MIN):
-        phi[phi < PHI_MIN] = PHI_MIN      
+        phi[phi < PHI_MIN] = PHI_MIN
 
     # Compute quasiQ
     quasiQ = sp.exp(-phi)/(1.*G)
 
     # Make sure quasiQ is valid
     if not all(np.isreal(quasiQ)):
-        raise ControlledError('/field_to_quasiprob/ quasiQ is not real: quasiQ = %s' % quasiQ)
+        raise ControlledError(
+            '/field_to_quasiprob/ quasiQ is not real: quasiQ = %s' % quasiQ)
     if not all(np.isfinite(quasiQ)):
-        raise ControlledError('/field_to_quasiprob/ quasiQ is not finite: quasiQ = %s' % quasiQ)
+        raise ControlledError(
+            '/field_to_quasiprob/ quasiQ is not finite: quasiQ = %s' % quasiQ)
     if not all(quasiQ >= 0):
-        raise ControlledError('/field_to_quasiprob/ quasiQ is not non-negative: quasiQ = %s' % quasiQ)
+        raise ControlledError(
+            '/field_to_quasiprob/ quasiQ is not non-negative: quasiQ = %s' % quasiQ)
 
     # Return quasi probability distribution
     return quasiQ
 
 
 # Convert field to normalized probability distribution
-def field_to_prob(raw_phi): 
-    phi = np.copy(raw_phi) 
+def field_to_prob(raw_phi):
+    phi = np.copy(raw_phi)
     G = len(phi)
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise ControlledError('/field_to_prob/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise ControlledError('/field_to_prob/ phi is not finite: phi = %s' % phi)
+        raise ControlledError(
+            '/field_to_prob/ phi is not finite: phi = %s' % phi)
 
     # Re-level phi. NOTE: CHANGES PHI!
     phi -= min(phi)
@@ -265,7 +263,8 @@ def field_to_prob(raw_phi):
     if not all(np.isfinite(Q)):
         raise ControlledError('/field_to_prob/ Q is not finite: Q = %s' % Q)
     if not all(Q >= 0):
-        raise ControlledError('/field_to_prob/ Q is not non-negative: Q = %s' % Q)
+        raise ControlledError(
+            '/field_to_prob/ Q is not non-negative: Q = %s' % Q)
 
     # Return probability
     return Q
@@ -281,15 +280,17 @@ def prob_to_field(Q):
     if not all(np.isfinite(Q)):
         raise ControlledError('/prob_to_field/ Q is not finite: Q = %s' % Q)
     if not all(Q >= 0):
-        raise ControlledError('/prob_to_field/ Q is not non-negative: Q = %s' % Q)
-    
+        raise ControlledError(
+            '/prob_to_field/ Q is not non-negative: Q = %s' % Q)
+
     phi = -sp.log(G*Q + TINY_FLOAT64)
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
         raise ControlledError('/prob_to_field/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise ControlledError('/prob_to_field/ phi is not finite: phi = %s' % phi)
+        raise ControlledError(
+            '/prob_to_field/ phi is not finite: phi = %s' % phi)
 
     # Return field
     return phi
@@ -328,7 +329,8 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
 
     # Make sure normalized is valid
     if not isinstance(normalized, bool):
-        raise ControlledError('/histogram_counts_1d/ normalized must be a boolean: normalized = %s' % type(normalized))
+        raise ControlledError(
+            '/histogram_counts_1d/ normalized must be a boolean: normalized = %s' % type(normalized))
 
     # data_spread = max(data) - min(data)
     #
@@ -353,21 +355,23 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
     # Make sure bin_centers is valid
     if not (len(bin_centers) == G):
         raise ControlledError('/histogram_counts_1d/ bin_centers must have length %d: len(bin_centers) = %d' %
-                              (G,len(bin_centers)))
+                              (G, len(bin_centers)))
     # Make sure bin_edges is valid
     if not (len(bin_edges) == G+1):
         raise ControlledError('/histogram_counts_1d/ bin_edges must have length %d: len(bin_edges) = %d' %
-                              (G+1,len(bin_edges)))
+                              (G+1, len(bin_edges)))
 
     # Get counts in each bin
     counts, _ = np.histogram(data, bins=bin_edges, density=False)
 
     # Make sure counts is valid
     if not (len(counts) == G):
-        raise ControlledError('/histogram_counts_1d/ counts must have length %d: len(counts) = %d' % (G, len(counts)))
+        raise ControlledError(
+            '/histogram_counts_1d/ counts must have length %d: len(counts) = %d' % (G, len(counts)))
     if not all(counts >= 0):
-        raise ControlledError('/histogram_counts_1d/ counts is not non-negative: counts = %s' % counts)
-    
+        raise ControlledError(
+            '/histogram_counts_1d/ counts is not non-negative: counts = %s' % counts)
+
     if normalized:
         hist = 1.*counts/np.sum(h*counts)
     else:
@@ -378,7 +382,7 @@ def histogram_counts_1d(data, G, bbox, normalized=False):
 
 
 # Make a 2d histogram
-def histogram_2d(data, box, num_bins=[10,10], normalized=False):
+def histogram_2d(data, box, num_bins=[10, 10], normalized=False):
     data_x = data[0]
     data_y = data[1]
 
@@ -387,8 +391,8 @@ def histogram_2d(data, box, num_bins=[10,10], normalized=False):
     hy, ys, y_edges = \
         grid_info_from_bbox_and_G(box[1], num_bins[1])
 
-    hist, xedges, yedges = np.histogram2d(data_x, data_y, 
-        bins=[x_edges, y_edges], normed=normalized)
+    hist, xedges, yedges = np.histogram2d(data_x, data_y,
+                                          bins=[x_edges, y_edges], normed=normalized)
 
     return hist, xs, ys
 
@@ -404,52 +408,53 @@ def bounding_box_from_centers(centers):
     h = centers[1]-centers[0]
     xmin = centers[0]-h/2.
     xmax = centers[-1]+h/2.
-    return sp.array([xmin,xmax])
+    return sp.array([xmin, xmax])
 
 
 # Defines a dot product with my normalization
-def dot(v1,v2,h=1.0):
+def dot(v1, v2, h=1.0):
     v1r = v1.ravel()
     v2r = v2.ravel()
     G = len(v1)
     if not (len(v2) == G):
-        raise ControlledError('/dot/ vectors are not of the same length: len(v1) = %d, len(v2) = %d' % (len(v1r), len(v2r)))
+        raise ControlledError(
+            '/dot/ vectors are not of the same length: len(v1) = %d, len(v2) = %d' % (len(v1r), len(v2r)))
     return sp.sum(v1r*v2r*h/(1.*G))
 
 
 # Computes a norm with my normalization
-def norm(v,h=1.0):
+def norm(v, h=1.0):
     v_cc = np.conj(v)
-    return sp.sqrt(dot(v,v_cc,h))
+    return sp.sqrt(dot(v, v_cc, h))
 
 
 # Normalizes vectors (stored as columns of a 2D numpy array)
 def normalize(vectors, grid_spacing=1.0):
     """ Normalizes vectors stored as columns of a 2D numpy array """
-    G = vectors.shape[0] # length of each vector
-    K = vectors.shape[1] # number of vectors
+    G = vectors.shape[0]  # length of each vector
+    K = vectors.shape[1]  # number of vectors
 
     # Set volume element h. This takes a little consideration
-    if isinstance(grid_spacing,NUMBER):
+    if isinstance(grid_spacing, NUMBER):
         h = grid_spacing
-    elif isinstance(grid_spacing,ARRAY):
+    elif isinstance(grid_spacing, ARRAY):
         grid_spacing = sp.array(grid_spacing)
         h = sp.prod(grid_spacing)
     else:
         raise ControlledError('/normalize/ Cannot recognize h: h = %s' % h)
-    
+
     if not (h > 0):
         raise ControlledError('/normalize/ h is not positive: h = %s' % h)
 
-    norm_vectors = sp.zeros([G,K])
+    norm_vectors = sp.zeros([G, K])
     for i in range(K):
         # Extract v from list of vectors
-        v = vectors[:,i]
+        v = vectors[:, i]
         # Flip sign of v so that last element is non-negative
         if (v[-1] < 0):
             v = -v
         # Normalize v and save in norm_vectors
-        norm_vectors[:,i] = v/norm(v)
+        norm_vectors[:, i] = v/norm(v)
 
     # Return array with normalized vectors along the columns
     return norm_vectors
@@ -462,11 +467,11 @@ def legendre_basis_1d(G, alpha, grid_spacing):
     x_grid = (sp.arange(G) - (G-1)/2.)/(G/2.)
 
     # First create an orthogonal (not necessarily normalized) basis
-    raw_basis = sp.zeros([G,alpha])
+    raw_basis = sp.zeros([G, alpha])
     for i in range(alpha):
         c = sp.zeros(alpha)
         c[i] = 1.0
-        raw_basis[:,i] = legval(x_grid,c)
+        raw_basis[:, i] = legval(x_grid, c)
 
     # Normalize basis
     basis = normalize(raw_basis, grid_spacing)
@@ -476,32 +481,33 @@ def legendre_basis_1d(G, alpha, grid_spacing):
 
 
 # Construct an orthonormal basis of order alpha from 2d legendre polynomials
-def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0,1.0]):
+def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0, 1.0]):
 
     # Compute x-coords and y-coords, each ranging from -1 to 1
     x_grid = (sp.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
     y_grid = (sp.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
 
     # Create meshgrid of these
-    xs, ys = np.meshgrid(x_grid,y_grid)
+    xs, ys = np.meshgrid(x_grid, y_grid)
     basis_dim = alpha*(alpha+1)/2
     G = Gx*Gy
-    raw_basis = sp.zeros([G,basis_dim])
+    raw_basis = sp.zeros([G, basis_dim])
     k = 0
     for a in range(alpha):
         for b in range(alpha):
             if a+b < alpha:
-                c = sp.zeros([alpha,alpha])
-                c[a,b] = 1
-                raw_basis[:,k] = \
-                    legval2d(xs,ys,c).T.reshape([G])
+                c = sp.zeros([alpha, alpha])
+                c[a, b] = 1
+                raw_basis[:, k] = \
+                    legval2d(xs, ys, c).T.reshape([G])
                 k += 1
 
     # Normalize this basis using my convension
     basis = normalize(raw_basis, grid_spacing)
-    
+
     # Return normalized basis
     return basis
+
 
 def clean_numerical_input(x):
     """
@@ -698,7 +704,8 @@ def handle_errors(func):
 
     return wrapped_func
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 # List of supported distributions by name
 VALID_DISTRIBUTIONS = '''
@@ -722,11 +729,14 @@ vonmises
 # Maximum number of samples this algorithm will simulate
 MAX_DATASET_SIZE = 1E6
 
-class Results(): pass;
 
-def gaussian_mixture(N,weights,mus,sigmas,bbox):
+class Results():
+    pass
+
+
+def gaussian_mixture(N, weights, mus, sigmas, bbox):
     assert bbox[1] > bbox[0]
-    assert len(weights)==len(mus)==len(sigmas)
+    assert len(weights) == len(mus) == len(sigmas)
 
     # Get xs to sample
     xs = np.linspace(bbox[0], bbox[1], 1E4)
@@ -734,13 +744,13 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
     # Build pdf strings
     pdf_py = '0'
     pdf_js = '0'
-    for m, s, w in zip(mus,sigmas,weights):
-        pdf_py +='+(%f/%f)*np.exp(-0.5*np.power((x-(%f))/%f,2))'%(w,s,m,s)
-        pdf_js +='+(%f/%f)*Math.exp(-0.5*Math.pow((x-(%f))/%f,2))'%(w,s,m,s)
+    for m, s, w in zip(mus, sigmas, weights):
+        pdf_py += '+(%f/%f)*np.exp(-0.5*np.power((x-(%f))/%f,2))' % (w, s, m, s)
+        pdf_js += '+(%f/%f)*Math.exp(-0.5*Math.pow((x-(%f))/%f,2))' % (w, s, m, s)
 
     # Evaluate pdf at xs
     ps = np.zeros(len(xs))
-    for i,x in enumerate(xs):
+    for i, x in enumerate(xs):
         ps[i] = eval(pdf_py)
     ps /= sum(ps)
 
@@ -749,6 +759,7 @@ def gaussian_mixture(N,weights,mus,sigmas,bbox):
 
     # Return valuables
     return data, pdf_py, pdf_js
+
 
 class SimulatedDataset:
     """
@@ -830,8 +841,9 @@ class SimulatedDataset:
             mus = [0.]
             sigmas = [1.]
             weights = [1.]
-            bounding_box = [-5,5]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            bounding_box = [-5, 5]
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         # If mixture of two gaussian distributions
         elif distribution == 'narrow':
@@ -840,7 +852,8 @@ class SimulatedDataset:
             sigmas = [1., 1.]
             weights = [1., 1.]
             bounding_box = [-6, 6]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         # If mixture of two gaussian distributions
         elif distribution == 'wide':
@@ -849,44 +862,49 @@ class SimulatedDataset:
             sigmas = [1.0, 1.0]
             weights = [1.0, 0.5]
             bounding_box = [-6.0, 6.0]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         elif distribution == 'foothills':
             description = 'Foothills (Gaussian mixture)'
             mus = [0., 5., 8., 10, 11]
             sigmas = [2., 1., 0.5, 0.25, 0.125]
             weights = [1., 1., 1., 1., 1.]
-            bounding_box = [-5,12]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            bounding_box = [-5, 12]
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         elif distribution == 'accordian':
             description = 'Accordian (Gaussian mixture)'
             mus = [0., 5., 8., 10, 11, 11.5]
             sigmas = [2., 1., 0.5, 0.25, 0.125, 0.0625]
             weights = [16., 8., 4., 2., 1., 0.5]
-            bounding_box = [-5,13]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            bounding_box = [-5, 13]
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         elif distribution == 'goalposts':
             description = 'Goalposts (Gaussian mixture)'
             mus = [-20, 20]
             sigmas = [1., 1.]
             weights = [1., 1.]
-            bounding_box = [-25,25]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            bounding_box = [-25, 25]
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         elif distribution == 'towers':
             description = 'Towers (Gaussian mixture)'
             mus = [-20, -15, -10, -5, 0, 5, 10, 15, 20]
             sigmas = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
             weights = [1., 1., 1., 1., 1., 1., 1., 1., 1.]
-            bounding_box = [-25,25]
-            data, pdf_py, pdf_js = gaussian_mixture(num_data_points, weights, mus, sigmas, bounding_box)
+            bounding_box = [-25, 25]
+            data, pdf_py, pdf_js = gaussian_mixture(
+                num_data_points, weights, mus, sigmas, bounding_box)
 
         # If uniform distribution
         elif distribution == 'uniform':
             data = stats.uniform.rvs(size=num_data_points)
-            bounding_box = [0,1]
+            bounding_box = [0, 1]
             description = 'Uniform distribution'
             pdf_js = "1.0"
             pdf_py = "1.0"
@@ -894,7 +912,7 @@ class SimulatedDataset:
         # Convex beta distribution
         elif distribution == 'beta_convex':
             data = stats.beta.rvs(a=0.5, b=0.5, size=num_data_points)
-            bounding_box = [0,1]
+            bounding_box = [0, 1]
             description = 'Convex beta distribtuion'
             pdf_js = "Math.pow(x,-0.5)*Math.pow(1-x,-0.5)*math.gamma(1)/(math.gamma(0.5)*math.gamma(0.5))"
             pdf_py = "np.power(x,-0.5)*np.power(1-x,-0.5)*math.gamma(1)/(math.gamma(0.5)*math.gamma(0.5))"
@@ -902,7 +920,7 @@ class SimulatedDataset:
         # Concave beta distribution
         elif distribution == 'beta_concave':
             data = stats.beta.rvs(a=2, b=2, size=num_data_points)
-            bounding_box = [0,1]
+            bounding_box = [0, 1]
             description = 'Concave beta distribution'
             pdf_js = "Math.pow(x,1)*Math.pow(1-x,1)*math.gamma(4)/(math.gamma(2)*math.gamma(2))"
             pdf_py = "np.power(x,1)*np.power(1-x,1)*math.gamma(4)/(math.gamma(2)*math.gamma(2))"
@@ -910,7 +928,7 @@ class SimulatedDataset:
         # Exponential distribution
         elif distribution == 'exponential':
             data = stats.expon.rvs(size=num_data_points)
-            bounding_box = [0,5]
+            bounding_box = [0, 5]
             description = 'Exponential distribution'
             pdf_js = "Math.exp(-x)"
             pdf_py = "np.exp(-x)"
@@ -918,7 +936,7 @@ class SimulatedDataset:
         # Gamma distribution
         elif distribution == 'gamma':
             data = stats.gamma.rvs(a=3, size=num_data_points)
-            bounding_box = [0,10]
+            bounding_box = [0, 10]
             description = 'Gamma distribution'
             pdf_js = "Math.pow(x,2)*Math.exp(-x)/math.gamma(3)"
             pdf_py = "np.power(x,2)*np.exp(-x)/math.gamma(3)"
@@ -926,7 +944,7 @@ class SimulatedDataset:
         # Triangular distribution
         elif distribution == 'triangular':
             data = stats.triang.rvs(c=0.5, size=num_data_points)
-            bounding_box = [0,1]
+            bounding_box = [0, 1]
             description = 'Triangular distribution'
             pdf_js = "2-4*Math.abs(x - 0.5)"
             pdf_py = "2-4*np.abs(x - 0.5)"
@@ -934,7 +952,7 @@ class SimulatedDataset:
         # Laplace distribution
         elif distribution == 'laplace':
             data = stats.laplace.rvs(size=num_data_points)
-            bounding_box = [-5,5]
+            bounding_box = [-5, 5]
             description = "Laplace distribution"
             pdf_js = "0.5*Math.exp(- Math.abs(x))"
             pdf_py = "0.5*np.exp(- np.abs(x))"
@@ -942,14 +960,15 @@ class SimulatedDataset:
         # von Misses distribution
         elif distribution == 'vonmises':
             data = stats.vonmises.rvs(1, size=num_data_points)
-            bounding_box = [-3.14159,3.14159]
+            bounding_box = [-3.14159, 3.14159]
             periodic = True
             description = 'von Mises distribution'
             pdf_js = "Math.exp(Math.cos(x))/7.95493"
             pdf_py = "np.exp(np.cos(x))/7.95493"
 
         else:
-            raise ControlledError('Distribution type "%s" not recognized.' % distribution)
+            raise ControlledError(
+                'Distribution type "%s" not recognized.' % distribution)
 
         # Set these
         attributes = {
@@ -973,9 +992,9 @@ class SimulatedDataset:
         return VALID_DISTRIBUTIONS
 
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-#$$$$ ---- ścieżki ----
+# $$$$ ---- ścieżki ----
 
 # Load directory of file
 data_dir = os.path.dirname(os.path.abspath(__file__))+'/../examples/data'
@@ -984,6 +1003,7 @@ data_dir = os.path.dirname(os.path.abspath(__file__))+'/../examples/data'
 VALID_DATASETS = ['.'.join(name.split('.')[:-1]) for name in
                   os.listdir(data_dir) if '.txt' in name]
 VALID_DATASETS.sort()
+
 
 class ExampleDataset:
     """
@@ -1038,7 +1058,7 @@ class ExampleDataset:
                 setattr(self, key, value)
             except:
                 ControlledError('Error loading example data. Either key or value'
-                          'of metadata is invalid. key = %s, value = %s' %
+                                'of metadata is invalid. key = %s, value = %s' %
                                 (key, value))
 
     @staticmethod
@@ -1049,55 +1069,59 @@ class ExampleDataset:
         """
         return VALID_DATASETS
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 # Class container for Laplacian operators. Constructor computes spectrum.
+
+
 class Laplacian:
     """
     Class container for Laplacian operators. Constructor computes specturm.
 
     Methods:
-        get_G(): 
+        get_G():
             Returns the (total) number of gridpoints
 
-        get_kernel_dim(): 
+        get_kernel_dim():
             Returns the dimension of the kernel
 
-        get_dense_matrix(): 
+        get_dense_matrix():
             Returns a dense scipy matrix of the operator
 
-        get_sparse_matrix(): 
+        get_sparse_matrix():
             Returns a scipy.sparse csr matrix of the operator
 
         save_to_file(filename):
             Pickles instance of class and saves to disk.
     """
 
-    def __init__(self, operator_type, operator_order, num_gridpoints, grid_spacing=1.0 ):
+    def __init__(self, operator_type, operator_order, num_gridpoints, grid_spacing=1.0):
         """
         Constructor for Smoothness_operator class
 
         Args:
-            operator_type (str): 
+            operator_type (str):
                 The type of operator. Accepts one of the following values:
                     '1d_bilateral'
                     '1d_periodic'
                     '2d_bilateral'
                     '2d_periodic'
 
-            operator_order (int): 
+            operator_order (int):
                 The order of the operator.
 
-            num_gridpoints: 
+            num_gridpoints:
                 The number of gridpoints in each dimension of the domain.
         """
-        
+
         # Make sure grid_spacing is valid
         if not isinstance(grid_spacing, float):
-            raise ControlledError('/Laplacian/ grid_spacing must be a float: grid_spacing = %s' % type(grid_spacing))
+            raise ControlledError(
+                '/Laplacian/ grid_spacing must be a float: grid_spacing = %s' % type(grid_spacing))
         if not (grid_spacing > 0):
-            raise ControlledError('/Laplacian/ grid_spacing must be > 0: grid_spacing = %s' % grid_spacing)
-        
+            raise ControlledError(
+                '/Laplacian/ grid_spacing must be > 0: grid_spacing = %s' % grid_spacing)
+
         if '1d' in operator_type:
             self._coordinate_dim = 1
 
@@ -1107,13 +1131,15 @@ class Laplacian:
             elif operator_type == '1d_periodic':
                 periodic = True
             else:
-                raise ControlledError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
-                
+                raise ControlledError(
+                    '/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
+
             self._type = operator_type
-            
+
             self._sparse_matrix, self._kernel_basis = \
-                laplacian_1d(num_gridpoints, operator_order, grid_spacing, periodic)
-            
+                laplacian_1d(num_gridpoints, operator_order,
+                             grid_spacing, periodic)
+
             self._G = self._kernel_basis.shape[0]
             self._kernel_dim = self._kernel_basis.shape[1]
             self._alpha = operator_order
@@ -1121,11 +1147,11 @@ class Laplacian:
         elif '2d' in operator_type:
             self._coordinate_dim = 2
 
-            assert( len(num_gridpoints)==2 )
-            assert( all([isinstance(n,utils.NUMBER) for n in num_gridpoints]) )
+            assert(len(num_gridpoints) == 2)
+            assert(all([isinstance(n, NUMBER) for n in num_gridpoints]))
 
-            assert( len(grid_spacing)==2 )
-            assert( all([isinstance(n,utils.NUMBER) for n in grid_spacing]) )
+            assert(len(grid_spacing) == 2)
+            assert(all([isinstance(n, NUMBER) for n in grid_spacing]))
 
             if operator_type == '2d_bilateral':
                 periodic = False
@@ -1134,42 +1160,42 @@ class Laplacian:
             else:
                 raise ControlledError('ERROR: cannot identify operator_type.')
 
-            
             self._type = operator_type
-            
+
             self._sparse_matrix, self._kernel_basis = \
-                laplacian_2d( num_gridpoints, 
-                              operator_order, 
-                              grid_spacing, 
-                              periodic=periodic, 
-                              sparse=True,
-                              report_kernel=True)
+                laplacian_2d(num_gridpoints,
+                             operator_order,
+                             grid_spacing,
+                             periodic=periodic,
+                             sparse=True,
+                             report_kernel=True)
 
             self._Gx = int(num_gridpoints[0])
             self._Gy = int(num_gridpoints[1])
             self._G = self._Gx * self._Gy
             self._alpha = operator_order
-            assert( self._G == self._kernel_basis.shape[0] )
+            assert(self._G == self._kernel_basis.shape[0])
             self._kernel_dim = self._kernel_basis.shape[1]
 
         else:
-            raise ControlledError('/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
+            raise ControlledError(
+                '/Laplacian/ Cannot identify operator_type: operator_type = %s' % operator_type)
 
         # Compute spectrum, and set lowest rank eigenvectors as kernel
         self._dense_matrix = self._sparse_matrix.todense()
         eigenvalues, eigenvectors = eigh(self._dense_matrix)
         self._eigenvalues = eigenvalues
-        self._eigenbasis = utils.normalize(eigenvectors)
+        self._eigenbasis = normalize(eigenvectors)
         #self._kernel_basis = self._eigenbasis[:,:self._kernel_dim]
 
         # Set kernel eigenvalues and eigenvectors
         self._eigenvalues[:self._kernel_dim] = 0.0
-        self._eigenbasis[:,:self._kernel_dim] = self._kernel_basis
+        self._eigenbasis[:, :self._kernel_dim] = self._kernel_basis
 
     def get_G(self):
         """ Return the total number of gridpoints used by this operator. """
         return self._G
-    
+
     def get_kernel_basis(self):
         """ Returns the kernel as a kernel_dim x G numpy array """
         return sp.copy(self._kernel_basis)
@@ -1177,7 +1203,7 @@ class Laplacian:
     def get_kernel_dim(self):
         """ Return the dimension of the kernel of this operator. """
         return self._kernel_dim
-    
+
     def get_sparse_matrix(self):
         """ Return a sparse matrix version of this operator. """
         return self._sparse_matrix
@@ -1208,11 +1234,11 @@ class Laplacian:
 
 def derivative_matrix_1d(G, grid_spacing):
     """ Returns a (G-1) x G sized 1d derivative matrix. """
-    
+
     # Create matrix
-    tmp_mat = sp.diag(sp.ones(G),0) + sp.diag(-1.0*sp.ones(G-1),-1)
-    right_partial = tmp_mat[1:,:]/grid_spacing
-    
+    tmp_mat = sp.diag(sp.ones(G), 0) + sp.diag(-1.0*sp.ones(G-1), -1)
+    right_partial = tmp_mat[1:, :]/grid_spacing
+
     return sp.mat(right_partial)
 
 
@@ -1221,51 +1247,55 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
 
     # Make sure sparse is valid
     if not isinstance(sparse, bool):
-        raise ControlledError('/laplacian_1d/ sparse must be a boolean: sparse = %s' % type(sparse))
+        raise ControlledError(
+            '/laplacian_1d/ sparse must be a boolean: sparse = %s' % type(sparse))
     # Make sure report_kernel is valid
     if not isinstance(report_kernel, bool):
-        raise ControlledError('/laplacian_1d/ report_kernel must be a boolean: report_kernel = %s' % type(report_kernel))
-    
+        raise ControlledError(
+            '/laplacian_1d/ report_kernel must be a boolean: report_kernel = %s' % type(report_kernel))
+
     x_grid = (sp.arange(G) - (G-1)/2.)/(G/2.)
 
     # If periodic boundary conditions, construct regular laplacian
     if periodic:
-        tmp_mat = 2*sp.diag(sp.ones(G),0) - sp.diag(sp.ones(G-1),-1) - sp.diag(sp.ones(G-1),+1)
-        tmp_mat[G-1,0] = -1.0
-        tmp_mat[0,G-1] = -1.0
+        tmp_mat = 2*sp.diag(sp.ones(G), 0) - \
+            sp.diag(sp.ones(G-1), -1) - sp.diag(sp.ones(G-1), +1)
+        tmp_mat[G-1, 0] = -1.0
+        tmp_mat[0, G-1] = -1.0
         Delta = (sp.mat(tmp_mat)/(grid_spacing**2))**alpha
-        
+
         # Get kernel, which is just the constant vector v = sp.ones([G,1])
-        # kernel_basis = utils.normalize(v, grid_spacing)
-        kernel_basis = utils.legendre_basis_1d(G, 1, grid_spacing)
+        # kernel_basis = normalize(v, grid_spacing)
+        kernel_basis = legendre_basis_1d(G, 1, grid_spacing)
 
     # Otherwise, construct bilateral laplacian
     else:
-    
+
         # Initialize to G x G identity matrix
-        right_side = sp.diag(sp.ones(G),0)
-        
+        right_side = sp.diag(sp.ones(G), 0)
+
         # Multiply alpha derivative matrices of together. Reduce dimension going left
         for a in range(alpha):
-            right_side = derivative_matrix_1d(G-a, grid_spacing)*right_side 
-        
+            right_side = derivative_matrix_1d(G-a, grid_spacing)*right_side
+
         # Construct final bilateral laplacian
         Delta = right_side.T*right_side
 
         # Make sure Delta is valid
         if not (Delta.shape[0] == Delta.shape[1] == G):
-            raise ControlledError('/laplacian_1d/ Delta must have shape (%d, %d): Delta.shape = %s' % (G, G, Delta.shape))
+            raise ControlledError(
+                '/laplacian_1d/ Delta must have shape (%d, %d): Delta.shape = %s' % (G, G, Delta.shape))
 
         # Construct a basis for the kernel from legendre polynomials
-        kernel_basis = utils.legendre_basis_1d(G, alpha, grid_spacing)
+        kernel_basis = legendre_basis_1d(G, alpha, grid_spacing)
 
         # Make sure kernel_basis is valid
         if not ((kernel_basis.shape[0] == G) and (kernel_basis.shape[1] == alpha)):
             raise ControlledError('/laplacian_1d/ kernel_basis must have shape (%d, %d): kernel_basis.shape = %s' %
-                                  (G,alpha,kernel_basis.shape))
-        
+                                  (G, alpha, kernel_basis.shape))
+
     # Sparsify matrix if requested
-    if sparse:  
+    if sparse:
         Delta = csr_matrix(Delta)
 
     # Report kernel if requested
@@ -1277,9 +1307,9 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
         return Delta
 
 
-def laplacian_2d( num_gridpoints, alpha, grid_spacing=[1.0,1.0], periodic=False, sparse=False, report_kernel=False):
+def laplacian_2d(num_gridpoints, alpha, grid_spacing=[1.0, 1.0], periodic=False, sparse=False, report_kernel=False):
     """ Returns a GxG (G=GxGy) sized 2d Laplacian """
-    assert(len(num_gridpoints)==2)
+    assert(len(num_gridpoints) == 2)
     Gx = num_gridpoints[0]
     Gy = num_gridpoints[1]
     G = Gx*Gy
@@ -1287,14 +1317,14 @@ def laplacian_2d( num_gridpoints, alpha, grid_spacing=[1.0,1.0], periodic=False,
     assert(Gy == int(Gy))
     assert(alpha == int(alpha))
     assert(alpha >= 1)
-    assert(len(grid_spacing)==2)
+    assert(len(grid_spacing) == 2)
     assert(type(grid_spacing[0]) == float)
     assert(type(grid_spacing[1]) == float)
     hx = grid_spacing[0]
     hy = grid_spacing[0]
     assert(hx > 0.0)
     assert(hy > 0.0)
-    
+
     # Identity matrices, which will be used below
     I_x = sp.mat(sp.identity(Gx))
     I_y = sp.mat(sp.identity(Gy))
@@ -1302,45 +1332,45 @@ def laplacian_2d( num_gridpoints, alpha, grid_spacing=[1.0,1.0], periodic=False,
     # Compute x-coords and y-coords
     x_grid = (sp.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
     y_grid = (sp.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
-    xs,ys = np.meshgrid(x_grid,y_grid)
-    
+    xs, ys = np.meshgrid(x_grid, y_grid)
+
     # If periodic boundary conditions,
     if periodic:
-        Delta_x = laplacian_1d(Gx, alpha=1, grid_spacing=hx, periodic=True)    
+        Delta_x = laplacian_1d(Gx, alpha=1, grid_spacing=hx, periodic=True)
         Delta_y = laplacian_1d(Gy, alpha=1, grid_spacing=hy, periodic=True)
-        
-        # Use the kroneker product to generate a first-order operator
-        Delta_1 = sp.mat(sp.kron(Delta_x,I_y) + sp.kron(I_x,Delta_y))
 
-        # Raise operator to alpha power 
+        # Use the kroneker product to generate a first-order operator
+        Delta_1 = sp.mat(sp.kron(Delta_x, I_y) + sp.kron(I_x, Delta_y))
+
+        # Raise operator to alpha power
         Delta = Delta_1**alpha
-    
+
     # If bilateral, construct alpha-order bilateral laplacian algorithmically
     else:
         Delta_x_array = [I_x]
         Delta_y_array = [I_y]
 
-        for a in range(1,alpha+1):
-            Delta_x_array.append( laplacian_1d(Gx, alpha=a, grid_spacing=hx) )
-            Delta_y_array.append( laplacian_1d(Gy, alpha=a, grid_spacing=hy) )
+        for a in range(1, alpha+1):
+            Delta_x_array.append(laplacian_1d(Gx, alpha=a, grid_spacing=hx))
+            Delta_y_array.append(laplacian_1d(Gy, alpha=a, grid_spacing=hy))
 
         for a in range(alpha+1):
             Dx = Delta_x_array[alpha-a]
             Dy = Delta_y_array[a]
-            coeff = comb(alpha,a)
+            coeff = comb(alpha, a)
             if a == 0:
-                Delta = coeff*sp.mat(sp.kron(Dx,Dy))
+                Delta = coeff*sp.mat(sp.kron(Dx, Dy))
             else:
-                Delta += coeff*sp.mat(sp.kron(Dx,Dy))
-        
+                Delta += coeff*sp.mat(sp.kron(Dx, Dy))
+
     # Build kernel from 2d legendre polynomials
     if periodic:
-        kernel_basis = utils.legendre_basis_2d(Gx, Gy, 1, grid_spacing)
+        kernel_basis = legendre_basis_2d(Gx, Gy, 1, grid_spacing)
     else:
-        kernel_basis = utils.legendre_basis_2d(Gx, Gy, alpha, grid_spacing)
+        kernel_basis = legendre_basis_2d(Gx, Gy, alpha, grid_spacing)
 
     # Sparsify matrix if requested
-    if sparse:  
+    if sparse:
         Delta = csr_matrix(Delta)
 
     # Report kernel if requested
@@ -1351,7 +1381,8 @@ def laplacian_2d( num_gridpoints, alpha, grid_spacing=[1.0,1.0], periodic=False,
     else:
         return Delta
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 x_MIN = -500
 
@@ -1379,7 +1410,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         lambdas = sp.exp(-phi_t) * (N / G)
     else:
         G = len(phi_t)
-        H = deft_core.hessian(phi_t, R, Delta, t, N)
+        H = hessian(phi_t, R, Delta, t, N)
         # H = deft_code.deft_core.hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         U_mat = np.linalg.eigh(A_mat)
@@ -1473,7 +1504,7 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         lambdas = sp.exp(-phi_t) * (N / G)
     else:
         G = len(phi_t)
-        H = deft_core.hessian(phi_t, R, Delta, t, N)
+        H = hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
@@ -1747,7 +1778,7 @@ def Feynman_diagrams(phi_t, R, Delta, t, N):
     else:
         G = len(phi_t)
         # Evaluate propagator matrix
-        H = deft_core.hessian(phi_t, R, Delta, t, N)
+        H = hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         P_mat = np.linalg.inv(A_mat)
         # Evaluate vertex vector
@@ -1819,7 +1850,7 @@ def diagrams_2nd_order(G, P, V):
         k = index_samples[n, 2]
         l = index_samples[n, 3]
         s_array[n] = V[i] * V[j] * V[k] * V[l] * P[i, j] * P[i, k] * P[i, l] * \
-                     P[j, k] * P[j, l] * P[k, l]
+            P[j, k] * P[j, l] * P[k, l]
     s = sp.sum(s_array) * G ** 4 / num_samples
     ms = sp.mean(s_array)
     ds = sp.std(s_array) / sp.sqrt(num_samples)
@@ -1871,7 +1902,7 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
             coeffs[i] = sp.mat(kernel_basis[:, i]) * sp.mat(phi_t).T
 
         # Find eigen-modes of the Hessian matrix
-        H = maxent.hessian_per_datum_from_coeffs(coeffs, R, kernel_basis)
+        H = hessian_per_datum_from_coeffs(coeffs, R, kernel_basis)
         A_mat = sp.mat(H) * N
         U_mat = np.linalg.eigh(A_mat)
         eig_vals = np.abs(sp.array(U_mat[0]))
@@ -1879,32 +1910,32 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
 
         # Initialize
         coeffs_current = coeffs
-        S_current = maxent.action_per_datum_from_coeffs(coeffs_current, R,
-                                                        kernel_basis) * N
+        S_current = action_per_datum_from_coeffs(coeffs_current, R,
+                                                 kernel_basis) * N
 
         # Do Monte Carlo sampling
         for k in range(
-                                num_thermalization_steps + num_samples * num_steps_per_sample + 1):
+                num_thermalization_steps + num_samples * num_steps_per_sample + 1):
             i = np.random.randint(0, alpha)
             eig_val = eig_vals[i]
             eig_vec = eig_vecs[i, :]
             step_size = np.random.normal(0, 1.0 / np.sqrt(eig_val))
             coeffs_new = coeffs_current + eig_vec * step_size
-            S_new = maxent.action_per_datum_from_coeffs(coeffs_new, R,
-                                                        kernel_basis) * N
+            S_new = action_per_datum_from_coeffs(coeffs_new, R,
+                                                 kernel_basis) * N
             if np.log(np.random.uniform(0, 1)) < (S_current - S_new):
                 coeffs_current = coeffs_new
                 S_current = S_new
             if (k > num_thermalization_steps) and (
                     k % num_steps_per_sample == 0):
-                phi_samples[:, sample_index] = maxent.coeffs_to_field(
+                phi_samples[:, sample_index] = coeffs_to_field(
                     coeffs_current, kernel_basis)
                 sample_index += 1
 
     else:
 
         # Find eigen-modes of the Hessian matrix
-        H = deft_core.hessian(phi_t, R, Delta, t, N)
+        H = hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         U_mat = np.linalg.eigh(A_mat)
         eig_vals = np.abs(sp.array(U_mat[0]))
@@ -1912,17 +1943,17 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
 
         # Initialize
         phi_current = phi_t
-        S_current = deft_core.action(phi_current, R, Delta, t, N) * (N / G)
+        S_current = action(phi_current, R, Delta, t, N) * (N / G)
 
         # Do Monte Carlo sampling
         for k in range(
-                                num_thermalization_steps + num_samples * num_steps_per_sample + 1):
+                num_thermalization_steps + num_samples * num_steps_per_sample + 1):
             i = np.random.randint(0, G)
             eig_val = eig_vals[i]
             eig_vec = eig_vecs[:, i]
             step_size = np.random.normal(0, 1.0 / np.sqrt(eig_val))
             phi_new = phi_current + eig_vec * step_size
-            S_new = deft_core.action(phi_new, R, Delta, t, N) * (N / G)
+            S_new = action(phi_new, R, Delta, t, N) * (N / G)
             if np.log(np.random.uniform(0, 1)) < (S_current - S_new):
                 phi_current = phi_new
                 S_current = S_new
@@ -1979,49 +2010,57 @@ def posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star):
 
                 # JBK: I don't understand this
                 phi_weights[sample_index] = phi_weights_at_t[k] / \
-                                            w_sample_means[i]
+                    w_sample_means[i]
 
                 sample_index += 1
 
     # Convert phi samples to Q samples
     Q_samples = np.zeros([G, num_pt_samples])
     for k in range(num_pt_samples):
-        Q_samples[:, k] = utils.field_to_prob(
+        Q_samples[:, k] = field_to_prob(
             sp.array(phi_samples[:, k]).ravel())
 
     # Return Q samples along with their weights
     return Q_samples, phi_samples, phi_weights
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-PHI_STD_REG = utils.PHI_STD_REG 
+
+PHI_STD_REG = PHI_STD_REG
 
 # Compute field from its coefficients in a basis
+
+
 def coeffs_to_field(coeffs, kernel):
     """ For maxent algorithm. """
 
     # Get number of gridpoints and dimension of kernel
     G = kernel.shape[0]
     kernel_dim = kernel.shape[1]
-    
+
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise ControlledError('/coeffs_to_field/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
+        raise ControlledError(
+            '/coeffs_to_field/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise ControlledError('/coeffs_to_field/ coeffs is not real: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/coeffs_to_field/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise ControlledError('/coeffs_to_field/ coeffs is not finite: coeffs = %s' % coeffs)
-    
-    # Convert to matrices
-    kernel_mat = sp.mat(kernel) # G x kernel_dim matrix
-    coeffs_col = sp.mat(coeffs).T # kernel_dim x 1 matrix
-    field_col = kernel_mat*coeffs_col # G x 1 matrix
+        raise ControlledError(
+            '/coeffs_to_field/ coeffs is not finite: coeffs = %s' % coeffs)
 
-    return sp.array(field_col).ravel() # Returns an array
+    # Convert to matrices
+    kernel_mat = sp.mat(kernel)  # G x kernel_dim matrix
+    coeffs_col = sp.mat(coeffs).T  # kernel_dim x 1 matrix
+    field_col = kernel_mat*coeffs_col  # G x 1 matrix
+
+    return sp.array(field_col).ravel()  # Returns an array
 
 # Compute the action of a field given its coefficients in a basis
-def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False, 
-    regularized=False):
+
+
+def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
+                                 regularized=False):
     """ For optimizer. Computes action from coefficients. """
 
     # Get number of gridpoints and dimension of kernel
@@ -2030,44 +2069,54 @@ def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise ControlledError('/action_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise ControlledError('/action_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise ControlledError('/action_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise ControlledError('/action_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/action_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise ControlledError('/action_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/action_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/action_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
-    quasiQ = utils.field_to_quasiprob(phi+phi0)
-    
+    quasiQ = field_to_quasiprob(phi+phi0)
+
     current_term = sp.sum(R*phi)
     nonlinear_term = sp.sum(quasiQ)
     s = current_term + nonlinear_term
-    
+
     if regularized:
         s += (.5/G)*sum(phi**2)/(PHI_STD_REG**2)
 
     # Make sure s is valid
     if not np.isreal(s):
-        raise ControlledError('/action_per_datum_from_coeffs/ s is not real: s = %s' % s)
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ s is not real: s = %s' % s)
     if not np.isfinite(s):
-        raise ControlledError('/action_per_datum_from_coeffs/ s is not finite: s = %s' % s)
-        
+        raise ControlledError(
+            '/action_per_datum_from_coeffs/ s is not finite: s = %s' % s)
+
     return s
 
 # Compute the action gradient w.r.t field coefficients in a basis
-def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False, 
-    regularized=False):
+
+
+def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
+                                   regularized=False):
     """ For optimizer. Computes gradient from coefficients. """
 
     # Get number of gridpoints and dimension of kernel
@@ -2076,51 +2125,61 @@ def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise ControlledError('/gradient_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/gradient_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise ControlledError('/gradient_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/gradient_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
-    quasiQ = utils.field_to_quasiprob(phi+phi0)
-    
-    R_row = sp.mat(R) # 1 x G
-    quasiQ_row = sp.mat(quasiQ) # 1 x G
-    kernel_mat = sp.mat(kernel) # G x kernel_dim
+    quasiQ = field_to_quasiprob(phi+phi0)
 
-    mu_R_row = R_row*kernel_mat # 1 x kernel_dim
-    mu_quasiQ_row = quasiQ_row*kernel_mat # 1 x kernel_dim
-    grad_row = mu_R_row - mu_quasiQ_row # 1 x kernel_dim
-    
+    R_row = sp.mat(R)  # 1 x G
+    quasiQ_row = sp.mat(quasiQ)  # 1 x G
+    kernel_mat = sp.mat(kernel)  # G x kernel_dim
+
+    mu_R_row = R_row*kernel_mat  # 1 x kernel_dim
+    mu_quasiQ_row = quasiQ_row*kernel_mat  # 1 x kernel_dim
+    grad_row = mu_R_row - mu_quasiQ_row  # 1 x kernel_dim
+
     if regularized:
-        reg_row = (1./G)*sp.mat(phi)/(PHI_STD_REG**2) # 1 x G
-        mu_reg_row = reg_row*kernel_mat # 1 x kernel_dim
-        grad_row += mu_reg_row # 1 x kernel_dim
+        reg_row = (1./G)*sp.mat(phi)/(PHI_STD_REG**2)  # 1 x G
+        mu_reg_row = reg_row*kernel_mat  # 1 x kernel_dim
+        grad_row += mu_reg_row  # 1 x kernel_dim
 
     # Make sure grad_array is valid
     grad_array = sp.array(grad_row).ravel()
     if not all(np.isreal(grad_array)):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ grad_array is not real: grad_array = %s' % grad_array)
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ grad_array is not real: grad_array = %s' % grad_array)
     if not all(np.isfinite(grad_array)):
-        raise ControlledError('/gradient_per_datum_from_coeffs/ grad_array is not finite: grad_array = %s' % grad_array)
-        
-    return sp.array(grad_row).ravel() # Returns an array
+        raise ControlledError(
+            '/gradient_per_datum_from_coeffs/ grad_array is not finite: grad_array = %s' % grad_array)
+
+    return sp.array(grad_row).ravel()  # Returns an array
 
 # Compute the action hessian w.r.t field coefficients in a basis
-def hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0=False, 
-    regularized=False):
+
+
+def hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
+                                  regularized=False):
     """ For optimizer. Computes hessian from coefficients. """
 
     # Get number of gridpoints and dimension of kernel
@@ -2129,58 +2188,68 @@ def hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
 
     # Make sure coeffs is valid
     if not (len(coeffs) == kernel_dim):
-        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
+        raise ControlledError(
+            '/hessian_per_datum_from_coeffs/ coeffs must have length %d: len(coeffs) = %d' % (kernel_dim, len(coeffs)))
     if not all(np.isreal(coeffs)):
-        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/hessian_per_datum_from_coeffs/ coeffs is not real: coeffs = %s' % coeffs)
     if not all(np.isfinite(coeffs)):
-        raise ControlledError('/hessian_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
+        raise ControlledError(
+            '/hessian_per_datum_from_coeffs/ coeffs is not finite: coeffs = %s' % coeffs)
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(G)
     else:
         if not all(np.isreal(phi0)):
-            raise ControlledError('/hessian_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/hessian_per_datum_from_coeffs/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise ControlledError('/hessian_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/hessian_per_datum_from_coeffs/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/hessian_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/hessian_per_datum_from_coeffs/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     phi = coeffs_to_field(coeffs, kernel)
-    quasiQ = utils.field_to_quasiprob(phi+phi0)
-    
-    kernel_mat = sp.mat(kernel) # G x kernel_dim 
-    H = sp.mat(sp.diag(quasiQ)) # G x G
-    
+    quasiQ = field_to_quasiprob(phi+phi0)
+
+    kernel_mat = sp.mat(kernel)  # G x kernel_dim
+    H = sp.mat(sp.diag(quasiQ))  # G x G
+
     if regularized:
         H += (1./G)*sp.diag(np.ones(G))/(PHI_STD_REG**2)
-        
-    hessian_mat = kernel_mat.T*H*kernel_mat # kernel_dim x kernel_dim
+
+    hessian_mat = kernel_mat.T*H*kernel_mat  # kernel_dim x kernel_dim
 
     # Make sure hessian_array is valid ?
 
-    return sp.array(hessian_mat) # Returns an array
+    return sp.array(hessian_mat)  # Returns an array
 
 # Computes the maximum entropy probaiblity distribution
-def compute_maxent_prob_1d(R, kernel, h=1.0, report_num_steps=False, 
-    phi0=False):
-    if not isinstance(phi0,np.ndarray):
+
+
+def compute_maxent_prob_1d(R, kernel, h=1.0, report_num_steps=False,
+                           phi0=False):
+    if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(R.size)
     else:
         assert all(np.isreal(phi0))
 
     field, num_corrector_steps, num_backtracks = \
         compute_maxent_field(R, kernel, report_num_steps=True, phi0=phi0)
-    Q = utils.field_to_prob(field+phi0)/h
+    Q = field_to_prob(field+phi0)/h
     if report_num_steps:
         return Q, num_corrector_steps, num_backtracks
     else:
         return Q
 
 # Computes the maximum entropy probaiblity distribution
-def compute_maxent_prob_2d(R, kernel, grid_spacing=[1.0,1.0],\
-        report_num_steps=False, phi0=False):
-    if not isinstance(phi0,np.ndarray):
+
+
+def compute_maxent_prob_2d(R, kernel, grid_spacing=[1.0, 1.0],
+                           report_num_steps=False, phi0=False):
+    if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(R.size)
     else:
         assert all(np.isreal(phi0))
@@ -2188,50 +2257,57 @@ def compute_maxent_prob_2d(R, kernel, grid_spacing=[1.0,1.0],\
     phi, num_corrector_steps, num_backtracks = \
         compute_maxent_field(R, kernel, report_num_steps=True)
     h = grid_spacing[0]*grid_spacing[1]
-    Q = utils.field_to_prob(phi+phi0)/h
+    Q = field_to_prob(phi+phi0)/h
     if report_num_steps:
         return Q, num_corrector_steps, num_backtracks
     else:
         return Q
 
-# Compute the maxent field 
-def compute_maxent_field(R, kernel, report_num_steps=False, 
-    phi0=False, geo_dist_tollerance=1E-3, grad_tollerance=1E-5):
+# Compute the maxent field
+
+
+def compute_maxent_field(R, kernel, report_num_steps=False,
+                         phi0=False, geo_dist_tollerance=1E-3, grad_tollerance=1E-5):
     """
     Computes the maxent field from a histogram and kernel
-    
+
     Args:
-        R (numpy.narray): 
+        R (numpy.narray):
             Normalized histogram of the raw data. Should have size G
-            
-        kernel (numpy.ndarray): 
+
+        kernel (numpy.ndarray):
             Array of vectors spanning the smoothness operator kernel. Should
             have size G x kernel_dim
-            
+
     Returns:
-        
-        phi: 
-            The MaxEnt field. 
+
+        phi:
+            The MaxEnt field.
     """
-    
+
     # Make sure report_num_steps is valid
     if not isinstance(report_num_steps, bool):
-        raise ControlledError('/compute_maxent_field/ report_num_steps must be a boolean: report_num_steps = %s' % type(report_num_steps))
+        raise ControlledError(
+            '/compute_maxent_field/ report_num_steps must be a boolean: report_num_steps = %s' % type(report_num_steps))
     # Make sure phi0 is valid
     if not isinstance(phi0, np.ndarray):
         phi0 = np.zeros(len(R))
     else:
         if not all(np.isreal(phi0)):
-            raise ControlledError('/compute_maxent_field/ phi0 is not real: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/compute_maxent_field/ phi0 is not real: phi0 = %s' % phi0)
         if not all(np.isfinite(phi0)):
-            raise ControlledError('/compute_maxent_field/ phi0 is not finite: phi0 = %s' % phi0)
+            raise ControlledError(
+                '/compute_maxent_field/ phi0 is not finite: phi0 = %s' % phi0)
     # Make sure geo_dist_tollerance is valid
     if not isinstance(geo_dist_tollerance, float):
-        raise ControlledError('/compute_maxent_field/ geo_dist_tollerance must be a float: geo_dist_tollerance = %s' % type(geo_dist_tollerance))
+        raise ControlledError(
+            '/compute_maxent_field/ geo_dist_tollerance must be a float: geo_dist_tollerance = %s' % type(geo_dist_tollerance))
     # Make sure grad_tollerance is valid
     if not isinstance(grad_tollerance, float):
-        raise ControlledError('/compute_maxent_field/ grad_tollerance must be a float: grad_tollerance = %s' % type(grad_tollerance))
-        
+        raise ControlledError(
+            '/compute_maxent_field/ grad_tollerance must be a float: grad_tollerance = %s' % type(grad_tollerance))
+
     # Get number of gridpoints and dimension of kernel
     G = kernel.shape[0]
     kernel_dim = kernel.shape[1]
@@ -2247,8 +2323,8 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
     phi = coeffs_to_field(coeffs, kernel)
     phi = sp.array(phi).ravel()
     phi0 = sp.array(phi0).ravel()
-    #print phi+phi0
-    Q = utils.field_to_prob(phi+phi0)
+    # print phi+phi0
+    Q = field_to_prob(phi+phi0)
 
     # Evaluate action
     s = action_per_datum_from_coeffs(coeffs, R, kernel, phi0)
@@ -2257,24 +2333,24 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
     num_corrector_steps = 0
     num_backtracks = 0
     while True:
-        
+
         if kernel_dim == 1:
             success = True
             break
-        
+
         # Compute the gradient
         v = gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0)
-        
+
         # If gradient is not detectable, we're already done!
-        if norm(v) < G*utils.TINY_FLOAT32:
+        if norm(v) < G*TINY_FLOAT32:
             break
 
         # Compute the hessian
-        Lambda = hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0) 
+        Lambda = hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0)
 
         # Solve linear equation to get change in field
         # This is the conjugate gradient method
-        da = -sp.real(solve(Lambda,v))
+        da = -sp.real(solve(Lambda, v))
 
         # Compute corresponding change in action
         ds = sp.sum(da*v)
@@ -2291,7 +2367,7 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
             # Compute new phi and new action
             coeffs_new = coeffs + beta*da
-            s_new = action_per_datum_from_coeffs(coeffs_new,R,kernel,phi0) 
+            s_new = action_per_datum_from_coeffs(coeffs_new, R, kernel, phi0)
 
             # Check for linear regime
             if s_new <= s + 0.5*beta*ds:
@@ -2299,23 +2375,24 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
             # Check to see if beta is too small and algorithm is failing
             elif beta < 1E-20:
-                raise ControlledError('/compute_maxent_field/ phi is not converging: beta = %s' % beta)
+                raise ControlledError(
+                    '/compute_maxent_field/ phi is not converging: beta = %s' % beta)
 
             # If not in linear regime backtrack value of beta
             else:
                 # pdb.set_trace()
-                num_backtracks+=1
+                num_backtracks += 1
                 beta *= 0.5
 
         # Compute new distribution
-        phi_new = coeffs_to_field(coeffs_new, kernel) 
-        Q_new = utils.field_to_prob(phi_new+phi0) 
+        phi_new = coeffs_to_field(coeffs_new, kernel)
+        Q_new = field_to_prob(phi_new+phi0)
 
         # Break out of loop if Q_new is close enough to Q
-        if (utils.geo_dist(Q_new,Q) < geo_dist_tollerance) and (np.linalg.norm(v) < grad_tollerance):
+        if (geo_dist(Q_new, Q) < geo_dist_tollerance) and (np.linalg.norm(v) < grad_tollerance):
             success = True
             break
-        
+
         # Break out of loop with warning if S_new > S. Should not happen,
         # but not fatal if it does. Just means less precision
         elif s_new-s > 0:
@@ -2336,10 +2413,10 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
     # Actually, should judge success by whether moments match
     if not success:
-        print('gradident norm == %f'%np.linalg.norm(v))
-        print('gradient tollerance == %f'%grad_tollerance)
+        print('gradident norm == %f' % np.linalg.norm(v))
+        print('gradient tollerance == %f' % grad_tollerance)
         print('Failure! Trying Maxent again!')
-        
+
     # After corrector loop has finished, return field
     # Also return stepping stats if requested
     if report_num_steps:
@@ -2347,15 +2424,16 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
     else:
         return phi, success
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 # Put hard bounds on how big or small t can be. T_MIN especially seems to help convergence
 T_MAX = 40
 T_MIN = -40
-PHI_MAX = utils.PHI_MAX
-PHI_MIN = utils.PHI_MIN
+PHI_MAX = PHI_MAX
+PHI_MIN = PHI_MIN
 MAX_DS = -1E-3
-PHI_STD_REG = utils.PHI_STD_REG
+PHI_STD_REG = PHI_STD_REG
 
 
 class Results():
@@ -2381,7 +2459,8 @@ class MAP_curve:
         self._is_sorted = False
 
     def add_point(self, t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details=False):
-        point = MAP_curve_point(t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details)
+        point = MAP_curve_point(
+            t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details)
         self.points.append(point)
         self._is_sorted = False
 
@@ -2400,7 +2479,8 @@ class MAP_curve:
             self.sort()
         p = self.points[0]
         if not (p.t == -sp.Inf):
-            raise ControlledError('/MAP_curve/ Not getting MaxEnt point: t = %f' % p.t)
+            raise ControlledError(
+                '/MAP_curve/ Not getting MaxEnt point: t = %f' % p.t)
         return p
 
     def get_histogram_point(self):
@@ -2408,7 +2488,8 @@ class MAP_curve:
             self.sort()
         p = self.points[-1]
         if not (p.t == sp.Inf):
-            raise ControlledError('/MAP_curve/ Not getting histogram point: t = %f' % p.t)
+            raise ControlledError(
+                '/MAP_curve/ Not getting histogram point: t = %f' % p.t)
         return p
 
     def get_log_evidence_ratios(self, finite=True):
@@ -2438,13 +2519,15 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
     #    raise ControlledError('/action/ t is not finite: t = %s' % t)
     # Make sure phi_in_kernel is valid
     if not isinstance(phi_in_kernel, bool):
-        raise ControlledError('/action/ phi_in_kernel must be a boolean: phi_in_kernel = %s' % type(phi_in_kernel))
+        raise ControlledError(
+            '/action/ phi_in_kernel must be a boolean: phi_in_kernel = %s' % type(phi_in_kernel))
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/action/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/action/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
-    quasiQ = utils.field_to_quasiprob(phi)
+    quasiQ = field_to_quasiprob(phi)
     quasiQ_col = sp.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
     phi_col = sp.mat(phi).T
@@ -2464,9 +2547,11 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
 
     # Make sure S is valid
     if not np.isreal(S):
-        raise ControlledError('/action/ S is not real at t = %s: S = %s' % (t, S))
+        raise ControlledError(
+            '/action/ S is not real at t = %s: S = %s' % (t, S))
     if not np.isfinite(S):
-        raise ControlledError('/action/ S is not finite at t = %s: S = %s' % (t, S))
+        raise ControlledError(
+            '/action/ S is not finite at t = %s: S = %s' % (t, S))
 
     return S
 
@@ -2485,10 +2570,11 @@ def gradient(phi, R, Delta, t, N, regularized=False):
         raise ControlledError('/gradient/ t is not finite: t = %s' % t)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/gradient/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/gradient/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
-    quasiQ = utils.field_to_quasiprob(phi)
+    quasiQ = field_to_quasiprob(phi)
     quasiQ_col = sp.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
     phi_col = sp.mat(phi).T
@@ -2502,9 +2588,11 @@ def gradient(phi, R, Delta, t, N, regularized=False):
 
     # Make sure grad is valid
     if not all(np.isreal(grad)):
-        raise ControlledError('/gradient/ grad is not real at t = %s: grad = %s' % (t, grad))
+        raise ControlledError(
+            '/gradient/ grad is not real at t = %s: grad = %s' % (t, grad))
     if not all(np.isfinite(grad)):
-        raise ControlledError('/gradient/ grad is not finite at t = %s: grad = %s' % (t, grad))
+        raise ControlledError(
+            '/gradient/ grad is not finite at t = %s: grad = %s' % (t, grad))
 
     return grad
 
@@ -2523,10 +2611,11 @@ def hessian(phi, R, Delta, t, N, regularized=False):
         raise ControlledError('/hessian/ t is not finite: t = %s' % t)
     # Make sure regularized is valid
     if not isinstance(regularized, bool):
-        raise ControlledError('/hessian/ regularized must be a boolean: regularized = %s' % type(regularized))
+        raise ControlledError(
+            '/hessian/ regularized must be a boolean: regularized = %s' % type(regularized))
 
     G = 1. * len(R)
-    quasiQ = utils.field_to_quasiprob(phi)
+    quasiQ = field_to_quasiprob(phi)
     Delta_sparse = Delta.get_sparse_matrix()
     H = sp.exp(-t) * Delta_sparse + G * diags(quasiQ, 0)
 
@@ -2541,12 +2630,14 @@ def hessian(phi, R, Delta, t, N, regularized=False):
 def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
     # Make sure phi_M is valid
     if not all(np.isreal(phi_M)):
-        raise ControlledError('/log_ptgd_at_maxent/ phi_M is not real: phi_M = %s' % phi_M)
+        raise ControlledError(
+            '/log_ptgd_at_maxent/ phi_M is not real: phi_M = %s' % phi_M)
     if not all(np.isfinite(phi_M)):
-        raise ControlledError('/log_ptgd_at_maxent/ phi_M is not finite: phi_M = %s' % phi_M)
+        raise ControlledError(
+            '/log_ptgd_at_maxent/ phi_M is not finite: phi_M = %s' % phi_M)
 
     kernel_dim = Delta._kernel_dim
-    M = utils.field_to_prob(phi_M)
+    M = field_to_prob(phi_M)
     M_on_kernel = sp.zeros([kernel_dim, kernel_dim])
     kernel_basis = Delta._kernel_basis
     lambdas = Delta._eigenvalues
@@ -2557,7 +2648,8 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
             M_on_kernel[a, b] = sp.sum(psi_a * psi_b * M)
 
     # Compute log Occam factor at infinity
-    log_Occam_at_infty = - 0.5 * sp.log(det(M_on_kernel)) - 0.5 * sp.sum(sp.log(lambdas[kernel_dim:]))
+    log_Occam_at_infty = - 0.5 * \
+        sp.log(det(M_on_kernel)) - 0.5 * sp.sum(sp.log(lambdas[kernel_dim:]))
 
     # Make sure log_Occam_at_infty is valid
     if not np.isreal(log_Occam_at_infty):
@@ -2589,31 +2681,39 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
             0.0, 1.0, 0.0
     if Z_eval == 'Lap+Imp':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False)
+            Laplace_approach(phi_M, R, Delta, t, N,
+                             num_samples, go_parallel=False)
     if Z_eval == 'Lap+Imp+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Laplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True)
+            Laplace_approach(phi_M, R, Delta, t, N,
+                             num_samples, go_parallel=True)
     if Z_eval == 'GLap':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False, sampling=False)
+            GLaplace_approach(phi_M, R, Delta, t, N, num_samples,
+                              go_parallel=False, sampling=False)
     if Z_eval == 'GLap+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True, sampling=False)
+            GLaplace_approach(phi_M, R, Delta, t, N, num_samples,
+                              go_parallel=True, sampling=False)
     if Z_eval == 'GLap+Sam':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=False, sampling=True)
+            GLaplace_approach(phi_M, R, Delta, t, N, num_samples,
+                              go_parallel=False, sampling=True)
     if Z_eval == 'GLap+Sam+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi_M, R, Delta, t, N, num_samples, go_parallel=True, sampling=True)
+            GLaplace_approach(phi_M, R, Delta, t, N, num_samples,
+                              go_parallel=True, sampling=True)
     if Z_eval == 'Lap+Fey':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Feynman_diagrams(phi_M, R, Delta, t, N)
+            Feynman_diagrams(phi_M, R, Delta, t, N)
 
     # Make sure correction is valid
     if not np.isreal(correction):
-        raise ControlledError('/log_ptgd_at_maxent/ correction is not real: correction = %s' % correction)
+        raise ControlledError(
+            '/log_ptgd_at_maxent/ correction is not real: correction = %s' % correction)
     if not np.isfinite(correction):
-        raise ControlledError('/log_ptgd_at_maxent/ correction is not finite: correction = %s' % correction)
+        raise ControlledError(
+            '/log_ptgd_at_maxent/ correction is not finite: correction = %s' % correction)
 
     log_ptgd_at_maxent += correction
 
@@ -2651,18 +2751,22 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 
         # Make sure log_det is valid
     if not np.isreal(log_det):
-        raise ControlledError('/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t, log_det))
+        raise ControlledError(
+            '/log_ptgd/ log_det is not real at t = %s: log_det = %s' % (t, log_det))
     if not np.isfinite(log_det):
-        raise ControlledError('/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t, log_det))
+        raise ControlledError(
+            '/log_ptgd/ log_det is not finite at t = %s: log_det = %s' % (t, log_det))
 
     # Compute contribution from finite t
     log_ptgd = -(N / G) * S + 0.5 * kernel_dim * t - 0.5 * log_det
 
     # Make sure log_ptgd is valid
     if not np.isreal(log_ptgd):
-        raise ControlledError('/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t, log_ptgd))
+        raise ControlledError(
+            '/log_ptgd/ log_ptgd is not real at t = %s: log_ptgd = %s' % (t, log_ptgd))
     if not np.isfinite(log_ptgd):
-        raise ControlledError('/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t, log_ptgd))
+        raise ControlledError(
+            '/log_ptgd/ log_ptgd is not finite at t = %s: log_ptgd = %s' % (t, log_ptgd))
 
     # If requested, incorporate corrections to the partition function
     num_samples = num_Z_samples
@@ -2671,31 +2775,38 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
             0.0, 1.0, 0.0
     if Z_eval == 'Lap+Imp':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False)
+            Laplace_approach(phi, R, Delta, t, N,
+                             num_samples, go_parallel=False)
     if Z_eval == 'Lap+Imp+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True)
+            Laplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True)
     if Z_eval == 'GLap':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False, sampling=False)
+            GLaplace_approach(phi, R, Delta, t, N, num_samples,
+                              go_parallel=False, sampling=False)
     if Z_eval == 'GLap+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True, sampling=False)
+            GLaplace_approach(phi, R, Delta, t, N, num_samples,
+                              go_parallel=True, sampling=False)
     if Z_eval == 'GLap+Sam':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=False, sampling=True)
+            GLaplace_approach(phi, R, Delta, t, N, num_samples,
+                              go_parallel=False, sampling=True)
     if Z_eval == 'GLap+Sam+P':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.GLaplace_approach(phi, R, Delta, t, N, num_samples, go_parallel=True, sampling=True)
+            GLaplace_approach(phi, R, Delta, t, N, num_samples,
+                              go_parallel=True, sampling=True)
     if Z_eval == 'Lap+Fey':
         correction, w_sample_mean, w_sample_mean_std = \
-            supplements.Feynman_diagrams(phi, R, Delta, t, N)
+            Feynman_diagrams(phi, R, Delta, t, N)
 
     # Make sure correction is valid
     if not np.isreal(correction):
-        raise ControlledError('/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
+        raise ControlledError(
+            '/log_ptgd/ correction is not real at t = %s: correction = %s' % (t, correction))
     if not np.isfinite(correction):
-        raise ControlledError('/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
+        raise ControlledError(
+            '/log_ptgd/ correction is not finite at t = %s: correction = %s' % (t, correction))
 
     log_ptgd += correction
 
@@ -2715,20 +2826,25 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
 def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise ControlledError('/compute_predictor_step/ phi is not real: phi = %s' % phi)
+        raise ControlledError(
+            '/compute_predictor_step/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise ControlledError('/compute_predictor_step/ phi is not finite: phi = %s' % phi)
+        raise ControlledError(
+            '/compute_predictor_step/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise ControlledError('/compute_predictor_step/ t is not real: t = %s' % t)
+        raise ControlledError(
+            '/compute_predictor_step/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise ControlledError('/compute_predictor_step/ t is not finite: t = %s' % t)
+        raise ControlledError(
+            '/compute_predictor_step/ t is not finite: t = %s' % t)
     # Make sure direction is valid
     if not ((direction == 1) or (direction == -1)):
-        raise ControlledError('/compute_predictor_step/ direction must be just a sign: direction = %s' % direction)
+        raise ControlledError(
+            '/compute_predictor_step/ direction must be just a sign: direction = %s' % direction)
 
     # Get current probability distribution
-    Q = utils.field_to_prob(phi)
+    Q = field_to_prob(phi)
     G = 1. * len(Q)
 
     # Get hessian
@@ -2739,19 +2855,24 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 
     # Make sure rho is valid
     if not all(np.isreal(rho)):
-        raise ControlledError('/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t, rho))
+        raise ControlledError(
+            '/compute_predictor_step/ rho is not real at t = %s: rho = %s' % (t, rho))
     if not all(np.isfinite(rho)):
-        raise ControlledError('/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
+        raise ControlledError(
+            '/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
 
     denom = sp.sqrt(sp.sum(rho * Q * rho))
 
     # Make sure denom is valid
     if not np.isreal(denom):
-        raise ControlledError('/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t, denom))
+        raise ControlledError(
+            '/compute_predictor_step/ denom is not real at t = %s: denom = %s' % (t, denom))
     if not np.isfinite(denom):
-        raise ControlledError('/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t, denom))
+        raise ControlledError(
+            '/compute_predictor_step/ denom is not finite at t = %s: denom = %s' % (t, denom))
     if not (denom > 0):
-        raise ControlledError('/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t, denom))
+        raise ControlledError(
+            '/compute_predictor_step/ denom is not positive at t = %s: denom = %s' % (t, denom))
 
     # Compute dt based on value of epsilon (the resolution)
     dt = direction * resolution / denom
@@ -2764,14 +2885,18 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 
     # Make sure phi_new is valid
     if not all(np.isreal(phi_new)):
-        raise ControlledError('/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new, phi_new))
+        raise ControlledError(
+            '/compute_predictor_step/ phi_new is not real at t_new = %s: phi_new = %s' % (t_new, phi_new))
     if not all(np.isfinite(phi_new)):
-        raise ControlledError('/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new, phi_new))
+        raise ControlledError(
+            '/compute_predictor_step/ phi_new is not finite at t_new = %s: phi_new = %s' % (t_new, phi_new))
     # Make sure t_new is valid
     if not np.isreal(t_new):
-        raise ControlledError('/compute_predictor_step/ t_new is not real: t_new = %s' % t_new)
+        raise ControlledError(
+            '/compute_predictor_step/ t_new is not real: t_new = %s' % t_new)
     if not np.isfinite(t_new):
-        raise ControlledError('/compute_predictor_step/ t_new is not finite: t_new = %s' % t_new)
+        raise ControlledError(
+            '/compute_predictor_step/ t_new is not finite: t_new = %s' % t_new)
 
     return phi_new, t_new
 
@@ -2780,21 +2905,25 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
 def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=False):
     # Make sure phi is valid
     if not all(np.isreal(phi)):
-        raise ControlledError('/compute_corrector_step/ phi is not real: phi = %s' % phi)
+        raise ControlledError(
+            '/compute_corrector_step/ phi is not real: phi = %s' % phi)
     if not all(np.isfinite(phi)):
-        raise ControlledError('/compute_corrector_step/ phi is not finite: phi = %s' % phi)
+        raise ControlledError(
+            '/compute_corrector_step/ phi is not finite: phi = %s' % phi)
     # Make sure t is valid
     if not np.isreal(t):
-        raise ControlledError('/compute_corrector_step/ t is not real: t = %s' % t)
+        raise ControlledError(
+            '/compute_corrector_step/ t is not real: t = %s' % t)
     if not np.isfinite(t):
-        raise ControlledError('/compute_corrector_step/ t is not finite: t = %s' % t)
+        raise ControlledError(
+            '/compute_corrector_step/ t is not finite: t = %s' % t)
     # Make sure report_num_steps is valid
     if not isinstance(report_num_steps, bool):
         raise ControlledError('/compute_corrector_step/ report_num_steps must be a boolean: report_num_steps = %s' %
                               type(report_num_steps))
 
     # Evaluate the probability distribution
-    Q = utils.field_to_prob(phi)
+    Q = field_to_prob(phi)
 
     # Evaluate action
     S = action(phi, R, Delta, t, N)
@@ -2815,9 +2944,11 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Make sure dphi is valid
         if not all(np.isreal(dphi)):
-            raise ControlledError('/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t, dphi))
+            raise ControlledError(
+                '/compute_corrector_step/ dphi is not real at t = %s: dphi = %s' % (t, dphi))
         if not all(np.isfinite(dphi)):
-            raise ControlledError('/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
+            raise ControlledError(
+                '/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
 
         # Compute corresponding change in action
         dS = sp.sum(dphi * v)
@@ -2832,7 +2963,8 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
             # Make sure beta is valid
             if beta < 1E-50:
-                raise ControlledError('/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t, beta))
+                raise ControlledError(
+                    '/compute_corrector_step/ phi is not converging at t = %s: beta = %s' % (t, beta))
 
             # Compute new phi
             phi_new = phi + beta * dphi
@@ -2858,15 +2990,17 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
 
         # Make sure phi_new is valid
         if not all(np.isreal(phi_new)):
-            raise ControlledError('/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t, phi_new))
+            raise ControlledError(
+                '/compute_corrector_step/ phi_new is not real at t = %s: phi_new = %s' % (t, phi_new))
         if not all(np.isfinite(phi_new)):
-            raise ControlledError('/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t, phi_new))
+            raise ControlledError(
+                '/compute_corrector_step/ phi_new is not finite at t = %s: phi_new = %s' % (t, phi_new))
 
         # Compute new Q
-        Q_new = utils.field_to_prob(phi_new)
+        Q_new = field_to_prob(phi_new)
 
         # Break out of loop if Q_new is close enough to Q
-        gd = utils.geo_dist(Q_new, Q)
+        gd = geo_dist(Q_new, Q)
         if gd < tollerance:
             break
 
@@ -2874,7 +3008,8 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
         # Should not happen, but not fatal if it does. Just means less precision
         # ACTUALLY, THIS SHOULD NEVER HAPPEN!
         elif S_new - S > 0:
-            raise ControlledError('/compute_corrector_step/ S_new > S at t = %s: terminating corrector steps' % t)
+            raise ControlledError(
+                '/compute_corrector_step/ S_new > S at t = %s: terminating corrector steps' % t)
 
         # Otherwise, continue with corrector step
         else:
@@ -2928,22 +3063,23 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 
     # Get normalized histogram and corresponding field
     R = R / sum(R)
-    phi_R = utils.prob_to_field(R)
+    phi_R = prob_to_field(R)
     log_E_R = -np.Inf
     t_R = np.Inf
     w_sample_mean_R = 1.0
     w_sample_mean_std_R = 0.0
-    map_curve.add_point(t_R, phi_R, R, log_E_R, w_sample_mean_R, w_sample_mean_std_R)
+    map_curve.add_point(t_R, phi_R, R, log_E_R,
+                        w_sample_mean_R, w_sample_mean_std_R)
 
     #
     # Then compute maxent stuff
     #
 
     # Compute the maxent field and density
-    phi_infty, success = maxent.compute_maxent_field(R, kernel_basis)
+    phi_infty, success = compute_maxent_field(R, kernel_basis)
 
     # Convert maxent field to probability distribution
-    M = utils.field_to_prob(phi_infty)
+    M = field_to_prob(phi_infty)
 
     # Compute the maxent log_ptgd. Important to keep this around to compute log_E at finite t
     log_ptgd_M, w_sample_mean_M, w_sample_mean_std_M = \
@@ -2952,7 +3088,8 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     # This corresponds to a log_E of zero
     log_E_M = 0
     t_M = -sp.Inf
-    map_curve.add_point(t_M, phi_infty, M, log_E_M, w_sample_mean_M, w_sample_mean_std_M)
+    map_curve.add_point(t_M, phi_infty, M, log_E_M,
+                        w_sample_mean_M, w_sample_mean_std_M)
 
     # Set maximum log evidence ratio so far encountered
     log_E_max = -np.Inf
@@ -2962,10 +3099,11 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     #
 
     # Compute phi_start by executing a corrector step starting at maxent dist
-    phi_start = compute_corrector_step(phi_infty, R, Delta, t_start, N, tollerance)
+    phi_start = compute_corrector_step(
+        phi_infty, R, Delta, t_start, N, tollerance)
 
     # Convert starting field to probability distribution
-    Q_start = utils.field_to_prob(phi_start)
+    Q_start = field_to_prob(phi_start)
 
     # Compute log ptgd
     log_ptgd_start, w_sample_mean_start, w_sample_mean_std_start = \
@@ -2980,14 +3118,16 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
     # Set start as first MAP curve point
     if print_t:
         print('t = %.2f' % t_start)
-    map_curve.add_point(t_start, phi_start, Q_start, log_E_start, w_sample_mean_start, w_sample_mean_std_start)
+    map_curve.add_point(t_start, phi_start, Q_start, log_E_start,
+                        w_sample_mean_start, w_sample_mean_std_start)
 
     #
     # Finally trace along the MAP curve
     #
 
     # This is to indicate how iteration in t is terminated
-    break_t_loop = [True, True]  # = [Q_M, Q_R]; True = thru geo_dist, False = thru log_E
+    # = [Q_M, Q_R]; True = thru geo_dist, False = thru log_E
+    break_t_loop = [True, True]
 
     # Trace MAP curve in both directions
     for direction in [-1, +1]:
@@ -3012,27 +3152,29 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
         while True:
 
             # Test distance to endpoint
-            if utils.geo_dist(Q_end, Q) <= resolution:
+            if geo_dist(Q_end, Q) <= resolution:
                 if direction == -1:
                     pass
-                    #print('Q_end = M: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end, Q), resolution))
+                    #print('Q_end = M: geo_dist (%.2f) <= resolution (%.2f)' % (geo_dist(Q_end, Q), resolution))
                 else:
                     pass
-                    #print('Q_end = R: geo_dist (%.2f) <= resolution (%.2f)' % (utils.geo_dist(Q_end, Q), resolution))
+                    #print('Q_end = R: geo_dist (%.2f) <= resolution (%.2f)' % (geo_dist(Q_end, Q), resolution))
                 break
 
             # Take predictor step
-            phi_pre, t_new = compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX)
+            phi_pre, t_new = compute_predictor_step(
+                phi, R, Delta, t, N, direction, resolution, DT_MAX)
 
             # If phi_pre is insane, start iterating from phi instead
             if any(phi_pre > PHI_MAX) or any(phi_pre < PHI_MIN):
                 phi_pre = phi
 
             # Perform corrector steps to get new phi
-            phi_new = compute_corrector_step(phi_pre, R, Delta, t_new, N, tollerance)
+            phi_new = compute_corrector_step(
+                phi_pre, R, Delta, t_new, N, tollerance)
 
             # Compute new distribution
-            Q_new = utils.field_to_prob(phi_new)
+            Q_new = field_to_prob(phi_new)
 
             # Compute log ptgd
             log_ptgd_new, w_sample_mean_new, w_sample_mean_std_new = \
@@ -3055,17 +3197,18 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             # Terminate if log_E is too small. But don't count the t=-inf endpoint when computing log_E_max
             if log_E_new < log_E_max - max_log_evidence_ratio_drop:
                 if direction == -1:
-                    #print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
+                    # print('Q_end = M: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
                     #      (log_E_new, log_E_max, max_log_evidence_ratio_drop))
                     break_t_loop[0] = False
                 else:
-                    #print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
+                    # print('Q_end = R: log_E (%.2f) < log_E_max (%.2f) - max_log_evidence_ratio_drop (%.2f)' %
                     #      (log_E_new, log_E_max, max_log_evidence_ratio_drop))
                     break_t_loop[1] = False
                 # Add new point to map curve
                 if print_t:
                     print('t = %.2f' % t)
-                map_curve.add_point(t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
+                map_curve.add_point(
+                    t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
                 break
 
             slope_new = np.sign(log_ptgd_new - log_ptgd0)
@@ -3079,12 +3222,12 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
                 break_t_loop[1] = False
                 break
             elif (direction == +1) and (t > 0) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0):
-                #print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
+                # print('Q_end = R: t (%.2f) > 0 and log_ptgd_new (%.2f) > log_ptgd (%.2f) wrongly' %
                 #      (t, log_ptgd_new, log_ptgd0))
                 break_t_loop[1] = False
                 break
             elif (direction == +1) and (np.sign(slope_new * slope) < 0) and (log_ptgd_new > log_ptgd0 + max_log_evidence_ratio_drop):
-                #print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + max_log_evidence_ratio_drop (%.2f) at t = %.2f' %
+                # print('Q_end = R: log_ptgd_new (%.2f) > log_ptgd (%.2f) + max_log_evidence_ratio_drop (%.2f) at t = %.2f' %
                 #      (log_ptgd_new, log_ptgd0, max_log_evidence_ratio_drop, t))
                 break_t_loop[1] = False
                 break
@@ -3094,7 +3237,8 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
             # Add new point to MAP curve
             if print_t:
                 print('t = %.2f' % t)
-            map_curve.add_point(t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
+            map_curve.add_point(
+                t, phi, Q, log_E, w_sample_mean, w_sample_mean_std)
 
     # Sort points along the MAP curve
     map_curve.sort()
@@ -3109,7 +3253,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 # Core DEFT algorithm
 #
 def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
-        tollerance, resolution, num_pt_samples, fix_t_at_t_star,max_log_evidence_ratio_drop, details=False):
+        tollerance, resolution, num_pt_samples, fix_t_at_t_star, max_log_evidence_ratio_drop, details=False):
     """
     The core algorithm of DEFT, used for both 1D and 2D density estmation.
 
@@ -3123,7 +3267,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Make sure details is valid
     if not isinstance(details, bool):
-        raise ControlledError('/deft_core._run/ details must be a boolean: details = %s' % type(details))
+        raise ControlledError(
+            '/deft_core._run/ details must be a boolean: details = %s' % type(details))
 
     # Get number of gridpoints and kernel dimension from smoothness operator
     G = Delta.get_G()
@@ -3134,7 +3279,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
         raise ControlledError('/deft_core._run/ counts_array must have length %d: len(counts_array) = %d' %
                               (G, len(counts_array)))
     if not all(counts_array >= 0):
-        raise ControlledError('/deft_core._run/ counts_array is not non-negative: counts_array = %s' % counts_array)
+        raise ControlledError(
+            '/deft_core._run/ counts_array is not non-negative: counts_array = %s' % counts_array)
     if not (sum(counts_array > 0) > kernel_dim):
         raise ControlledError('/deft_core._run/ Only %d elements of counts_array contain data, less than kernel dimension %d' %
                               (sum(counts_array > 0), kernel_dim))
@@ -3149,7 +3295,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     clock = ConsumedTimeTimer()
     clock.tic()
-    map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t, tollerance, resolution,max_log_evidence_ratio_drop)
+    map_curve = compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start,
+                                  DT_MAX, print_t, tollerance, resolution, max_log_evidence_ratio_drop)
     map_curve_compute_time = clock.toc()
     if print_t:
         print('MAP curve computation took %.2f sec' % map_curve_compute_time)
@@ -3171,10 +3318,8 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     if not (num_pt_samples == 0):
         Q_samples, phi_samples, phi_weights = \
-            supplements.posterior_sampling(points, R, Delta, N, G,
-                                           num_pt_samples, fix_t_at_t_star)
-
-
+            posterior_sampling(points, R, Delta, N, G,
+                               num_pt_samples, fix_t_at_t_star)
 
     #
     # Package results
@@ -3212,13 +3357,15 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
     # Return density estimate along with histogram on which it is based
     return results
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 SMALL_NUM = 1E-6
 MAX_NUM_GRID_POINTS = 1000
 DEFAULT_NUM_GRID_POINTS = 100
 MAX_NUM_POSTERIOR_SAMPLES = 1000
 MAX_NUM_SAMPLES_FOR_Z = 1000
+
 
 class DensityEstimator:
     """Estimates a 1D probability density from sampled data.
@@ -3425,7 +3572,7 @@ class DensityEstimator:
 
             # Compute effective sample size and efficiency
             self.effective_sample_size = np.sum(self.sample_weights)**2 \
-                                        / np.sum(self.sample_weights**2)
+                / np.sum(self.sample_weights**2)
             self.effective_sampling_efficiency = \
                 self.effective_sample_size / self.num_posterior_samples
 
@@ -3622,7 +3769,6 @@ class DensityEstimator:
         if show_now:
             plt.show()
 
-
     @handle_errors
     def evaluate(self, x):
         """
@@ -3654,7 +3800,6 @@ class DensityEstimator:
 
         # Return answer
         return values
-
 
     @handle_errors
     def evaluate_samples(self, x, resample=True):
@@ -3750,7 +3895,6 @@ class DensityEstimator:
             each sample. A column showing column weights will also be included.
         """
 
-
         # Check inputs
         check(isinstance(use_weights, bool),
               'use_weights = %s; must be True or False.' % use_weights)
@@ -3802,7 +3946,7 @@ class DensityEstimator:
         # Create list of row names
         if show_samples:
             rows = ['sample %d' % n
-                     for n in range(self.num_posterior_samples)]
+                    for n in range(self.num_posterior_samples)]
         else:
             rows = ['star', 'histogram', 'maxent',
                     'posterior mean', 'posterior RMSD']
@@ -3900,7 +4044,8 @@ class DensityEstimator:
         Delta = laplacian.Laplacian(op_type, alpha, G)
         laplacian_compute_time = clock() - laplacian_start_time
         if print_t:
-            print('Laplacian computed de novo in %f sec.'%laplacian_compute_time)
+            print('Laplacian computed de novo in %f sec.' %
+                  laplacian_compute_time)
 
         # Get histogram counts and grid centers
 
@@ -3920,14 +4065,14 @@ class DensityEstimator:
             print('t_start = %0.2f' % t_start)
 
         # Do DEFT density estimation
-        core_results = deft_core.run(counts, Delta, Z_eval, num_Z_samples,
-                                     t_start, DT_MAX, print_t,
-                                     tollerance, resolution, num_pt_samples,
-                                     fix_t_at_t_star,
-                                     max_log_evidence_ratio_drop)
+        core_results = run(counts, Delta, Z_eval, num_Z_samples,
+                           t_start, DT_MAX, print_t,
+                           tollerance, resolution, num_pt_samples,
+                           fix_t_at_t_star,
+                           max_log_evidence_ratio_drop)
 
         # Fill in results
-        results = core_results # Get all results from deft_core
+        results = core_results  # Get all results from deft_core
 
         # Normalize densities properly
         results.h = h
@@ -3944,7 +4089,6 @@ class DensityEstimator:
 
         # Store results
         self.results = results
-
 
     def _inputs_check(self):
         """
@@ -3975,8 +4119,9 @@ class DensityEstimator:
             # cast grid as np.array as ints
             try:
                 self.grid = np.array(self.grid).ravel().astype(float)
-            except: # SHOULD BE MORE SPECIFIC
-                raise ControlledError('Cannot cast grid as 1D np.array of floats.')
+            except:  # SHOULD BE MORE SPECIFIC
+                raise ControlledError(
+                    'Cannot cast grid as 1D np.array of floats.')
 
             # grid has appropriate number of points
             check(2*self.alpha <= len(self.grid) <= MAX_NUM_GRID_POINTS,
@@ -4010,8 +4155,8 @@ class DensityEstimator:
 
             # num_grid_points is in the right range
             check(2*self.alpha <= self.num_grid_points <= MAX_NUM_GRID_POINTS,
-              'num_grid_points = %d; must have %d <= num_grid_poitns <= %d.' %
-              (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS))
+                  'num_grid_points = %d; must have %d <= num_grid_poitns <= %d.' %
+                  (self.num_grid_points, 2*self.alpha, MAX_NUM_GRID_POINTS))
 
         # bounding_box
         if self.bounding_box is not None:
@@ -4023,7 +4168,7 @@ class DensityEstimator:
                   (type(self.bounding_box), box_types))
 
             # bounding_box has right length
-            check(len(self.bounding_box)==2,
+            check(len(self.bounding_box) == 2,
                   'len(bounding_box) = %d; must be %d' %
                   (len(self.bounding_box), 2))
 
@@ -4063,7 +4208,7 @@ class DensityEstimator:
         check(0 <= self.num_samples_for_Z <= MAX_NUM_SAMPLES_FOR_Z,
               'self.num_samples_for_Z = %d; ' % self.num_samples_for_Z +
               ' must satisfy 0 <= num_samples_for_Z <= %d.' %
-               MAX_NUM_SAMPLES_FOR_Z)
+              MAX_NUM_SAMPLES_FOR_Z)
 
         # max_t_step is a number
         check(isinstance(self.max_t_step, numbers.Real),
@@ -4075,7 +4220,7 @@ class DensityEstimator:
               'maxt_t_step = %f; must be > 0.' % self.max_t_step)
 
         # print_t is bool
-        check(isinstance(self.print_t,bool),
+        check(isinstance(self.print_t, bool),
               'type(print_t) = %s; must be bool.' % type(self.print_t))
 
         # tolerance is float
@@ -4115,11 +4260,10 @@ class DensityEstimator:
               type(self.num_posterior_samples))
         self.num_posterior_samples = int(self.num_posterior_samples)
 
-
         # num_posterior_samples is nonnegative
         check(0 <= self.num_posterior_samples <= MAX_NUM_POSTERIOR_SAMPLES,
-              'num_posterior_samples = %f; need '%self.num_posterior_samples +
-              '0 <= num_posterior_samples <= %d.' %MAX_NUM_POSTERIOR_SAMPLES)
+              'num_posterior_samples = %f; need ' % self.num_posterior_samples +
+              '0 <= num_posterior_samples <= %d.' % MAX_NUM_POSTERIOR_SAMPLES)
 
         # max_log_evidence_ratio_drop is number
         check(isinstance(self.max_log_evidence_ratio_drop, numbers.Real),
@@ -4130,7 +4274,6 @@ class DensityEstimator:
         check(self.max_log_evidence_ratio_drop > 0,
               'max_log_evidence_ratio_drop = %f; must be > 0' %
               self.max_log_evidence_ratio_drop)
-
 
     def _clean_data(self):
         """
@@ -4159,7 +4302,6 @@ class DensityEstimator:
         # Keep only finite numbers
         data = data[np.isfinite(data)]
 
-
         try:
             if not (len(data) > 0):
                 raise ControlledError(
@@ -4187,7 +4329,6 @@ class DensityEstimator:
 
         # Set cleaned data
         self.data = data
-
 
     def _set_grid(self):
         """
@@ -4232,7 +4373,6 @@ class DensityEstimator:
                 lower_bound = bounding_box[0]
                 upper_bound = bounding_box[1]
                 box_size = upper_bound - lower_bound
-
 
             # Otherwise set bounding box based on data
             else:
@@ -4299,7 +4439,7 @@ class DensityEstimator:
                 grid_start = lower_bound + grid_padding
                 grid_stop = upper_bound - grid_padding
                 grid = np.linspace(grid_start,
-                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   grid_stop * (1 + SMALL_NUM),  # For safety
                                    num_grid_points)
 
             # Otherwise, if num_grid_points is specified
@@ -4317,7 +4457,7 @@ class DensityEstimator:
                 grid_start = lower_bound + grid_padding
                 grid_stop = upper_bound - grid_padding
                 grid = np.linspace(grid_start,
-                                   grid_stop * (1 + SMALL_NUM), # For safety
+                                   grid_stop * (1 + SMALL_NUM),  # For safety
                                    num_grid_points)
 
             # Otherwise, set grid_spacing and num_grid_points based on data
@@ -4376,7 +4516,8 @@ class DensityEstimator:
                                          grid[:-1]+grid_spacing/2,
                                          [upper_bound]))
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 
 class DensityEvaluator:
     """
@@ -4442,7 +4583,6 @@ class DensityEvaluator:
         # Compute density values at supplied grid points
         self.values = self.evaluate(xs=self.grid)
 
-
     def evaluate(self, xs):
         """
         Evaluates the probability density at specified positions.
@@ -4477,12 +4617,10 @@ class DensityEvaluator:
 
         return self.evaluate(*args, **kwargs)
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
 # Enable plotting
-from src.utils import enable_graphics, check, ControlledError
 
 # # Classes that have yet to be written
 # class Density2DEstimator:
@@ -4540,7 +4678,6 @@ def demo(example='real_data'):
     None.
     """
 
-    import os
     example_dir = os.path.dirname(__file__)
 
     example_dict = {
@@ -4550,13 +4687,13 @@ def demo(example='real_data'):
     }
 
     check(example in example_dict,
-          'example = %s is not valid. Must be one of %s'%\
+          'example = %s is not valid. Must be one of %s' %
           (example, example_dict.keys()))
 
-    file_name = '%s/%s'%(example_dir, example_dict[example])
+    file_name = '%s/%s' % (example_dir, example_dict[example])
     with open(file_name, 'r') as f:
         content = f.read()
         line = '-------------------------------------------------------------'
-        print('Running %s:\n%s\n%s\n%s'%\
+        print('Running %s:\n%s\n%s\n%s' %
               (file_name, line, content, line))
     exec(open(file_name).read())
