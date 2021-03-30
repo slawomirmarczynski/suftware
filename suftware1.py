@@ -127,15 +127,15 @@ class ConsumedTimeTimer:
 
 
 # A very small floating point number, used to prevent taking logs of 0
-TINY_FLOAT64 = sp.finfo(sp.float64).tiny
-TINY_FLOAT32 = sp.finfo(sp.float32).tiny
+TINY_FLOAT64 = np.finfo(np.float64).tiny
+TINY_FLOAT32 = np.finfo(np.float32).tiny
 PHI_MIN = -500
 PHI_MAX = 500
 PHI_STD_REG = 100.0
 LISTLIKE = (list, np.ndarray, np.matrix, range)
 
 # This is useful for testing whether something is a number
-#NUMBER = (int, float, long)
+# NUMBER = (int, float, long)
 NUMBER = (int, float, int)
 
 # This is useful for testing whether something is an array
@@ -181,12 +181,12 @@ def geo_dist(P, Q):
         raise ControlledError('/geo_dist/ Q is vanishing: Q = %s' % Q)
 
     # Enforce proper normalization
-    P_prob = P/sp.sum(P)
-    Q_prob = Q/sp.sum(Q)
+    P_prob = P/np.sum(P)
+    Q_prob = Q/np.sum(Q)
 
     # Return geo-distance. Arc-cosine can behave badly if argument is too close to one, so prepare for this
     try:
-        dist = 2*sp.arccos(sp.sum(sp.sqrt(P_prob*Q_prob)))
+        dist = 2*np.arccos(np.sum(np.sqrt(P_prob*Q_prob)))
         if not np.isreal(dist):
             raise ControlledError(
                 '/geo_dist/ dist is not real: dist = %s' % dist)
@@ -194,7 +194,7 @@ def geo_dist(P, Q):
             raise ControlledError(
                 '/geo_dist/ dist is not >= 0: dist = %s' % dist)
     except:
-        if sp.sum(sp.sqrt(P_prob*Q_prob)) > 1 - TINY_FLOAT32:
+        if np.sum(np.sqrt(P_prob*Q_prob)) > 1 - TINY_FLOAT32:
             dist = 0
         else:
             raise ControlledError(
@@ -221,7 +221,7 @@ def field_to_quasiprob(raw_phi):
         phi[phi < PHI_MIN] = PHI_MIN
 
     # Compute quasiQ
-    quasiQ = sp.exp(-phi)/(1.*G)
+    quasiQ = np.exp(-phi)/(1.*G)
 
     # Make sure quasiQ is valid
     if not all(np.isreal(quasiQ)):
@@ -254,8 +254,8 @@ def field_to_prob(raw_phi):
     phi -= min(phi)
 
     # Compute Q
-    denom = sp.sum(sp.exp(-phi))
-    Q = sp.exp(-phi)/denom
+    denom = np.sum(np.exp(-phi))
+    Q = np.exp(-phi)/denom
 
     # Make sure Q is valid
     if not all(np.isreal(Q)):
@@ -283,7 +283,7 @@ def prob_to_field(Q):
         raise ControlledError(
             '/prob_to_field/ Q is not non-negative: Q = %s' % Q)
 
-    phi = -sp.log(G*Q + TINY_FLOAT64)
+    phi = -np.log(G*Q + TINY_FLOAT64)
 
     # Make sure phi is valid
     if not all(np.isreal(phi)):
@@ -408,7 +408,7 @@ def bounding_box_from_centers(centers):
     h = centers[1]-centers[0]
     xmin = centers[0]-h/2.
     xmax = centers[-1]+h/2.
-    return sp.array([xmin, xmax])
+    return np.array([xmin, xmax])
 
 
 # Defines a dot product with my normalization
@@ -419,13 +419,13 @@ def dot(v1, v2, h=1.0):
     if not (len(v2) == G):
         raise ControlledError(
             '/dot/ vectors are not of the same length: len(v1) = %d, len(v2) = %d' % (len(v1r), len(v2r)))
-    return sp.sum(v1r*v2r*h/(1.*G))
+    return np.sum(v1r*v2r*h/(1.*G))
 
 
-# Computes a norm with my normalization
-def norm(v, h=1.0):
-    v_cc = np.conj(v)
-    return sp.sqrt(dot(v, v_cc, h))
+# # Computes a norm with my normalization
+# def norm(v, h=1.0):
+#     v_cc = np.conj(v)
+#     return np.sqrt(dot(v, v_cc, h))
 
 
 # Normalizes vectors (stored as columns of a 2D numpy array)
@@ -438,15 +438,15 @@ def normalize(vectors, grid_spacing=1.0):
     if isinstance(grid_spacing, NUMBER):
         h = grid_spacing
     elif isinstance(grid_spacing, ARRAY):
-        grid_spacing = sp.array(grid_spacing)
-        h = sp.prod(grid_spacing)
+        grid_spacing = np.array(grid_spacing)
+        h = np.prod(grid_spacing)
     else:
         raise ControlledError('/normalize/ Cannot recognize h: h = %s' % h)
 
     if not (h > 0):
         raise ControlledError('/normalize/ h is not positive: h = %s' % h)
 
-    norm_vectors = sp.zeros([G, K])
+    norm_vectors = np.zeros([G, K])
     for i in range(K):
         # Extract v from list of vectors
         v = vectors[:, i]
@@ -464,12 +464,12 @@ def normalize(vectors, grid_spacing=1.0):
 def legendre_basis_1d(G, alpha, grid_spacing):
 
     # Create grid of centred x-values ranging from -1 to 1
-    x_grid = (sp.arange(G) - (G-1)/2.)/(G/2.)
+    x_grid = (np.arange(G) - (G-1)/2.)/(G/2.)
 
     # First create an orthogonal (not necessarily normalized) basis
-    raw_basis = sp.zeros([G, alpha])
+    raw_basis = np.zeros([G, alpha])
     for i in range(alpha):
-        c = sp.zeros(alpha)
+        c = np.zeros(alpha)
         c[i] = 1.0
         raw_basis[:, i] = legval(x_grid, c)
 
@@ -484,19 +484,19 @@ def legendre_basis_1d(G, alpha, grid_spacing):
 def legendre_basis_2d(Gx, Gy, alpha, grid_spacing=[1.0, 1.0]):
 
     # Compute x-coords and y-coords, each ranging from -1 to 1
-    x_grid = (sp.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
-    y_grid = (sp.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
+    x_grid = (np.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
+    y_grid = (np.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
 
     # Create meshgrid of these
     xs, ys = np.meshgrid(x_grid, y_grid)
     basis_dim = alpha*(alpha+1)/2
     G = Gx*Gy
-    raw_basis = sp.zeros([G, basis_dim])
+    raw_basis = np.zeros([G, basis_dim])
     k = 0
     for a in range(alpha):
         for b in range(alpha):
             if a+b < alpha:
-                c = sp.zeros([alpha, alpha])
+                c = np.zeros([alpha, alpha])
                 c[a, b] = 1
                 raw_basis[:, k] = \
                     legval2d(xs, ys, c).T.reshape([G])
@@ -997,7 +997,7 @@ class SimulatedDataset:
 # $$$$ ---- ścieżki ----
 
 # Load directory of file
-data_dir = os.path.dirname(os.path.abspath(__file__))+'/../examples/data'
+data_dir = os.path.dirname(os.path.abspath(__file__))+'/data1'
 
 # List of supported distributions by name
 VALID_DATASETS = ['.'.join(name.split('.')[:-1]) for name in
@@ -1198,7 +1198,7 @@ class Laplacian:
 
     def get_kernel_basis(self):
         """ Returns the kernel as a kernel_dim x G numpy array """
-        return sp.copy(self._kernel_basis)
+        return np.copy(self._kernel_basis)
 
     def get_kernel_dim(self):
         """ Return the dimension of the kernel of this operator. """
@@ -1236,13 +1236,13 @@ def derivative_matrix_1d(G, grid_spacing):
     """ Returns a (G-1) x G sized 1d derivative matrix. """
 
     # Create matrix
-    tmp_mat = sp.diag(sp.ones(G), 0) + sp.diag(-1.0*sp.ones(G-1), -1)
+    tmp_mat = np.diag(np.ones(G), 0) + np.diag(-1.0*np.ones(G-1), -1)
     right_partial = tmp_mat[1:, :]/grid_spacing
 
-    return sp.mat(right_partial)
+    return np.mat(right_partial)
 
 
-def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=True):
+def laplacian_1d(G, alpha, grid_spacing, periodic=False, sparse=True, report_kernel=True):
     """ Returns a G x G sized 1d bilateral laplacian matrix of order alpha """
 
     # Make sure sparse is valid
@@ -1254,17 +1254,17 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
         raise ControlledError(
             '/laplacian_1d/ report_kernel must be a boolean: report_kernel = %s' % type(report_kernel))
 
-    x_grid = (sp.arange(G) - (G-1)/2.)/(G/2.)
+    x_grid = (np.arange(G) - (G-1)/2.)/(G/2.)
 
     # If periodic boundary conditions, construct regular laplacian
     if periodic:
-        tmp_mat = 2*sp.diag(sp.ones(G), 0) - \
-            sp.diag(sp.ones(G-1), -1) - sp.diag(sp.ones(G-1), +1)
+        tmp_mat = 2*np.diag(np.ones(G), 0) - \
+            np.diag(np.ones(G-1), -1) - np.diag(np.ones(G-1), +1)
         tmp_mat[G-1, 0] = -1.0
         tmp_mat[0, G-1] = -1.0
-        Delta = (sp.mat(tmp_mat)/(grid_spacing**2))**alpha
+        Delta = (np.mat(tmp_mat)/(grid_spacing**2))**alpha
 
-        # Get kernel, which is just the constant vector v = sp.ones([G,1])
+        # Get kernel, which is just the constant vector v = np.ones([G,1])
         # kernel_basis = normalize(v, grid_spacing)
         kernel_basis = legendre_basis_1d(G, 1, grid_spacing)
 
@@ -1272,7 +1272,7 @@ def laplacian_1d(G, alpha, grid_spacing, periodic, sparse=True, report_kernel=Tr
     else:
 
         # Initialize to G x G identity matrix
-        right_side = sp.diag(sp.ones(G), 0)
+        right_side = np.diag(np.ones(G), 0)
 
         # Multiply alpha derivative matrices of together. Reduce dimension going left
         for a in range(alpha):
@@ -1326,12 +1326,12 @@ def laplacian_2d(num_gridpoints, alpha, grid_spacing=[1.0, 1.0], periodic=False,
     assert(hy > 0.0)
 
     # Identity matrices, which will be used below
-    I_x = sp.mat(sp.identity(Gx))
-    I_y = sp.mat(sp.identity(Gy))
+    I_x = np.mat(np.identity(Gx))
+    I_y = np.mat(np.identity(Gy))
 
     # Compute x-coords and y-coords
-    x_grid = (sp.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
-    y_grid = (sp.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
+    x_grid = (np.arange(Gx) - (Gx-1)/2.)/(Gx/2.)
+    y_grid = (np.arange(Gy) - (Gy-1)/2.)/(Gy/2.)
     xs, ys = np.meshgrid(x_grid, y_grid)
 
     # If periodic boundary conditions,
@@ -1340,7 +1340,7 @@ def laplacian_2d(num_gridpoints, alpha, grid_spacing=[1.0, 1.0], periodic=False,
         Delta_y = laplacian_1d(Gy, alpha=1, grid_spacing=hy, periodic=True)
 
         # Use the kroneker product to generate a first-order operator
-        Delta_1 = sp.mat(sp.kron(Delta_x, I_y) + sp.kron(I_x, Delta_y))
+        Delta_1 = np.mat(np.kron(Delta_x, I_y) + np.kron(I_x, Delta_y))
 
         # Raise operator to alpha power
         Delta = Delta_1**alpha
@@ -1359,9 +1359,9 @@ def laplacian_2d(num_gridpoints, alpha, grid_spacing=[1.0, 1.0], periodic=False,
             Dy = Delta_y_array[a]
             coeff = comb(alpha, a)
             if a == 0:
-                Delta = coeff*sp.mat(sp.kron(Dx, Dy))
+                Delta = coeff*np.mat(np.kron(Dx, Dy))
             else:
-                Delta += coeff*sp.mat(sp.kron(Dx, Dy))
+                Delta += coeff*np.mat(np.kron(Dx, Dy))
 
     # Build kernel from 2d legendre polynomials
     if periodic:
@@ -1400,14 +1400,14 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         kernel_basis = np.zeros([G, alpha])
         for i in range(alpha):
             kernel_basis[:, i] = Delta_diagonalized[1][:, i].ravel()
-        M_mat = diags(sp.exp(-phi_t), 0).todense() * (N / G)
-        M_mat_on_kernel = sp.mat(kernel_basis).T * M_mat * sp.mat(kernel_basis)
+        M_mat = diags(np.exp(-phi_t), 0).todense() * (N / G)
+        M_mat_on_kernel = np.mat(kernel_basis).T * M_mat * np.mat(kernel_basis)
         U_mat_on_kernel = np.linalg.eigh(M_mat_on_kernel)
         # Below are what will be used
         y_dim = alpha
-        eig_vals = np.abs(sp.array(U_mat_on_kernel[0]))
-        transf_matrix = sp.mat(kernel_basis) * U_mat_on_kernel[1]
-        lambdas = sp.exp(-phi_t) * (N / G)
+        eig_vals = np.abs(np.array(U_mat_on_kernel[0]))
+        transf_matrix = np.mat(kernel_basis) * U_mat_on_kernel[1]
+        lambdas = np.exp(-phi_t) * (N / G)
     else:
         G = len(phi_t)
         H = hessian(phi_t, R, Delta, t, N)
@@ -1416,9 +1416,9 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
         y_dim = G
-        eig_vals = np.abs(sp.array(U_mat[0]))
+        eig_vals = np.abs(np.array(U_mat[0]))
         transf_matrix = U_mat[1]
-        lambdas = sp.exp(-phi_t) * (N / G)
+        lambdas = np.exp(-phi_t) * (N / G)
 
     # If requested to go parallel, set up a pool of workers for parallel computation
     if go_parallel:
@@ -1429,7 +1429,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
     if go_parallel:
         inputs = itertools.izip(itertools.repeat(num_samples), eig_vals)
         outputs = pool.map(y_sampling_of_Lap, inputs)
-        y_samples = sp.array(outputs)
+        y_samples = np.array(outputs)
     else:
         y_samples = np.zeros([y_dim, num_samples])
         for i in range(y_dim):
@@ -1438,7 +1438,7 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
             y_samples[i, :] = outputs
 
     # Transform y samples to x samples
-    x_samples = sp.array(transf_matrix * sp.mat(y_samples))
+    x_samples = np.array(transf_matrix * np.mat(y_samples))
     for i in range(G):
         x_vec = x_samples[i, :]
         x_vec[x_vec < x_MIN] = x_MIN
@@ -1449,21 +1449,21 @@ def Laplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         phi_samples[:, k] = x_samples[:, k] + phi_t
 
     # Calculate the weight of each sample
-    x_combo = sp.exp(-x_samples) - np.ones(
+    x_combo = np.exp(-x_samples) - np.ones(
         [G, num_samples]) + x_samples - 0.5 * np.square(x_samples)
-    dS_vals = sp.array(sp.mat(lambdas) * sp.mat(x_combo)).ravel()
-    phi_weights = sp.exp(-dS_vals)
+    dS_vals = np.array(np.mat(lambdas) * np.mat(x_combo)).ravel()
+    phi_weights = np.exp(-dS_vals)
 
     # If called from posterior sampling, return phi samples along with their weights at this point
     if pt_sampling:
         return phi_samples, phi_weights
 
     # Calculate sample mean and sample mean std
-    w_sample_mean = sp.mean(phi_weights)
-    w_sample_mean_std = sp.std(phi_weights) / sp.sqrt(num_samples)
+    w_sample_mean = np.mean(phi_weights)
+    w_sample_mean_std = np.std(phi_weights) / np.sqrt(num_samples)
 
     # Return correction and other stuff
-    correction = sp.log(w_sample_mean)
+    correction = np.log(w_sample_mean)
     return correction, w_sample_mean, w_sample_mean_std
 
 
@@ -1473,7 +1473,7 @@ def y_sampling_of_Lap(input_array):
     eig_val = input_array[1]
 
     # Draw y samples
-    sigma = 1.0 / sp.sqrt(eig_val)
+    sigma = 1.0 / np.sqrt(eig_val)
     y_samples = np.random.normal(0, sigma, num_samples)
 
     # Return y samples
@@ -1493,15 +1493,15 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         kernel_basis = np.zeros([G, alpha])
         for i in range(alpha):
             kernel_basis[:, i] = Delta_diagonalized[1][:, i].ravel()
-        M_mat = diags(sp.exp(-phi_t), 0).todense() * (N / G)
-        M_mat_on_kernel = sp.mat(kernel_basis).T * M_mat * sp.mat(kernel_basis)
+        M_mat = diags(np.exp(-phi_t), 0).todense() * (N / G)
+        M_mat_on_kernel = np.mat(kernel_basis).T * M_mat * np.mat(kernel_basis)
         U_mat_on_kernel = np.linalg.eigh(M_mat_on_kernel)
         # Below are what will be used
         y_dim = alpha
-        eig_vals = np.abs(sp.array(U_mat_on_kernel[0]))
-        eig_vecs = sp.array((sp.mat(kernel_basis) * U_mat_on_kernel[1]).T)
-        transf_matrix = sp.mat(kernel_basis) * U_mat_on_kernel[1]
-        lambdas = sp.exp(-phi_t) * (N / G)
+        eig_vals = np.abs(np.array(U_mat_on_kernel[0]))
+        eig_vecs = np.array((np.mat(kernel_basis) * U_mat_on_kernel[1]).T)
+        transf_matrix = np.mat(kernel_basis) * U_mat_on_kernel[1]
+        lambdas = np.exp(-phi_t) * (N / G)
     else:
         G = len(phi_t)
         H = hessian(phi_t, R, Delta, t, N)
@@ -1509,10 +1509,10 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         U_mat = np.linalg.eigh(A_mat)
         # Below are what will be used
         y_dim = G
-        eig_vals = np.abs(sp.array(U_mat[0]))
-        eig_vecs = sp.array(U_mat[1].T)
+        eig_vals = np.abs(np.array(U_mat[0]))
+        eig_vecs = np.array(U_mat[1].T)
         transf_matrix = U_mat[1]
-        lambdas = sp.exp(-phi_t) * (N / G)
+        lambdas = np.exp(-phi_t) * (N / G)
 
     # If requested to go parallel, set up a pool of workers for parallel computation
     if go_parallel:
@@ -1545,13 +1545,13 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
 
     # If not sampling, return correction and other stuff at this point
     if not sampling:
-        correction = sp.sum(sp.log(gammas))
+        correction = np.sum(np.log(gammas))
         w_sample_mean = 1.0
         w_sample_mean_std = 0.0
         return correction, w_sample_mean, w_sample_mean_std
 
     # Transform y samples to x samples
-    x_samples = sp.array(transf_matrix * sp.mat(y_samples))
+    x_samples = np.array(transf_matrix * np.mat(y_samples))
     for i in range(G):
         x_vec = x_samples[i, :]
         x_vec[x_vec < x_MIN] = x_MIN
@@ -1562,35 +1562,35 @@ def GLaplace_approach(phi_t, R, Delta, t, N, num_samples, go_parallel,
         phi_samples[:, k] = x_samples[:, k] + phi_t
 
     # Calculate the weight of each sample
-    x_combo = sp.exp(-x_samples) - np.ones(
+    x_combo = np.exp(-x_samples) - np.ones(
         [G, num_samples]) + x_samples - 0.5 * np.square(x_samples)
-    dS_vals = sp.array(sp.mat(lambdas) * sp.mat(x_combo)).ravel()
+    dS_vals = np.array(np.mat(lambdas) * np.mat(x_combo)).ravel()
     if go_parallel:
-        inputs = itertools.izip(sp.array(transf_matrix.T), y_samples,
+        inputs = itertools.izip(np.array(transf_matrix.T), y_samples,
                                 itertools.repeat(lambdas))
         outputs = pool.map(dSi_evaluations_of_GLap, inputs)
-        dSi_vals = sp.array(outputs)
+        dSi_vals = np.array(outputs)
     else:
         dSi_vals = np.zeros([y_dim, num_samples])
         for i in range(y_dim):
-            inputs = [sp.array(transf_matrix)[:, i], y_samples[i, :], lambdas]
+            inputs = [np.array(transf_matrix)[:, i], y_samples[i, :], lambdas]
             outputs = dSi_evaluations_of_GLap(inputs)
             dSi_vals[i, :] = outputs
-    sum_dSi_vals = sp.array(sp.mat(np.ones(y_dim)) * sp.mat(dSi_vals)).ravel()
+    sum_dSi_vals = np.array(np.mat(np.ones(y_dim)) * np.mat(dSi_vals)).ravel()
     dS_residues = dS_vals - sum_dSi_vals
     dS_residues[dS_residues < x_MIN] = x_MIN
-    phi_weights = sp.exp(-dS_residues)
+    phi_weights = np.exp(-dS_residues)
 
     # If called from posterior sampling, return phi samples along with their weights at this point
     if pt_sampling:
         return phi_samples, phi_weights
 
     # Calculate sample mean, sample mean std, and effective sample size of the weights
-    w_sample_mean = sp.mean(phi_weights)
-    w_sample_mean_std = sp.std(phi_weights) / sp.sqrt(num_samples)
+    w_sample_mean = np.mean(phi_weights)
+    w_sample_mean_std = np.std(phi_weights) / np.sqrt(num_samples)
 
     # Return correction and other stuff
-    correction = sp.sum(sp.log(gammas)) + sp.log(w_sample_mean)
+    correction = np.sum(np.log(gammas)) + np.log(w_sample_mean)
     return correction, w_sample_mean, w_sample_mean_std
 
 
@@ -1604,7 +1604,7 @@ def y_sampling_of_GLap(inputs_array):
     sampling = inputs_array[5]
 
     # Find the lower and upper bounds of the Laplace distribution and tabulate its values
-    sigma = 1.0 / sp.sqrt(eig_val)
+    sigma = 1.0 / np.sqrt(eig_val)
     Lap_N_lb = 0
     while distribution(eig_val, eig_vec, Lap_N_lb * sigma, lambdas,
                        switch=0) > 1E-6:
@@ -1621,7 +1621,7 @@ def y_sampling_of_GLap(inputs_array):
             distribution(eig_val, eig_vec, Lap_N * sigma, lambdas, switch=0))
 
     # Find the lower and upper bounds of the generalized Laplace distribution and tabulate its values
-    sigma = 1.0 / sp.sqrt(eig_val)
+    sigma = 1.0 / np.sqrt(eig_val)
     GLap_N_lb = 0
     while distribution(eig_val, eig_vec, GLap_N_lb * sigma, lambdas,
                        switch=1) > 1E-6:
@@ -1639,7 +1639,7 @@ def y_sampling_of_GLap(inputs_array):
 
     # See if these two distributions are similar enough
     if Lap_Ns == GLap_Ns:
-        diff_Es = abs(sp.array(Lap_Es) - sp.array(GLap_Es))
+        diff_Es = abs(np.array(Lap_Es) - np.array(GLap_Es))
         if all(diff_Es < 1E-6):
             similar_enough = True
         else:
@@ -1652,29 +1652,29 @@ def y_sampling_of_GLap(inputs_array):
         gamma = 1.0
     else:
         # Evaluate area under the Laplace distribution
-        Lap_bin_edges = sp.linspace(Lap_Ns[0] * sigma, Lap_Ns[-1] * sigma,
+        Lap_bin_edges = np.linspace(Lap_Ns[0] * sigma, Lap_Ns[-1] * sigma,
                                     num_grid + 1)
         h = Lap_bin_edges[1] - Lap_bin_edges[0]
-        Lap_bin_centers = sp.linspace(Lap_Ns[0] * sigma + h / 2,
+        Lap_bin_centers = np.linspace(Lap_Ns[0] * sigma + h / 2,
                                       Lap_Ns[-1] * sigma - h / 2, num_grid)
         Lap_bin_centers_dist = np.zeros(num_grid)
         for j in range(num_grid):
             Lap_bin_centers_dist[j] = distribution(eig_val, eig_vec,
                                                    Lap_bin_centers[j], lambdas,
                                                    switch=0)
-        Lap_area = h * sp.sum(Lap_bin_centers_dist)
+        Lap_area = h * np.sum(Lap_bin_centers_dist)
         # Evaluate area under the generalized Laplace distribution
-        GLap_bin_edges = sp.linspace(GLap_Ns[0] * sigma, GLap_Ns[-1] * sigma,
+        GLap_bin_edges = np.linspace(GLap_Ns[0] * sigma, GLap_Ns[-1] * sigma,
                                      num_grid + 1)
         h = GLap_bin_edges[1] - GLap_bin_edges[0]
-        GLap_bin_centers = sp.linspace(GLap_Ns[0] * sigma + h / 2,
+        GLap_bin_centers = np.linspace(GLap_Ns[0] * sigma + h / 2,
                                        GLap_Ns[-1] * sigma - h / 2, num_grid)
         GLap_bin_centers_dist = np.zeros(num_grid)
         for j in range(num_grid):
             GLap_bin_centers_dist[j] = distribution(eig_val, eig_vec,
                                                     GLap_bin_centers[j],
                                                     lambdas, switch=1)
-        GLap_area = h * sp.sum(GLap_bin_centers_dist)
+        GLap_area = h * np.sum(GLap_bin_centers_dist)
         # Take ratio of the areas
         gamma = GLap_area / Lap_area
 
@@ -1688,16 +1688,16 @@ def y_sampling_of_GLap(inputs_array):
 
     # Otherwise, draw samples according to the distribution as follows
     else:
-        bin_edges = sp.linspace(GLap_N_lb * sigma, GLap_N_ub * sigma,
+        bin_edges = np.linspace(GLap_N_lb * sigma, GLap_N_ub * sigma,
                                 num_grid + 1)
         h = bin_edges[1] - bin_edges[0]
-        bin_centers = sp.linspace(GLap_N_lb * sigma + h / 2,
+        bin_centers = np.linspace(GLap_N_lb * sigma + h / 2,
                                   GLap_N_ub * sigma - h / 2, num_grid)
         bin_centers_dist = np.zeros(num_grid)
         for j in range(num_grid):
             bin_centers_dist[j] = distribution(eig_val, eig_vec, bin_centers[j],
                                                lambdas, switch=1)
-        prob = bin_centers_dist / sp.sum(bin_centers_dist)
+        prob = bin_centers_dist / np.sum(bin_centers_dist)
         y_samples = np.random.choice(bin_centers, num_samples, replace=True,
                                      p=prob)
         y_shifts = (np.random.random(num_samples) - 0.5 * np.ones(
@@ -1717,7 +1717,7 @@ def y_sampling_of_GLap(inputs_array):
                 if fa == fb:
                     y_samples[k] = a + h * r
                 else:
-                    h_ratio = (sp.sqrt(fa**2+r*(fb**2-fa**2)) - fa) / (fb - fa)
+                    h_ratio = (np.sqrt(fa**2+r*(fb**2-fa**2)) - fa) / (fb - fa)
                     y_samples[k] = a + h * h_ratio
             """
 
@@ -1734,26 +1734,26 @@ def dSi_evaluations_of_GLap(inputs_array):
     G = len(Ui)
     num_samples = len(yi)
 
-    xi = sp.array(sp.mat(Ui).T * sp.mat(yi))
+    xi = np.array(np.mat(Ui).T * np.mat(yi))
     for i in range(G):
         xi_vec = xi[i, :]
         xi_vec[xi_vec < x_MIN] = x_MIN
-    xi_combo = sp.exp(-xi) - np.ones([G, num_samples]) + xi - 0.5 * np.square(
+    xi_combo = np.exp(-xi) - np.ones([G, num_samples]) + xi - 0.5 * np.square(
         xi)
 
-    return sp.array(sp.mat(lambdas) * sp.mat(xi_combo)).ravel()
+    return np.array(np.mat(lambdas) * np.mat(xi_combo)).ravel()
 
 
 # The Laplace or generalized Laplace distribution
 def distribution(eig_val, eig_vec, y, lambdas, switch):
-    return sp.exp(
+    return np.exp(
         -(0.5 * eig_val * y ** 2 + switch * dSi(eig_vec * y, lambdas)))
 
 
 # The dSi function
 def dSi(x, lambdas):
     x[x < x_MIN] = x_MIN
-    return sp.sum(lambdas * (sp.exp(-x) - 1.0 + x - 0.5 * x ** 2))
+    return np.sum(lambdas * (np.exp(-x) - 1.0 + x - 0.5 * x ** 2))
 
 
 # Feynman diagram calculations
@@ -1769,12 +1769,12 @@ def Feynman_diagrams(phi_t, R, Delta, t, N):
         kernel_basis = np.zeros([G, alpha])
         for i in range(alpha):
             kernel_basis[:, i] = Delta_diagonalized[1][:, i].ravel()
-        M_mat = diags(sp.exp(-phi_t), 0).todense() * (N / G)
-        M_mat_on_kernel = sp.mat(kernel_basis).T * M_mat * sp.mat(kernel_basis)
+        M_mat = diags(np.exp(-phi_t), 0).todense() * (N / G)
+        M_mat_on_kernel = np.mat(kernel_basis).T * M_mat * np.mat(kernel_basis)
         M_inv_on_kernel = sp.linalg.inv(M_mat_on_kernel)
-        P_mat = sp.mat(kernel_basis) * M_inv_on_kernel * sp.mat(kernel_basis).T
+        P_mat = np.mat(kernel_basis) * M_inv_on_kernel * np.mat(kernel_basis).T
         # Evaluate vertex vector
-        V = sp.exp(-phi_t) * (N / G)
+        V = np.exp(-phi_t) * (N / G)
     else:
         G = len(phi_t)
         # Evaluate propagator matrix
@@ -1782,7 +1782,7 @@ def Feynman_diagrams(phi_t, R, Delta, t, N):
         A_mat = H.todense() * (N / G)
         P_mat = np.linalg.inv(A_mat)
         # Evaluate vertex vector
-        V = sp.exp(-phi_t) * (N / G)
+        V = np.exp(-phi_t) * (N / G)
 
     # Calculate Feynman diagrams
     correction = diagrams_1st_order(G, P_mat, V)
@@ -1797,19 +1797,19 @@ def Feynman_diagrams(phi_t, R, Delta, t, N):
 def diagrams_1st_order(G, P, V):
     s = np.zeros(4)  # s[0] is dummy
 
-    P_diag = sp.array([P[i, i] for i in range(G)])
+    P_diag = np.array([P[i, i] for i in range(G)])
 
     # Diagram 1
-    s[1] = sp.sum(V * P_diag ** 2)
+    s[1] = np.sum(V * P_diag ** 2)
     s[1] *= -1 / 8
 
     # Diagram 2
-    U = sp.array([V[i] * P_diag[i] for i in range(G)])
-    s[2] = sp.array(sp.mat(U) * P * sp.mat(U).T).ravel()[0]
+    U = np.array([V[i] * P_diag[i] for i in range(G)])
+    s[2] = np.array(np.mat(U) * P * np.mat(U).T).ravel()[0]
     s[2] *= 1 / 8
 
     # Diagram 3
-    s[3] = sp.array(sp.mat(V) * sp.mat(sp.array(P) ** 3) * sp.mat(V).T).ravel()[
+    s[3] = np.array(np.mat(V) * np.mat(np.array(P) ** 3) * np.mat(V).T).ravel()[
         0]
     s[3] *= 1 / 12
 
@@ -1833,7 +1833,7 @@ def diagrams_1st_order(G, P, V):
     """
 
     # Return
-    return sp.sum(s)
+    return np.sum(s)
 
 
 # Feynman diagrams of order 1/N^2 ---> Under construction
@@ -1851,9 +1851,9 @@ def diagrams_2nd_order(G, P, V):
         l = index_samples[n, 3]
         s_array[n] = V[i] * V[j] * V[k] * V[l] * P[i, j] * P[i, k] * P[i, l] * \
             P[j, k] * P[j, l] * P[k, l]
-    s = sp.sum(s_array) * G ** 4 / num_samples
-    ms = sp.mean(s_array)
-    ds = sp.std(s_array) / sp.sqrt(num_samples)
+    s = np.sum(s_array) * G ** 4 / num_samples
+    ms = np.mean(s_array)
+    ds = np.std(s_array) / np.sqrt(num_samples)
     print('')
     print('s =', s)
     print(ds / ms)
@@ -1899,14 +1899,14 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
         # Find coefficients of phi_t in the kernel basis
         coeffs = np.zeros(alpha)
         for i in range(alpha):
-            coeffs[i] = sp.mat(kernel_basis[:, i]) * sp.mat(phi_t).T
+            coeffs[i] = np.mat(kernel_basis[:, i]) * np.mat(phi_t).T
 
         # Find eigen-modes of the Hessian matrix
         H = hessian_per_datum_from_coeffs(coeffs, R, kernel_basis)
-        A_mat = sp.mat(H) * N
+        A_mat = np.mat(H) * N
         U_mat = np.linalg.eigh(A_mat)
-        eig_vals = np.abs(sp.array(U_mat[0]))
-        eig_vecs = np.abs(sp.array(U_mat[1]))
+        eig_vals = np.abs(np.array(U_mat[0]))
+        eig_vecs = np.abs(np.array(U_mat[1]))
 
         # Initialize
         coeffs_current = coeffs
@@ -1938,8 +1938,8 @@ def Metropolis_Monte_Carlo(phi_t, R, Delta, t, N, num_samples, go_parallel,
         H = hessian(phi_t, R, Delta, t, N)
         A_mat = H.todense() * (N / G)
         U_mat = np.linalg.eigh(A_mat)
-        eig_vals = np.abs(sp.array(U_mat[0]))
-        eig_vecs = np.abs(sp.array(U_mat[1]))
+        eig_vals = np.abs(np.array(U_mat[0]))
+        eig_vecs = np.abs(np.array(U_mat[1]))
 
         # Initialize
         phi_current = phi_t
@@ -1976,10 +1976,10 @@ def posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star):
     sample_index = 0
 
     # Read in t, phi, log_E, and w_sample_mean from MAP curve points
-    ts = sp.array([p.t for p in points])
-    phis = sp.array([p.phi for p in points])
-    log_Es = sp.array([p.log_E for p in points])
-    w_sample_means = sp.array([p.sample_mean for p in points])
+    ts = np.array([p.t for p in points])
+    phis = np.array([p.phi for p in points])
+    log_Es = np.array([p.log_E for p in points])
+    w_sample_means = np.array([p.sample_mean for p in points])
 
     # Generate a "histogram" of t according to their relative probability
     num_t = len(ts)
@@ -1988,8 +1988,8 @@ def posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star):
         hist_t[log_Es.argmax()] = num_pt_samples
     else:
         log_Es = log_Es - log_Es.max()
-        prob_t = sp.exp(log_Es)
-        prob_t = prob_t / sp.sum(prob_t)
+        prob_t = np.exp(log_Es)
+        prob_t = prob_t / np.sum(prob_t)
         num_indices = num_t
         sampled_indices = list(
             np.random.choice(num_indices, size=num_pt_samples, replace=True,
@@ -2018,7 +2018,7 @@ def posterior_sampling(points, R, Delta, N, G, num_pt_samples, fix_t_at_t_star):
     Q_samples = np.zeros([G, num_pt_samples])
     for k in range(num_pt_samples):
         Q_samples[:, k] = field_to_prob(
-            sp.array(phi_samples[:, k]).ravel())
+            np.array(phi_samples[:, k]).ravel())
 
     # Return Q samples along with their weights
     return Q_samples, phi_samples, phi_weights
@@ -2050,11 +2050,11 @@ def coeffs_to_field(coeffs, kernel):
             '/coeffs_to_field/ coeffs is not finite: coeffs = %s' % coeffs)
 
     # Convert to matrices
-    kernel_mat = sp.mat(kernel)  # G x kernel_dim matrix
-    coeffs_col = sp.mat(coeffs).T  # kernel_dim x 1 matrix
+    kernel_mat = np.mat(kernel)  # G x kernel_dim matrix
+    coeffs_col = np.mat(coeffs).T  # kernel_dim x 1 matrix
     field_col = kernel_mat*coeffs_col  # G x 1 matrix
 
-    return sp.array(field_col).ravel()  # Returns an array
+    return np.array(field_col).ravel()  # Returns an array
 
 # Compute the action of a field given its coefficients in a basis
 
@@ -2095,8 +2095,8 @@ def action_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = field_to_quasiprob(phi+phi0)
 
-    current_term = sp.sum(R*phi)
-    nonlinear_term = sp.sum(quasiQ)
+    current_term = np.sum(R*phi)
+    nonlinear_term = np.sum(quasiQ)
     s = current_term + nonlinear_term
 
     if regularized:
@@ -2151,21 +2151,21 @@ def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = field_to_quasiprob(phi+phi0)
 
-    R_row = sp.mat(R)  # 1 x G
-    quasiQ_row = sp.mat(quasiQ)  # 1 x G
-    kernel_mat = sp.mat(kernel)  # G x kernel_dim
+    R_row = np.mat(R)  # 1 x G
+    quasiQ_row = np.mat(quasiQ)  # 1 x G
+    kernel_mat = np.mat(kernel)  # G x kernel_dim
 
     mu_R_row = R_row*kernel_mat  # 1 x kernel_dim
     mu_quasiQ_row = quasiQ_row*kernel_mat  # 1 x kernel_dim
     grad_row = mu_R_row - mu_quasiQ_row  # 1 x kernel_dim
 
     if regularized:
-        reg_row = (1./G)*sp.mat(phi)/(PHI_STD_REG**2)  # 1 x G
+        reg_row = (1./G)*np.mat(phi)/(PHI_STD_REG**2)  # 1 x G
         mu_reg_row = reg_row*kernel_mat  # 1 x kernel_dim
         grad_row += mu_reg_row  # 1 x kernel_dim
 
     # Make sure grad_array is valid
-    grad_array = sp.array(grad_row).ravel()
+    grad_array = np.array(grad_row).ravel()
     if not all(np.isreal(grad_array)):
         raise ControlledError(
             '/gradient_per_datum_from_coeffs/ grad_array is not real: grad_array = %s' % grad_array)
@@ -2173,7 +2173,7 @@ def gradient_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
         raise ControlledError(
             '/gradient_per_datum_from_coeffs/ grad_array is not finite: grad_array = %s' % grad_array)
 
-    return sp.array(grad_row).ravel()  # Returns an array
+    return np.array(grad_row).ravel()  # Returns an array
 
 # Compute the action hessian w.r.t field coefficients in a basis
 
@@ -2214,17 +2214,17 @@ def hessian_per_datum_from_coeffs(coeffs, R, kernel, phi0=False,
     phi = coeffs_to_field(coeffs, kernel)
     quasiQ = field_to_quasiprob(phi+phi0)
 
-    kernel_mat = sp.mat(kernel)  # G x kernel_dim
-    H = sp.mat(sp.diag(quasiQ))  # G x G
+    kernel_mat = np.mat(kernel)  # G x kernel_dim
+    H = np.mat(np.diag(quasiQ))  # G x G
 
     if regularized:
-        H += (1./G)*sp.diag(np.ones(G))/(PHI_STD_REG**2)
+        H += (1./G)*np.diag(np.ones(G))/(PHI_STD_REG**2)
 
     hessian_mat = kernel_mat.T*H*kernel_mat  # kernel_dim x kernel_dim
 
     # Make sure hessian_array is valid ?
 
-    return sp.array(hessian_mat)  # Returns an array
+    return np.array(hessian_mat)  # Returns an array
 
 # Computes the maximum entropy probaiblity distribution
 
@@ -2314,15 +2314,15 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
     # Set coefficients to zero
     if kernel_dim > 1:
-        coeffs = sp.zeros(kernel_dim)
+        coeffs = np.zeros(kernel_dim)
         #coeffs = sp.randn(kernel_dim)
     else:
-        coeffs = sp.zeros(1)
+        coeffs = np.zeros(1)
 
     # Evaluate the probabiltiy distribution
     phi = coeffs_to_field(coeffs, kernel)
-    phi = sp.array(phi).ravel()
-    phi0 = sp.array(phi0).ravel()
+    phi = np.array(phi).ravel()
+    phi0 = np.array(phi0).ravel()
     # print phi+phi0
     Q = field_to_prob(phi+phi0)
 
@@ -2350,10 +2350,10 @@ def compute_maxent_field(R, kernel, report_num_steps=False,
 
         # Solve linear equation to get change in field
         # This is the conjugate gradient method
-        da = -sp.real(solve(Lambda, v))
+        da = -np.real(solve(Lambda, v))
 
         # Compute corresponding change in action
-        ds = sp.sum(da*v)
+        ds = np.sum(da*v)
 
         # This should always be satisifed
         if (ds > 0):
@@ -2436,10 +2436,6 @@ MAX_DS = -1E-3
 PHI_STD_REG = PHI_STD_REG
 
 
-class Results():
-    pass
-
-
 # Represents a point along the MAP curve
 class MAP_curve_point:
     def __init__(self, t, phi, Q, log_E, sample_mean, sample_mean_std_dev, details=False):
@@ -2478,7 +2474,7 @@ class MAP_curve:
         if not self._is_sorted:
             self.sort()
         p = self.points[0]
-        if not (p.t == -sp.Inf):
+        if not (p.t == -np.Inf):
             raise ControlledError(
                 '/MAP_curve/ Not getting MaxEnt point: t = %f' % p.t)
         return p
@@ -2487,14 +2483,14 @@ class MAP_curve:
         if not self._is_sorted:
             self.sort()
         p = self.points[-1]
-        if not (p.t == sp.Inf):
+        if not (p.t == np.Inf):
             raise ControlledError(
                 '/MAP_curve/ Not getting histogram point: t = %f' % p.t)
         return p
 
     def get_log_evidence_ratios(self, finite=True):
-        log_Es = sp.array([p.log_E for p in self.points])
-        ts = sp.array([p.t for p in self.points])
+        log_Es = np.array([p.log_E for p in self.points])
+        ts = np.array([p.t for p in self.points])
         if finite:
             indices = (log_Es > -np.Inf) * (ts > -np.Inf) * (ts < np.Inf)
             return log_Es[indices], ts[indices]
@@ -2528,16 +2524,16 @@ def action(phi, R, Delta, t, N, phi_in_kernel=False, regularized=False):
 
     G = 1. * len(R)
     quasiQ = field_to_quasiprob(phi)
-    quasiQ_col = sp.mat(quasiQ).T
+    quasiQ_col = np.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
-    phi_col = sp.mat(phi).T
-    R_col = sp.mat(R).T
-    ones_col = sp.mat(sp.ones(int(G))).T
+    phi_col = np.mat(phi).T
+    R_col = np.mat(R).T
+    ones_col = np.mat(np.ones(int(G))).T
 
     if phi_in_kernel:
         S_mat = G * R_col.T * phi_col + G * ones_col.T * quasiQ_col
     else:
-        S_mat = 0.5 * sp.exp(
+        S_mat = 0.5 * np.exp(
             -t) * phi_col.T * Delta_sparse * phi_col + G * R_col.T * phi_col + G * ones_col.T * quasiQ_col
 
     if regularized:
@@ -2575,16 +2571,16 @@ def gradient(phi, R, Delta, t, N, regularized=False):
 
     G = 1. * len(R)
     quasiQ = field_to_quasiprob(phi)
-    quasiQ_col = sp.mat(quasiQ).T
+    quasiQ_col = np.mat(quasiQ).T
     Delta_sparse = Delta.get_sparse_matrix()
-    phi_col = sp.mat(phi).T
-    R_col = sp.mat(R).T
-    grad_col = sp.exp(-t) * Delta_sparse * phi_col + G * R_col - G * quasiQ_col
+    phi_col = np.mat(phi).T
+    R_col = np.mat(R).T
+    grad_col = np.exp(-t) * Delta_sparse * phi_col + G * R_col - G * quasiQ_col
 
     if regularized:
         grad_col += phi_col / (N * PHI_STD_REG ** 2)
 
-    grad = sp.array(grad_col).ravel()
+    grad = np.array(grad_col).ravel()
 
     # Make sure grad is valid
     if not all(np.isreal(grad)):
@@ -2617,7 +2613,7 @@ def hessian(phi, R, Delta, t, N, regularized=False):
     G = 1. * len(R)
     quasiQ = field_to_quasiprob(phi)
     Delta_sparse = Delta.get_sparse_matrix()
-    H = sp.exp(-t) * Delta_sparse + G * diags(quasiQ, 0)
+    H = np.exp(-t) * Delta_sparse + G * diags(quasiQ, 0)
 
     if regularized:
         H += diags(np.ones(int(G)), 0) / (N * PHI_STD_REG ** 2)
@@ -2638,18 +2634,18 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
 
     kernel_dim = Delta._kernel_dim
     M = field_to_prob(phi_M)
-    M_on_kernel = sp.zeros([kernel_dim, kernel_dim])
+    M_on_kernel = np.zeros([kernel_dim, kernel_dim])
     kernel_basis = Delta._kernel_basis
     lambdas = Delta._eigenvalues
     for a in range(int(kernel_dim)):
         for b in range(int(kernel_dim)):
-            psi_a = sp.ravel(kernel_basis[:, a])
-            psi_b = sp.ravel(kernel_basis[:, b])
-            M_on_kernel[a, b] = sp.sum(psi_a * psi_b * M)
+            psi_a = np.ravel(kernel_basis[:, a])
+            psi_b = np.ravel(kernel_basis[:, b])
+            M_on_kernel[a, b] = np.sum(psi_a * psi_b * M)
 
     # Compute log Occam factor at infinity
     log_Occam_at_infty = - 0.5 * \
-        sp.log(det(M_on_kernel)) - 0.5 * sp.sum(sp.log(lambdas[kernel_dim:]))
+        np.log(det(M_on_kernel)) - 0.5 * np.sum(np.log(lambdas[kernel_dim:]))
 
     # Make sure log_Occam_at_infty is valid
     if not np.isreal(log_Occam_at_infty):
@@ -2660,7 +2656,7 @@ def log_ptgd_at_maxent(phi_M, R, Delta, N, Z_eval, num_Z_samples):
                               log_Occam_at_infty)
 
     # Compute the log likelihood at infinity
-    log_likelihood_at_infty = - N * sp.sum(phi_M * R) - N
+    log_likelihood_at_infty = - N * np.sum(phi_M * R) - N
 
     # Make sure log_likelihood_at_infty is valid
     if not np.isreal(log_likelihood_at_infty):
@@ -2737,17 +2733,17 @@ def log_ptgd(phi, R, Delta, t, N, Z_eval, num_Z_samples):
     alpha = 1. * Delta._alpha
     kernel_dim = 1. * Delta._kernel_dim
     H = hessian(phi, R, Delta, t, N)
-    H_prime = H.todense() * sp.exp(t)
+    H_prime = H.todense() * np.exp(t)
 
     S = action(phi, R, Delta, t, N)
 
     # First try computing log determinant straight away
-    log_det = sp.log(det(H_prime))
+    log_det = np.log(det(H_prime))
 
     # If failed, try computing the sum of eigenvalues, forcing the eigenvalues to be real and non-negative
     if not (np.isreal(log_det) and np.isfinite(log_det)):
         lambdas = abs(eigvalsh(H_prime))
-        log_det = sp.sum(sp.log(lambdas))
+        log_det = np.sum(np.log(lambdas))
 
         # Make sure log_det is valid
     if not np.isreal(log_det):
@@ -2861,7 +2857,7 @@ def compute_predictor_step(phi, R, Delta, t, N, direction, resolution, DT_MAX):
         raise ControlledError(
             '/compute_predictor_step/ rho is not finite at t = %s: rho = %s' % (t, rho))
 
-    denom = sp.sqrt(sp.sum(rho * Q * rho))
+    denom = np.sqrt(np.sum(rho * Q * rho))
 
     # Make sure denom is valid
     if not np.isreal(denom):
@@ -2951,7 +2947,7 @@ def compute_corrector_step(phi, R, Delta, t, N, tollerance, report_num_steps=Fal
                 '/compute_corrector_step/ dphi is not finite at t = %s: dphi = %s' % (t, dphi))
 
         # Compute corresponding change in action
-        dS = sp.sum(dphi * v)
+        dS = np.sum(dphi * v)
 
         # If we're already very close to the max, then dS will be close to zero. In this case, we're done already
         if dS > MAX_DS:
@@ -3087,7 +3083,7 @@ def compute_map_curve(N, R, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print
 
     # This corresponds to a log_E of zero
     log_E_M = 0
-    t_M = -sp.Inf
+    t_M = -np.Inf
     map_curve.add_point(t_M, phi_infty, M, log_E_M,
                         w_sample_mean_M, w_sample_mean_std_M)
 
@@ -3303,7 +3299,7 @@ def run(counts_array, Delta, Z_eval, num_Z_samples, t_start, DT_MAX, print_t,
 
     # Identify the optimal density estimate
     points = map_curve.points
-    log_Es = sp.array([p.log_E for p in points])
+    log_Es = np.array([p.log_E for p in points])
     log_E_max = log_Es.max()
     ibest = log_Es.argmax()
     star = points[ibest]
@@ -4041,7 +4037,7 @@ class DensityEstimator:
             op_type = '1d_periodic'
         else:
             op_type = '1d_bilateral'
-        Delta = laplacian.Laplacian(op_type, alpha, G)
+        Delta = Laplacian(op_type, alpha, G)
         laplacian_compute_time = clock() - laplacian_start_time
         if print_t:
             print('Laplacian computed de novo in %f sec.' %
@@ -4060,7 +4056,7 @@ class DensityEstimator:
               (num_nonempty_bins, self.alpha))
 
         # Compute initial t
-        t_start = min(0.0, sp.log(N)-2.0*alpha*sp.log(alpha/h))
+        t_start = min(0.0, np.log(N)-2.0*alpha*np.log(alpha/h))
         if print_t:
             print('t_start = %0.2f' % t_start)
 
@@ -4080,7 +4076,7 @@ class DensityEstimator:
         results.R /= h
         results.M /= h
         results.Q_star /= h
-        results.l_star = h*(sp.exp(-results.t_star)*N)**(1/(2.*alpha))
+        results.l_star = h*(np.exp(-results.t_star)*N)**(1/(2.*alpha))
         for p in results.map_curve.points:
             p.Q /= h
         if not (num_pt_samples == 0):
@@ -4697,3 +4693,28 @@ def demo(example='real_data'):
         print('Running %s:\n%s\n%s\n%s' %
               (file_name, line, content, line))
     exec(open(file_name).read())
+
+
+if __name__ == '__main__':
+    #
+    # Uproszczone uruchamianie pakietu SUFTWARE1
+    #
+
+    INPUT = 'input'
+    OUTPUT = 'output'
+
+    def process(input_file_name, output_file_name):
+        print(input_file_name, end=' --> ')
+        print(output_file_name)
+
+        data = np.fromfile(input_file_name)
+        density = DensityEstimator(list(data))
+        #density.plot(title=dataset.description, xlabel=dataset.units)
+
+
+    CWD = os.getcwd()
+    __, __, filenames = next(os.walk(os.path.join(CWD, INPUT)))
+    for filename in filenames:
+        process(os.path.join(INPUT, filename), os.path.join(OUTPUT, filename))
+
+    pass
